@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Listler</string>
+    <string name="add_new_list">Add new list</string>
+    <string name="shopping_list">Shopping list</string>
+    <string name="action_settings">Settings</string>
+    <string name="name_list_hint">Name the list</string>
+    <string name="save">Save</string>
+    <string name="medicine_list">Medicine list</string>
+    <string name="hint_add_item">Add item</string>
+    <string name="test">Test</string>
+
+    <!-- INFORMATION -->
+    <string name="i_c_item_in_list">%1$s is already in this list.</string>
+    <string name="i_item_in_list">Item is already in this list.</string>
+
+    <!-- ERRORS -->
+    <string name="e_unknown_viewmodel_class">Unknown viewmodel class</string>
+    <string name="e_item_does_not_exist">Item doesn\'t exist</string>
+    <string name="hint_item_name">Item name</string>
+    <string name="add_item">Add item</string>
+    <string name="update_item">Update item</string>
+    <string name="delete_item">Delete item</string>
+</resources>

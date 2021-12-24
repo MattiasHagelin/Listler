@@ -6,30 +6,34 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.math3249.listler.databinding.ListDetailsCategoryBinding
-import com.math3249.listler.model.ListWithItem
-import com.math3249.listler.model.entity.Item
+import com.math3249.listler.model.CategoryWithItems
 
-class ListDetailCategoryAdapter(private val clickListener: (Item) -> Unit,
-                                private val longClickListener: (Item) -> Unit
-): ListAdapter<Item, ListDetailCategoryAdapter.ListDetailCategoryHolder>(DiffCallback) {
+class ListDetailCategoryAdapter(private val clickListener: (CategoryWithItems) -> Unit,
+                                private val longClickListener: (CategoryWithItems) -> Unit
+): ListAdapter<CategoryWithItems, ListDetailCategoryAdapter.ListDetailCategoryHolder>(DiffCallback) {
 
     class ListDetailCategoryHolder(
         private var binding: ListDetailsCategoryBinding
     ): RecyclerView.ViewHolder(binding.root) {
-        fun bind(category: Item) {
-            //binding. = category
+        fun bind(category: CategoryWithItems) {
+            binding.category = category.category
             binding.executePendingBindings()
         }
     }
 
-    companion object DiffCallback: DiffUtil.ItemCallback<Item>() {
-        override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean {
-            return oldItem.itemId == newItem.itemId
+    companion object DiffCallback: DiffUtil.ItemCallback<CategoryWithItems>() {
+        override fun areItemsTheSame(
+            oldItem: CategoryWithItems,
+            newItem: CategoryWithItems
+        ): Boolean {
+            return oldItem.category.categoryId == newItem.category.categoryId
         }
 
-        override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean {
-            return oldItem == newItem
+        override fun areContentsTheSame(oldCategoryWithItems: CategoryWithItems, newCategoryWithItems: CategoryWithItems): Boolean {
+            return oldCategoryWithItems == newCategoryWithItems
         }
+
+
     }
 
     private val viewPool = RecyclerView.RecycledViewPool()
@@ -42,28 +46,28 @@ class ListDetailCategoryAdapter(private val clickListener: (Item) -> Unit,
     }
 
     override fun onBindViewHolder(holder: ListDetailCategoryHolder, position: Int) {
-        val item = getItem(position)
+        val categoryWithItems = getItem(position)
 
-        toggleView(holder, item)
+        //toggleView(holder, categoryWithItems)
 
         holder.itemView.setOnClickListener {
-            clickListener(item)
+            clickListener(categoryWithItems)
         }
         holder.itemView.setOnLongClickListener {
-            longClickListener(item)
+            longClickListener(categoryWithItems)
             true
         }
-        holder.bind(item)
+        holder.bind(categoryWithItems)
     }
 
-    fun toggleView(holder: ListDetailCategoryHolder, item: Item){
+    fun toggleView(holder: ListDetailCategoryHolder, CategoryWithItems: CategoryWithItems){
         /*
-        if (item.isDone) {
-            holder.itemView.visibility = View.GONE
-            holder.itemView.layoutParams = RecyclerView.LayoutParams(0, 0)
+        if (CategoryWithItems.isDone) {
+            holder.CategoryWithItemsView.visibility = View.GONE
+            holder.CategoryWithItemsView.layoutParams = RecyclerView.LayoutParams(0, 0)
         } else {
-            holder.itemView.visibility = View.VISIBLE
-            holder.itemView.layoutParams =
+            holder.CategoryWithItemsView.visibility = View.VISIBLE
+            holder.CategoryWithItemsView.layoutParams =
                 RecyclerView.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT

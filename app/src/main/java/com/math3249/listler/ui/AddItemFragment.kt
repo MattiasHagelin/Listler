@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.math3249.listler.App
+import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentAddItemBinding
 import com.math3249.listler.model.entity.Item
 import com.math3249.listler.ui.viewmodel.AddItemViewModel
@@ -28,7 +30,7 @@ class AddItemFragment: Fragment() {
 
     private val viewModel: AddItemViewModel by activityViewModels {
         AddItemViewModel.AddItemViewModelFactory (
-            (activity?.application as App).database.listDetailDao()
+            (activity?.application as App).database.itemDao()
         )
     }
     private var _binding: FragmentAddItemBinding? = null
@@ -64,6 +66,18 @@ class AddItemFragment: Fragment() {
             }
         }
          */
+        viewModel.allCategories.observe(this.viewLifecycleOwner) {
+            categories ->
+            categories.let {
+                val arr = mutableListOf<String>()
+                for (value in it){
+                    arr.add(value.name)
+                }
+                val dropDownAdapter: ArrayAdapter<String> =
+                    ArrayAdapter(requireContext(), R.layout.add_list_dropdown, arr)
+                binding.categoryDropdown.setAdapter(dropDownAdapter)
+            }
+        }
         if ( id > 0 ) {
             viewModel.getItem(id).observe(this.viewLifecycleOwner) {
                 selectedItem -> item = selectedItem
@@ -97,8 +111,8 @@ class AddItemFragment: Fragment() {
         binding.apply {
 
             itemInput.setText(navArgs.itemName)
-            categoryInput.setText("default")
-            categoryInput.requestFocus()
+           // categoryInput.setText("default")
+            //categoryInput.requestFocus()
 
             addItem.setOnClickListener {
                 val itemName = Utils.standardizeItemName(itemInput.text.toString())

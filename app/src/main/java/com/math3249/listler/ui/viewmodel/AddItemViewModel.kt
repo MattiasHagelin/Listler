@@ -2,6 +2,7 @@ package com.math3249.listler.ui.viewmodel
 
 import androidx.lifecycle.*
 import com.math3249.listler.R
+import com.math3249.listler.data.dao.ItemDao
 import com.math3249.listler.data.dao.ListDetailDao
 import com.math3249.listler.model.entity.Item
 import com.math3249.listler.model.crossref.CategoryItemCrossRef
@@ -11,13 +12,14 @@ import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
 class AddItemViewModel(
-    private val listDetailDao: ListDetailDao
+    private val itemDao: ItemDao
 ): ViewModel() {
 
     val insertId = MutableLiveData<Long?>()
+    val allCategories = itemDao.getCategories().asLiveData()
 
     fun getItem(id: Long): LiveData<Item> {
-        return listDetailDao.getItem(id).asLiveData()
+        return itemDao.getItemById(id).asLiveData()
     }
 
     fun addItem(
@@ -29,7 +31,7 @@ class AddItemViewModel(
             categoryId = categoryId
         )
         viewModelScope.launch {
-            insertId.postValue(listDetailDao.insertItem(item))
+            insertId.postValue(itemDao.insertItem(item))
         }
     }
 
@@ -44,7 +46,7 @@ class AddItemViewModel(
             done = isDone
         )
         viewModelScope.launch() {
-            listDetailDao.insertOrUpdate(listItem)
+            itemDao.insertOrUpdate(listItem)
             /*
             try {
                 listDetailDao.insertItemToList(itemList)
@@ -65,15 +67,15 @@ class AddItemViewModel(
             categoryId = categoryId
         )
         viewModelScope.launch {
-            listDetailDao.updateItem(item)
+            itemDao.updateItem(item)
         }
     }
 
-    class AddItemViewModelFactory(private val listDetailDao: ListDetailDao): ViewModelProvider.Factory {
+    class AddItemViewModelFactory(private val itemDao: ItemDao): ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(AddItemViewModel::class.java)) {
                 @Suppress
-                return AddItemViewModel(listDetailDao) as T
+                return AddItemViewModel(itemDao) as T
             }
             throw IllegalArgumentException(Utils.getString(R.string.e_unknown_viewmodel_class))
         }

@@ -20,4 +20,5 @@
     <string name="add_item">Add item</string>
     <string name="update_item">Update item</string>
     <string name="delete_item">Delete item</string>
+    <string name="hint_add_category">Add category</string>
 </resources>

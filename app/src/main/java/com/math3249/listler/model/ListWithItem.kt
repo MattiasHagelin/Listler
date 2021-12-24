@@ -15,7 +15,7 @@ data class ListWithItem(
         entityColumn = "itemId",
         associateBy = (Junction(
             parentColumn = "listId",
-            entityColumn = "listId",
+            entityColumn = "itemId",
             value = ListItemCrossRef::class
         ))
     )

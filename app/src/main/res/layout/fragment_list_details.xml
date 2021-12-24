@@ -5,9 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.ListDetailsFragment"
-    android:layout_margin="@dimen/standard_margin"
-    android:padding="@dimen/standard_padding">
+    tools:context=".ui.ListDetailsFragment">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/add_item"
@@ -17,7 +15,9 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:endIconMode="none"
-        android:hint="@string/hint_add_item">
+        android:hint="@string/hint_add_item"
+        android:layout_marginStart="@dimen/standard_margin"
+        android:layout_marginEnd="@dimen/standard_margin">
 
         <AutoCompleteTextView
             android:id="@+id/item_dropdown"

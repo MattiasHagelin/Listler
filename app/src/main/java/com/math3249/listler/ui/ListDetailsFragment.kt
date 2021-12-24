@@ -75,11 +75,11 @@ class ListDetailsFragment: Fragment() {
             }
         }
 
-        viewModel.getItems(id).observe(this.viewLifecycleOwner) {
+        viewModel.getCategoriesWithItems(id).observe(this.viewLifecycleOwner) {
             selectedList ->
             selectedList.let {
-                adapter.submitList(it.items)
-                (requireActivity() as AppCompatActivity).supportActionBar?.title = it.list.name
+                adapter.submitList(it)
+                //(requireActivity() as AppCompatActivity).supportActionBar?.title = it.list.name TODO:Fix name
             }
         }
 

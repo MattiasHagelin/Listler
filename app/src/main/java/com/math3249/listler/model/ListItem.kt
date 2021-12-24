@@ -1,8 +1,7 @@
 package com.math3249.listler.model
 
-data class CategoryItem(
+data class ListItem(
     val itemId: Long,
     val name: String,
-    val done: Boolean,
-    val categoryId: Long
+    val done: Boolean
 )

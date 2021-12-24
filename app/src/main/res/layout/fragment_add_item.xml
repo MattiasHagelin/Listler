@@ -29,19 +29,27 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/category_label"
+        style="@style/ThemeOverlay.Listler.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/hint_item_name"
-        android:layout_marginBottom="@dimen/standard_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/item_label"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/category_input"
+        app:endIconMode="none"
+        android:hint="@string/hint_add_category">
+
+        <AutoCompleteTextView
+            android:id="@+id/category_dropdown"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:inputType="textAutoComplete"
-            android:singleLine="true" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:completionThreshold="2"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:singleLine="true"
+            android:maxLength="20"
+            />
     </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout

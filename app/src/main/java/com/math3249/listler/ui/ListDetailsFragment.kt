@@ -47,7 +47,7 @@ class ListDetailsFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val id = navArgs.id
+        val id = navArgs.listId
         val adapter = ListDetailCategoryAdapter (
             {
                 //item -> viewModel.updateItemOnList(id, item.itemId, true)
@@ -71,6 +71,7 @@ class ListDetailsFragment: Fragment() {
                 }
                 val dropDownAdapter: ArrayAdapter<String> =
                     ArrayAdapter(requireContext(), R.layout.add_list_dropdown, arr)
+
                 binding.itemDropdown.setAdapter(dropDownAdapter)
             }
         }
@@ -129,7 +130,8 @@ class ListDetailsFragment: Fragment() {
 
         if (selectedItem != null) {
           if (selectedItem!!.itemId > 0) {
-              viewModel.addItemToList(selectedItem!!.itemId, navArgs.id, false)
+              val listId = navArgs.listId
+              viewModel.addItemToList(navArgs.listId, selectedItem!!.itemId, false)
               clearItemDropdown()
           }
         } else
@@ -147,13 +149,12 @@ class ListDetailsFragment: Fragment() {
             viewModel.itemExists(getItemNameFromItemDropdown()).observe(this.viewLifecycleOwner) {
                 if (!it) {
                     //add new item to database
-                    //TODO: navigate to fragment_add_item
                     val action = ListDetailsFragmentDirections
-                        .actionListDetailsFragmentToAddItemFragment(
-                            getItemNameFromItemDropdown(),
-                            navArgs.id,
-                            0
-                        )
+                        .actionListDetailsFragmentToAddItemFragment(navArgs.listId
+                            , 0
+                            , getItemNameFromItemDropdown()
+                            , 0
+                            , "")
                     findNavController().navigate(action)
                 } else {
                     addToList()
@@ -165,7 +166,12 @@ class ListDetailsFragment: Fragment() {
         binding.itemDropdown.setText("", false)
     }
     private fun getItemNameFromItemDropdown(): String {
-        return Utils.standardizeItemName(binding.itemDropdown.text.toString())
+        val text = Utils.standardizeItemName(binding.itemDropdown.text.toString())
+        if (text == null) {
+            Utils.snackbar(MessageType.ITEM_INPUT_EMPTY, binding.categoryRecyclerview)
+            return ""
+        }
+        return text!!
     }
 
     private fun bindList() {

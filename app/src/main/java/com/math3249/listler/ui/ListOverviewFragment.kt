@@ -38,7 +38,7 @@ class ListOverviewFragment : Fragment() {
 
         val adapter = ListOverviewAdapter {
             list -> val action = ListOverviewFragmentDirections
-            .actionListOverviewFragmentToListDetailsFragment(list.listId,list.name)
+            .actionListOverviewFragmentToListDetailsFragment(list.listId)
             findNavController().navigate(action)
         }
 

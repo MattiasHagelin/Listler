@@ -6,10 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.math3249.listler.App
 import com.math3249.listler.databinding.FragmentAddCategoryBinding
 import com.math3249.listler.ui.viewmodel.AddCategoryViewModel
+import com.math3249.listler.util.Utils
+import com.math3249.listler.util.message.Type.MessageType
 
 class AddCategoryFragment: Fragment() {
 
@@ -40,5 +43,34 @@ class AddCategoryFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.apply {
+            categoryInput.setText(navArgs.categoryName)
+            addCategory.setOnClickListener {
+                addCategoryToDatabase()
+            }
+        }
+    }
+
+    private fun addCategoryToDatabase() {
+        val name = Utils.standardizeItemName(binding.categoryInput.text.toString())
+        if (name != null) {
+            viewModel.addCategory(name!!)
+            viewModel.insertId.observe(this.viewLifecycleOwner) {
+                if (it != null) {
+                    val action = AddCategoryFragmentDirections
+                        .actionAddCategoryFragmentToAddItemFragment(navArgs.listId
+                                , navArgs.itemId
+                                , navArgs.itemName
+                                , it
+                                , name)
+
+                    findNavController().navigate(action)
+                } else {
+                    Utils.snackbar(MessageType.CATEGORY_IN_DATABASE, binding.rootLayout, name)
+                }
+            }
+        } else Utils.snackbar(MessageType.CATEGORY_INPUT_EMPTY, binding.rootLayout)
+
     }
 }

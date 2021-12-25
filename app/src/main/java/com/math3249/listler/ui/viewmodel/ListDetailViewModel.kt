@@ -37,7 +37,7 @@ class ListDetailViewModel(
         //Do work on IO Thread
         viewModelScope.launch(Dispatchers.IO) {
             //Get selected list
-            val listWithItem = listDetailDao.getSelectedList(id)
+            val listWithItem = listDetailDao.getSelectedList(id) //TODO: convert to Flow and observe from fragment then do the stuff below at change
 
             //Convert lists in listWithItem to maps
             val itemsMappedByCategory = listWithItem.items.groupBy { it.categoryId }

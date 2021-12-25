@@ -17,11 +17,17 @@ interface ItemDao {
     @Query("SELECT * FROM Category")
     fun getCategories(): Flow<List<Category>>
 
+    @Query("SELECT categoryId FROM category WHERE name = :name")
+    fun getCategoryIdByName(name: String): Long
+
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertItem(item: Item): Long
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertItemToListIgnore(listItemCrossRef: ListItemCrossRef): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insert(category: Category): Long
 
     @Update
     suspend fun updateItem(item: Item)

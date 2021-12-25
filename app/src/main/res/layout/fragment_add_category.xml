@@ -14,7 +14,7 @@
         android:id="@+id/category_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/hint_item_name"
+        android:hint="@string/hint_category_name"
         android:layout_marginBottom="@dimen/standard_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -38,10 +38,10 @@
         android:gravity="center">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/add_item"
+            android:id="@+id/add_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/add_item"/>
+            android:text="@string/add_category"/>
         <com.google.android.material.button.MaterialButton
             android:id="@+id/update_item"
             android:layout_width="wrap_content"

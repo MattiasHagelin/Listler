@@ -15,6 +15,7 @@ import com.math3249.listler.databinding.FragmentAddItemBinding
 import com.math3249.listler.model.entity.Item
 import com.math3249.listler.ui.viewmodel.AddItemViewModel
 import com.math3249.listler.util.Utils
+import com.math3249.listler.util.message.Type.MessageType
 
 class AddItemFragment: Fragment() {
 
@@ -55,17 +56,7 @@ class AddItemFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val id = navArgs.itemId
-        /*
-        TODO: Check if this code is still needed
-        viewModel.message.observe(this.viewLifecycleOwner) {
-            message -> message.let {
-                if (message != null && !message.success) {
-                    Utils.snackbar(message.type, binding.rootLayout)
-                    viewModel.message.value = null
-                }
-            }
-        }
-         */
+
         viewModel.allCategories.observe(this.viewLifecycleOwner) {
             categories ->
             categories.let {
@@ -89,45 +80,79 @@ class AddItemFragment: Fragment() {
             binding.addItem.visibility = View.INVISIBLE
             binding.updateItem.visibility = View.VISIBLE
             binding.updateItem.setOnClickListener {
-                viewModel.updateItem(id,
-                    binding.itemInput.text.toString(),
-                    0L) //TODO:Get categories from table
-                navigateBack()
+                val itemName = Utils.standardizeItemName(binding.itemInput.text.toString())
+                val categoryName = Utils.standardizeItemName(binding.categoryDropdown.text.toString())
+
+                if (checkUserInput(itemName, categoryName)) {
+                    viewModel.updateItem(id
+                        , itemName!!
+                        , categoryName!!)
+                    navigateBack()
+                }
             }
         } else {
             binding.addItem.visibility = View.VISIBLE
             binding.itemInput.setText(navArgs.itemName)
         }
 
-        viewModel.insertId.observe(this.viewLifecycleOwner) {
+        viewModel.newItemId.observe(this.viewLifecycleOwner) {
             id -> id.let {
                 if (id != null) {
                     viewModel.addItemToList(id, navArgs.listId, false)
-                    viewModel.insertId.value = null
+                    viewModel.newItemId.value = null
                     navigateBack()
                 }
             }
         }
         binding.apply {
-
             itemInput.setText(navArgs.itemName)
-           // categoryInput.setText("default")
-            //categoryInput.requestFocus()
-
+            categoryDropdown.setText(navArgs.categoryName)
+            categoryLabel.setEndIconOnClickListener {
+                clickEndIcon()
+            }
             addItem.setOnClickListener {
-                val itemName = Utils.standardizeItemName(itemInput.text.toString())
-                val categoryName = 0L //TODO: Get category id
-                if (!itemName.isNullOrBlank()) {
-                        viewModel.addItem(itemName, categoryName)
+                if (checkUserInput(getItemName(), getCategoryName())) {
+                    viewModel.addItem(getItemName()!!, getCategoryName()!!)
                 }
             }
-
         }
     }
 
     private fun navigateBack() {
         val action = AddItemFragmentDirections
-            .actionAddItemFragmentToListDetailsFragment(navArgs.listId, "default")
+            .actionAddItemFragmentToListDetailsFragment(navArgs.listId)
         findNavController().navigate(action)
+    }
+
+    private fun clickEndIcon() {
+
+        if (checkUserInput(getItemName(), getCategoryName())){
+            addCategoryToDatabase()
+        }
+    }
+
+    private fun checkUserInput(itemName:String?, categoryName: String?): Boolean {
+        if (itemName == null) Utils.snackbar(MessageType.ITEM_INPUT_EMPTY, binding.rootLayout)
+        if (categoryName == null) Utils.snackbar(MessageType.CATEGORY_INPUT_EMPTY, binding.rootLayout)
+
+        return itemName != null && categoryName != null
+    }
+
+    private fun getItemName(): String? {
+        return Utils.standardizeItemName(binding.itemInput.text.toString())
+    }
+
+    private fun getCategoryName(): String? {
+        return Utils.standardizeItemName(binding.categoryDropdown.text.toString())
+    }
+
+    private fun addCategoryToDatabase() {
+            viewModel.addCategory(getCategoryName()!!)
+            viewModel.newCategoryId.observe(this.viewLifecycleOwner) {
+            if (it != null && it < 0) {
+                Utils.snackbar(MessageType.CATEGORY_IN_DATABASE, binding.rootLayout, getCategoryName()!!)
+            }
+        }
+
     }
 }

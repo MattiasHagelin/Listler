@@ -7,7 +7,10 @@ import com.math3249.listler.data.dao.ListDetailDao
 import com.math3249.listler.model.entity.Item
 import com.math3249.listler.model.crossref.CategoryItemCrossRef
 import com.math3249.listler.model.crossref.ListItemCrossRef
+import com.math3249.listler.model.entity.Category
 import com.math3249.listler.util.Utils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
@@ -15,7 +18,8 @@ class AddItemViewModel(
     private val itemDao: ItemDao
 ): ViewModel() {
 
-    val insertId = MutableLiveData<Long?>()
+    val newItemId = MutableLiveData<Long?>()
+    val newCategoryId = MutableLiveData<Long?>()
     val allCategories = itemDao.getCategories().asLiveData()
 
     fun getItem(id: Long): LiveData<Item> {
@@ -24,14 +28,17 @@ class AddItemViewModel(
 
     fun addItem(
         name: String,
-        categoryId: Long
+        categoryName: String
     ) {
-        val item = Item(
-            name = name,
-            categoryId = categoryId
-        )
-        viewModelScope.launch {
-            insertId.postValue(itemDao.insertItem(item))
+        viewModelScope.launch(Dispatchers.IO) {
+            var categoryId = itemDao.getCategoryIdByName(categoryName)
+            if (categoryId == 0L) addCategory(categoryName)
+            categoryId = newCategoryId.asFlow().first()!!
+            val item = Item(
+                name = name,
+                categoryId = categoryId
+            )
+            newItemId.postValue(itemDao.insertItem(item))
         }
     }
 
@@ -59,15 +66,25 @@ class AddItemViewModel(
     fun updateItem(
         id: Long,
         name: String,
-        categoryId: Long
+        categoryName: String
     ) {
-        val item = Item(
-            itemId = id,
-            name = name,
-            categoryId = categoryId
-        )
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
+            val categoryId = itemDao.getCategoryIdByName(categoryName)
+            val item = Item(
+                itemId = id,
+                name = name,
+                categoryId = categoryId
+            )
             itemDao.updateItem(item)
+        }
+    }
+
+    fun addCategory(name: String) {
+        val category = Category(
+            name = name
+        )
+        viewModelScope.launch(Dispatchers.IO) {
+            newCategoryId.postValue(itemDao.insert(category))
         }
     }
 

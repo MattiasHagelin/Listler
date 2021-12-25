@@ -19,9 +19,13 @@ object Utils {
      * Sets first letter to upper case
      * and the rest to lower case
      */
-    fun standardizeItemName(name: String): String {
-        return name.lowercase()
-            .replaceFirstChar { it.uppercaseChar() }
+    fun standardizeItemName(name: String): String? {
+        return if (name.isBlank()) {
+            null
+        } else {
+            name.lowercase()
+                .replaceFirstChar { it.uppercaseChar() }
+        }
     }
 
     /**
@@ -36,6 +40,7 @@ object Utils {
             MessageType.ITEM_IN_LIST -> snackbar(view, getString(R.string.i_c_item_in_list, *formatArgs))
             MessageType.ITEM_IN_DATABASE -> snackbar(view, "Item already exists")
             MessageType.ITEM_NOT_IN_DATABASE -> snackbar(view, getString(R.string.e_item_does_not_exist))
+            MessageType.CATEGORY_IN_DATABASE -> snackbar(view, getString(R.string.i_category_in_db, *formatArgs))
             else -> return
         }
     }
@@ -45,6 +50,8 @@ object Utils {
             MessageType.ITEM_IN_LIST -> snackbar(view, getString(R.string.i_item_in_list))
             MessageType.ITEM_IN_DATABASE -> snackbar(view, "Item already exists")
             MessageType.ITEM_NOT_IN_DATABASE -> snackbar(view, getString(R.string.e_item_does_not_exist))
+            MessageType.ITEM_INPUT_EMPTY -> snackbar(view, getString(R.string.i_item_input_empty))
+            MessageType.CATEGORY_INPUT_EMPTY -> snackbar(view, getString(R.string.i_category_input_empty))
             else -> return
         }
     }

@@ -22,12 +22,11 @@
         android:layout_height="wrap_content"
         android:textAppearance="?attr/textAppearanceHeadline6"
         android:layout_marginTop="@dimen/standard_margin"
+        android:text="@{list.name}"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="Name" />
-    <!--
-        android:text="@{list.name}" -->
-    <TextView
+    <!--<TextView
         android:id="@+id/type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -37,7 +36,7 @@
         android:layout_marginStart="@dimen/standard_margin"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@+id/name"
-        tools:text="Name" />
+        tools:text="Name" />-->
     <ImageView
         android:id="@+id/image"
         android:layout_width="wrap_content"
@@ -45,7 +44,7 @@
         android:layout_marginStart="@dimen/standard_margin"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/type"
+        app:layout_constraintStart_toEndOf="@id/name"
         app:srcCompat="@drawable/ic_shopping_cart_24"
         app:tint="@color/black"/>
     <View

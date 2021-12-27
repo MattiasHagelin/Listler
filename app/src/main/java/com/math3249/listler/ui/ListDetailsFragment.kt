@@ -16,7 +16,11 @@ import com.math3249.listler.databinding.FragmentListDetailsBinding
 import com.math3249.listler.ui.adapter.ListDetailCategoryAdapter
 import com.math3249.listler.ui.viewmodel.ListDetailViewModel
 import com.math3249.listler.App
+import com.math3249.listler.model.CategoryWithItems
+import com.math3249.listler.model.ListCategoryOrItem
+import com.math3249.listler.model.ListItem
 import com.math3249.listler.model.entity.Item
+import com.math3249.listler.ui.adapter.ListDetailAdapter
 import com.math3249.listler.util.message.Type.MessageType
 import com.math3249.listler.util.Utils
 
@@ -48,6 +52,8 @@ class ListDetailsFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val id = navArgs.listId
+        val adapter = ListDetailAdapter()
+        /*
         val adapter = ListDetailCategoryAdapter (
             {
                 //item -> viewModel.updateItemOnList(id, item.itemId, true)
@@ -59,7 +65,7 @@ class ListDetailsFragment: Fragment() {
             findNavController().navigate(action)
             TODO: Implement longClickLisener for Category header
             */
-        })
+        })*/
 
         viewModel.allItems.observe(this.viewLifecycleOwner) {
             allItems ->
@@ -75,14 +81,28 @@ class ListDetailsFragment: Fragment() {
                 binding.itemDropdown.setAdapter(dropDownAdapter)
             }
         }
-
-        viewModel.getCategoriesWithItems(id).observe(this.viewLifecycleOwner) {
+        viewModel.getListWithCategoriesAndItems(id).observe(this.viewLifecycleOwner) {
             selectedList ->
-            selectedList.let {
-                adapter.submitList(it)
-                //(requireActivity() as AppCompatActivity).supportActionBar?.title = it.list.name TODO:Fix name
+            selectedList.let { list ->
+                val listItemsById = list.listItems.associateBy { it.itemId }
+                val listData = mutableListOf<RowType>()
+                list.categories.map { category ->
+                    //TODO: Add check to se if category have any none finished items
+                    listData.add(ListDetailCategory(category.name, category.categoryId))
+                    list.items.groupBy { it.categoryId }.let { itemByCategory ->
+                        itemByCategory[category.categoryId]!!.map { item ->
+                            if (!listItemsById[item.itemId]!!.done) {
+                                listData.add(ListDetailItem(item.name, item.itemId))
+                            }
+                        }
+                    }
+                }
+                adapter.listData = listData
+                binding.categoryRecyclerview.adapter = adapter
+                (requireActivity() as AppCompatActivity).supportActionBar?.title = list.list.name
             }
         }
+
 
         viewModel.message.observe(this.viewLifecycleOwner) {
             message -> message.let {
@@ -104,7 +124,7 @@ class ListDetailsFragment: Fragment() {
         }
 
         binding.apply {
-            categoryRecyclerview.adapter = adapter
+            //categoryRecyclerview.adapter = adapter
 
             itemDropdown.setOnClickListener {
                 addToDatabase()
@@ -130,7 +150,6 @@ class ListDetailsFragment: Fragment() {
 
         if (selectedItem != null) {
           if (selectedItem!!.itemId > 0) {
-              val listId = navArgs.listId
               viewModel.addItemToList(navArgs.listId, selectedItem!!.itemId, false)
               clearItemDropdown()
           }

@@ -17,17 +17,20 @@
 
         <TextView
             android:id="@+id/category_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/standard_margin"
-            android:text="@{category.name}"
-            android:textAppearance="@style/Theme.Listler.Category.TextView"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_marginStart="@dimen/half_standard_margin"
+            style="@style/Theme.Listler.Category.TextView"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:gravity="center_vertical|center_horizontal"
             tools:text="Name" />
 
-        <LinearLayout
+        <!--<LinearLayout
+
+            android:text="@{category.name}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/standard_margin"
@@ -39,6 +42,6 @@
                 android:id="@+id/item_recyclerview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-        </LinearLayout>
+        </LinearLayout>-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

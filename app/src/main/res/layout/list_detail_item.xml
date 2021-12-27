@@ -9,19 +9,18 @@
             type="com.math3249.listler.model.entity.Item" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_height="match_parent"
-        android:layout_width="match_parent">
+        style="@style/Theme.Listler.Category.Item"
+        android:layout_width="match_parent"
+        android:layout_height="48dp">
 
         <TextView
             android:id="@+id/item_name"
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:layout_width="180dp"
+            style="@style/Theme.Listler.Category.Item.TextView"
             android:layout_marginTop="@dimen/standard_margin"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:text="Name"/>
-<!--
-            android:text="@{item.name}" -->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

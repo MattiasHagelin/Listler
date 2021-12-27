@@ -5,12 +5,13 @@ import com.math3249.listler.R
 import com.math3249.listler.data.dao.ListDetailDao
 import com.math3249.listler.model.CategoryWithItems
 import com.math3249.listler.model.ListItem
+import com.math3249.listler.model.ListWithCategoriesAndItems
+import com.math3249.listler.model.crossref.ListCategoryCrossRef
 import com.math3249.listler.model.crossref.ListItemCrossRef
 import com.math3249.listler.util.message.Message
 import com.math3249.listler.util.Utils
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
@@ -22,45 +23,15 @@ class ListDetailViewModel(
         //TODO: Log error and find possible way to inform user of error
     }
 
-    private val categoriesWithItems = MutableLiveData<List<CategoryWithItems>>()
     val message = MutableLiveData<Message?>()
     val allItems = listDetailDao.getItems().asLiveData()
 
     fun itemExists(name: String): LiveData<Boolean> {
         return listDetailDao.itemExists(name).asLiveData()
     }
-    fun getCategoriesWithItems(id: Long): LiveData<List<CategoryWithItems>> {
-        getItems(id)
-        return categoriesWithItems
-    }
-    private fun getItems(id: Long){
-        //Do work on IO Thread
-        viewModelScope.launch(Dispatchers.IO) {
-            //Get selected list
-            val listWithItem = listDetailDao.getSelectedList(id) //TODO: convert to Flow and observe from fragment then do the stuff below at change
 
-            //Convert lists in listWithItem to maps
-            val itemsMappedByCategory = listWithItem.items.groupBy { it.categoryId }
-            val listItemsByItemId = listWithItem.listItems.associateBy { it.itemId }
-
-            //Get categories associated with items in listWithItem
-            val categories = listDetailDao.getCategories(itemsMappedByCategory.keys.toList())
-
-            //Use collected data to create list of Categories
-            //with corresponding ListItems
-            val tempCategoriesWithItems = emptyList<CategoryWithItems>().toMutableList()
-            for (category in categories) {
-
-                val listItems = mutableListOf<ListItem>()
-                for (item in itemsMappedByCategory[category.categoryId]!!) {
-                    listItems.add(ListItem(item.itemId, item.name, listItemsByItemId[item.itemId]!!.done))
-                }
-                val categoryWithItems = CategoryWithItems(category, listItems)
-                tempCategoriesWithItems.add(categoryWithItems)
-            }
-
-            categoriesWithItems.postValue(tempCategoriesWithItems)
-        }
+    fun getListWithCategoriesAndItems(id: Long): LiveData<ListWithCategoriesAndItems> {
+        return listDetailDao.getListWithCategoriesAndItemsById(id).asLiveData()
     }
 
     /**
@@ -71,13 +42,18 @@ class ListDetailViewModel(
         itemId: Long,
         done: Boolean
     ) {
-        val categoryItem = ListItemCrossRef(
+        val listItem = ListItemCrossRef(
             listId = listId,
             itemId = itemId,
             done = done
         )
-        viewModelScope.launch() {
-            listDetailDao.insertOrUpdate(categoryItem)
+        viewModelScope.launch(Dispatchers.IO) {
+            listDetailDao.insertOrUpdate(listItem)
+            val catId = listDetailDao.getCategoryId(itemId)
+            if (catId > 0) {
+                val listCat = ListCategoryCrossRef(listId, catId)
+                listDetailDao.insert(listCat)
+            }
         }
     }
 

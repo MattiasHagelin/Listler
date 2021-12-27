@@ -8,7 +8,7 @@ import com.math3249.listler.data.dao.CategoryDao
 import com.math3249.listler.data.dao.ItemDao
 import com.math3249.listler.data.dao.ListDao
 import com.math3249.listler.data.dao.ListDetailDao
-import com.math3249.listler.model.crossref.CategoryItemCrossRef
+import com.math3249.listler.model.crossref.ListCategoryCrossRef
 import com.math3249.listler.model.crossref.ListItemCrossRef
 import com.math3249.listler.model.crossref.StoreCategoryCrossRef
 import com.math3249.listler.model.entity.Category
@@ -16,13 +16,14 @@ import com.math3249.listler.model.entity.Item
 import com.math3249.listler.model.entity.List
 import com.math3249.listler.model.entity.Store
 
-@Database(version = 4,
+@Database(version = 5,
     entities = [
     Item::class,
     List::class,
-    ListItemCrossRef::class,
     Category::class,
     Store::class,
+    ListCategoryCrossRef::class,
+    ListItemCrossRef::class,
     StoreCategoryCrossRef::class
                ],
     exportSchema = false

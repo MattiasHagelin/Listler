@@ -3,9 +3,7 @@ package com.math3249.listler.ui.viewmodel
 import androidx.lifecycle.*
 import com.math3249.listler.R
 import com.math3249.listler.data.dao.ItemDao
-import com.math3249.listler.data.dao.ListDetailDao
 import com.math3249.listler.model.entity.Item
-import com.math3249.listler.model.crossref.CategoryItemCrossRef
 import com.math3249.listler.model.crossref.ListItemCrossRef
 import com.math3249.listler.model.entity.Category
 import com.math3249.listler.util.Utils

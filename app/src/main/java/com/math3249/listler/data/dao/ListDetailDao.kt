@@ -1,9 +1,9 @@
 package com.math3249.listler.data.dao
 
 import androidx.room.*
-import com.math3249.listler.model.ListWithItem
+import com.math3249.listler.model.ListWithCategoriesAndItems
+import com.math3249.listler.model.crossref.ListCategoryCrossRef
 import com.math3249.listler.model.entity.Item
-import com.math3249.listler.model.crossref.CategoryItemCrossRef
 import com.math3249.listler.model.crossref.ListItemCrossRef
 import com.math3249.listler.model.entity.Category
 import kotlinx.coroutines.flow.Flow
@@ -22,9 +22,12 @@ interface ListDetailDao {
     @Query("SELECT * FROM category WHERE categoryId IN (:categoryIds)")
     fun getCategories(categoryIds: List<Long>): List<Category>
 
+    @Query("SELECT categoryId FROM item WHERE itemId = :itemId")
+    fun getCategoryId(itemId: Long): Long
+
     @Transaction
     @Query("SELECT * FROM list WHERE list.listId = :listId")
-    fun getSelectedList(listId: Long): ListWithItem
+    fun getListWithCategoriesAndItemsById(listId: Long): Flow<ListWithCategoriesAndItems>
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertItemToList(listItemCrossRef: ListItemCrossRef)
@@ -34,6 +37,9 @@ interface ListDetailDao {
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertItem(item: Item): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(listCategory: ListCategoryCrossRef): Long
 
     @Update
     suspend fun updateItemOnList(listItemCrossRef: ListItemCrossRef)

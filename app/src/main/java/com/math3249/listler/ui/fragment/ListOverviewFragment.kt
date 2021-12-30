@@ -1,4 +1,4 @@
-package com.math3249.listler.ui
+package com.math3249.listler.ui.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater

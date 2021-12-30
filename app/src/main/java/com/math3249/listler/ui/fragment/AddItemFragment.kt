@@ -1,4 +1,4 @@
-package com.math3249.listler.ui
+package com.math3249.listler.ui.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,6 +14,7 @@ import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentAddItemBinding
 import com.math3249.listler.model.entity.Item
 import com.math3249.listler.ui.viewmodel.AddItemViewModel
+import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.Utils
 import com.math3249.listler.util.message.Type.MessageType
 
@@ -55,7 +56,7 @@ class AddItemFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val id = navArgs.itemId
+        val itemId = navArgs.itemId
 
         viewModel.allCategories.observe(this.viewLifecycleOwner) {
             categories ->
@@ -69,8 +70,8 @@ class AddItemFragment: Fragment() {
                 binding.categoryDropdown.setAdapter(dropDownAdapter)
             }
         }
-        if ( id > 0 ) {
-            viewModel.getItem(id).observe(this.viewLifecycleOwner) {
+        if ( itemId > 0 ) {
+            viewModel.getItem(itemId).observe(this.viewLifecycleOwner) {
                 selectedItem -> item = selectedItem
                 binding.apply {
                     itemInput.setText(item.name)
@@ -80,13 +81,15 @@ class AddItemFragment: Fragment() {
             binding.addItem.visibility = View.INVISIBLE
             binding.updateItem.visibility = View.VISIBLE
             binding.updateItem.setOnClickListener {
-                val itemName = Utils.standardizeItemName(binding.itemInput.text.toString())
-                val categoryName = Utils.standardizeItemName(binding.categoryDropdown.text.toString())
+                val itemName = StringUtil.standardizeItemName(binding.itemInput.text.toString())
+                val categoryName = StringUtil.standardizeItemName(binding.categoryDropdown.text.toString())
 
                 if (checkUserInput(itemName, categoryName)) {
-                    viewModel.updateItem(id
-                        , itemName!!
-                        , categoryName!!)
+                    viewModel.updateItem(
+                        navArgs.listId,
+                        itemId,
+                        itemName!!,
+                        categoryName!!)
                     navigateBack()
                 }
             }
@@ -95,24 +98,31 @@ class AddItemFragment: Fragment() {
             binding.itemInput.setText(navArgs.itemName)
         }
 
-        viewModel.newItemId.observe(this.viewLifecycleOwner) {
-            id -> id.let {
-                if (id != null) {
-                    viewModel.addItemToList(id, navArgs.listId, false)
-                    viewModel.newItemId.value = null
-                    navigateBack()
+        viewModel.message.observe(this.viewLifecycleOwner) {
+            message ->
+            if (!message.messageRead) {
+                when (message.type) {
+                    else -> {
+                        //MessageType.ITEM_INSERTED ->
+                        viewModel.addItemToList(
+                            navArgs.listId,
+                            message.categoryId,
+                            message.itemId,
+                            false
+                        )
+                        message.clear()
+                        navigateBack()
+                    }
                 }
             }
+
         }
         binding.apply {
             itemInput.setText(navArgs.itemName)
             categoryDropdown.setText(navArgs.categoryName)
-            categoryLabel.setEndIconOnClickListener {
-                clickEndIcon()
-            }
             addItem.setOnClickListener {
                 if (checkUserInput(getItemName(), getCategoryName())) {
-                    viewModel.addItem(getItemName()!!, getCategoryName()!!)
+                    viewModel.addItemAndCategory(navArgs.listId, getItemName()!!, getCategoryName()!!)
                 }
             }
         }
@@ -124,26 +134,21 @@ class AddItemFragment: Fragment() {
         findNavController().navigate(action)
     }
 
-    private fun clickEndIcon() {
-
-        if (checkUserInput(getItemName(), getCategoryName())){
-            addCategoryToDatabase()
-        }
-    }
-
     private fun checkUserInput(itemName:String?, categoryName: String?): Boolean {
-        if (itemName == null) Utils.snackbar(MessageType.ITEM_INPUT_EMPTY, binding.rootLayout)
-        if (categoryName == null) Utils.snackbar(MessageType.CATEGORY_INPUT_EMPTY, binding.rootLayout)
 
-        return itemName != null && categoryName != null
+        if (!StringUtil.validateUserInput(itemName)) Utils.snackbar(MessageType.ITEM_INPUT_EMPTY, binding.rootLayout)
+        if (!StringUtil.validateUserInput(categoryName)) Utils.snackbar(MessageType.CATEGORY_INPUT_EMPTY, binding.rootLayout)
+
+        return StringUtil.validateUserInput(itemName)
+                && StringUtil.validateUserInput(categoryName)
     }
 
     private fun getItemName(): String? {
-        return Utils.standardizeItemName(binding.itemInput.text.toString())
+        return StringUtil.standardizeItemName(binding.itemInput.text.toString())
     }
 
     private fun getCategoryName(): String? {
-        return Utils.standardizeItemName(binding.categoryDropdown.text.toString())
+        return StringUtil.standardizeItemName(binding.categoryDropdown.text.toString())
     }
 
     private fun addCategoryToDatabase() {

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/listOverviewFragment"
-        android:name="com.math3249.listler.ui.ListOverviewFragment"
+        android:name="com.math3249.listler.ui.fragment.ListOverviewFragment"
         android:label="Listler"
         tools:layout="@layout/fragment_list_overview">
         <action
@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/addListFragment"
-        android:name="com.math3249.listler.ui.AddListFragment"
+        android:name="com.math3249.listler.ui.fragment.AddListFragment"
         android:label="Listler"
         tools:layout="@layout/fragment_add_list">
         <action
@@ -27,10 +27,13 @@
             app:destination="@id/listOverviewFragment"
             app:popUpTo="@id/listOverviewFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_addListFragment_to_listDetailsFragment"
+            app:destination="@id/listDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/listDetailsFragment"
-        android:name="com.math3249.listler.ui.ListDetailsFragment">
+        android:name="com.math3249.listler.ui.fragment.ListDetailsFragment">
         <argument
             android:name="listId"
             app:argType="long" />
@@ -40,7 +43,7 @@
     </fragment>
     <fragment
         android:id="@+id/addItemFragment"
-        android:name="com.math3249.listler.ui.AddItemFragment"
+        android:name="com.math3249.listler.ui.fragment.AddItemFragment"
         android:label="AddItemFragment" >
         <action
             android:id="@+id/action_addItemFragment_to_listDetailsFragment"
@@ -66,7 +69,7 @@
     </fragment>
     <fragment
         android:id="@+id/addCategoryFragment"
-        android:name="com.math3249.listler.ui.AddCategoryFragment"
+        android:name="com.math3249.listler.ui.fragment.AddCategoryFragment"
         android:label="fragment_add_category"
         tools:layout="@layout/fragment_add_category" >
         <action

@@ -7,5 +7,5 @@ data class Item(
     @PrimaryKey(autoGenerate = true)
     val itemId: Long = 0,
     val name: String,
-    val categoryId: Long
+    //val categoryId: Long
 )

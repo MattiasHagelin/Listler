@@ -5,6 +5,7 @@ import androidx.room.Junction
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import com.math3249.listler.model.crossref.ListCategoryCrossRef
+import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
 import com.math3249.listler.model.crossref.ListItemCrossRef
 import com.math3249.listler.model.entity.Category
 import com.math3249.listler.model.entity.Item
@@ -20,15 +21,16 @@ data class ListWithCategoriesAndItems(
     val categories: kotlin.collections.List<Category>,
     @Relation(
         parentColumn = "listId",
-        entity = ListItemCrossRef::class,
-        entityColumn = "itemId",
+        entity = ListCategoryItemCrossRef::class,
+        entityColumn = "listId"
+        /*,
         associateBy = (Junction(
             parentColumn = "listId",
-            entityColumn = "itemId",
-            value = ListItemCrossRef::class
-        ))
+            entityColumn = "listId",
+            value = ListCategoryItemCrossRef::class
+        ))*/
     )
-    val listItems: kotlin.collections.List<ListItemCrossRef>,
+    val listItems: kotlin.collections.List<ListCategoryItemCrossRef>,
     @Relation(
         parentColumn = "listId",
         entityColumn = "itemId",

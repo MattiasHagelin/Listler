@@ -5,16 +5,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.ListDetailsFragment">
+    tools:context=".ui.fragment.ListDetailsFragment">
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/add_item"
+        android:id="@+id/add_item_to_list"
         style="@style/ThemeOverlay.Listler.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/half_standard_margin"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:endIconMode="none"
+        app:layout_constraintTop_toBottomOf="parent"
+        app:endIconMode="custom"
+        app:endIconDrawable="@drawable/ic_add_24"
         android:hint="@string/hint_add_item"
         android:layout_marginStart="@dimen/standard_margin"
         android:layout_marginEnd="@dimen/standard_margin">
@@ -34,13 +37,13 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/category_recyclerview"
+        android:id="@+id/list_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/add_item"
+        app:layout_constraintTop_toBottomOf="@id/add_item_to_list"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.math3249.listler.R
 import com.math3249.listler.data.dao.CategoryDao
 import com.math3249.listler.model.entity.Category
+import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.DisposableHandle
@@ -44,7 +45,7 @@ class AddCategoryViewModel(
                 @Suppress
                 return AddCategoryViewModel(categoryDao) as T
             }
-            throw IllegalArgumentException(Utils.getString(R.string.e_unknown_viewmodel_class))
+            throw IllegalArgumentException(StringUtil.getString(R.string.e_unknown_viewmodel_class))
         }
     }
 }

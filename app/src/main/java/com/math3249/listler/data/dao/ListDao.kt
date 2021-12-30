@@ -12,8 +12,8 @@ interface ListDao {
     @Transaction
     @Query("SELECT * FROM list WHERE listId = :id")
     fun getListWithItemsByListId(id: Long): Flow<ListWithItem>
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    suspend fun insertList(list: List)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(list: List): Long
     @Update
     suspend fun updateList(list: List)
     @Delete

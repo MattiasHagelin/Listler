@@ -5,7 +5,9 @@ import com.math3249.listler.R
 import com.math3249.listler.data.dao.ListDao
 import com.math3249.listler.model.ListWithItem
 import com.math3249.listler.model.entity.List
-import com.math3249.listler.util.Utils
+import com.math3249.listler.util.StringUtil
+import com.math3249.listler.util.message.Message
+import com.math3249.listler.util.message.Type.MessageType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
@@ -13,6 +15,7 @@ import java.lang.IllegalArgumentException
 class ListOverviewViewModel (
     private val listDao: ListDao
         ): ViewModel() {
+    val message = MutableLiveData<Message>()
     val allLists: LiveData<kotlin.collections.List<List>> = listDao.getAllLists().asLiveData()
 
     fun getList(id: Long): LiveData<ListWithItem> {
@@ -29,7 +32,13 @@ class ListOverviewViewModel (
             storeId = 0L //TODO: Replace with StoreId from Table
         )
         viewModelScope.launch {
-            listDao.insertList(list)
+            val listId = listDao.insert(list)
+            if (listId > 0) message.postValue(Message(
+                MessageType.LIST_INSERTED,
+                true,
+                listId,
+            -1,
+            -1))
         }
     }
 
@@ -62,7 +71,7 @@ class ListOverviewViewModel (
                 @Suppress("UNCHECKED_CAST")
                 return ListOverviewViewModel(listDao) as T
             }
-            throw IllegalArgumentException(Utils.getString(R.string.e_unknown_viewmodel_class))
+            throw IllegalArgumentException(StringUtil.getString(R.string.e_unknown_viewmodel_class))
         }
 
     }

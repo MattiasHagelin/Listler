@@ -1,12 +1,14 @@
-package com.math3249.listler.ui
+package com.math3249.listler.ui.listview
 
 import androidx.recyclerview.widget.RecyclerView
 import com.math3249.listler.ui.adapter.ViewHolderFactory
 
-class ListDetailItem(private val itemName: String, override val id: Long): RowType {
+class ListDetailItem(
+                     private val itemName: String,
+                     override val id: Long): RowType {
 
     override fun getRowType(): Int {
-        return RowType.RowTypes.ITEM.ordinal
+        return RowTypes.ITEM.ordinal
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder) {

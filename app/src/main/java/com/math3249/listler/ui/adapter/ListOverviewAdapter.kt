@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.math3249.listler.R
 import com.math3249.listler.databinding.ListItemListBinding
 import com.math3249.listler.model.entity.List
+import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.Utils
 
 class ListOverviewAdapter(private val clickListener: (List) -> Unit
@@ -21,7 +22,7 @@ class ListOverviewAdapter(private val clickListener: (List) -> Unit
 
             //get image to ListOverview
             val imageResource = when (list.type){
-                Utils.getString(R.string.medicine_list) -> R.drawable.ic_medication_24
+                StringUtil.getString(R.string.medicine_list) -> R.drawable.ic_medication_24
                 else -> R.drawable.ic_shopping_cart_24
             }
             binding.image.setImageResource(imageResource)

@@ -1,32 +1,14 @@
 package com.math3249.listler.util
 
 import android.view.View
-import androidx.annotation.StringRes
+import androidx.navigation.NavController
+import androidx.navigation.NavDirections
 import com.google.android.material.snackbar.Snackbar
-import com.math3249.listler.App
 import com.math3249.listler.R
+import com.math3249.listler.util.message.Message
 import com.math3249.listler.util.message.Type.MessageType
 
 object Utils {
-    /**
-     * Get string from string resource file
-     */
-    fun getString(@StringRes stringRes: Int, vararg formatArgs: Any = emptyArray()): String {
-        return App.instance.getString(stringRes, *formatArgs)
-    }
-
-    /**
-     * Sets first letter to upper case
-     * and the rest to lower case
-     */
-    fun standardizeItemName(name: String): String? {
-        return if (name.isBlank()) {
-            null
-        } else {
-            name.lowercase()
-                .replaceFirstChar { it.uppercaseChar() }
-        }
-    }
 
     /**
      * creates a snackbar of short duration
@@ -37,24 +19,35 @@ object Utils {
 
     fun snackbar(type: MessageType, view: View, vararg formatArgs: Any = emptyArray()) {
         when (type) {
-            MessageType.ITEM_IN_LIST -> snackbar(view, getString(R.string.i_c_item_in_list, *formatArgs))
+                MessageType.ITEM_IN_LIST -> snackbar(view, StringUtil.getString(R.string.i_c_item_in_list, *formatArgs))
             MessageType.ITEM_IN_DATABASE -> snackbar(view, "Item already exists")
-            MessageType.ITEM_NOT_IN_DATABASE -> snackbar(view, getString(R.string.e_item_does_not_exist))
-            MessageType.CATEGORY_IN_DATABASE -> snackbar(view, getString(R.string.i_category_in_db, *formatArgs))
+            MessageType.ITEM_NOT_IN_DATABASE -> snackbar(view, StringUtil.getString(R.string.e_item_does_not_exist))
+            MessageType.CATEGORY_IN_DATABASE -> snackbar(view, StringUtil.getString(R.string.i_category_in_db, *formatArgs))
             else -> return
         }
     }
 
     fun snackbar(type: MessageType, view: View) {
         when (type) {
-            MessageType.ITEM_IN_LIST -> snackbar(view, getString(R.string.i_item_in_list))
+            MessageType.ITEM_IN_LIST -> snackbar(view, StringUtil.getString(R.string.i_item_in_list))
             MessageType.ITEM_IN_DATABASE -> snackbar(view, "Item already exists")
-            MessageType.ITEM_NOT_IN_DATABASE -> snackbar(view, getString(R.string.e_item_does_not_exist))
-            MessageType.ITEM_INPUT_EMPTY -> snackbar(view, getString(R.string.i_item_input_empty))
-            MessageType.CATEGORY_INPUT_EMPTY -> snackbar(view, getString(R.string.i_category_input_empty))
+            MessageType.ITEM_NOT_IN_DATABASE -> snackbar(view, StringUtil.getString(R.string.e_item_does_not_exist))
+            MessageType.ITEM_INPUT_EMPTY -> snackbar(view, StringUtil.getString(R.string.i_item_input_empty))
+            MessageType.CATEGORY_INPUT_EMPTY -> snackbar(view, StringUtil.getString(R.string.i_category_input_empty))
             else -> return
         }
     }
+    /*
+    fun messageHandler(message: Message,
+                       navController: NavController,
+                       action: NavDirections
+    ) {
+        when (message.type) {
+            MessageType.LIST_INSERTED -> navController.navigate(action)
+            MessageType.ITEM_INSERTED ->
+        }
+    }
+     */
 /*
     fun getListCategories(listWithCategoryAndItems: ListWithCategoryAndItems): List<ListCategory?> {
         val categoryByCategoryId: Map<Long, List<Category>> = listWithCategoryAndItems.categories.groupBy { it.categoryId }

@@ -1,12 +1,9 @@
-package com.math3249.listler.ui
+package com.math3249.listler.ui.listview
 
 import androidx.recyclerview.widget.RecyclerView
 
 interface RowType {
-    enum class RowTypes {
-        CATEGORY,
-        ITEM
-    }
+
 
     val id: Long
 

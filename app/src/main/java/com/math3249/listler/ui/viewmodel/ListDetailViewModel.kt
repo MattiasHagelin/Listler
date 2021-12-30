@@ -7,9 +7,14 @@ import com.math3249.listler.model.CategoryWithItems
 import com.math3249.listler.model.ListItem
 import com.math3249.listler.model.ListWithCategoriesAndItems
 import com.math3249.listler.model.crossref.ListCategoryCrossRef
+import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
 import com.math3249.listler.model.crossref.ListItemCrossRef
+import com.math3249.listler.model.entity.Item
+import com.math3249.listler.ui.fragment.ListDetailsFragmentDirections
+import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.message.Message
 import com.math3249.listler.util.Utils
+import com.math3249.listler.util.message.Type.MessageType
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,9 +31,6 @@ class ListDetailViewModel(
     val message = MutableLiveData<Message?>()
     val allItems = listDetailDao.getItems().asLiveData()
 
-    fun itemExists(name: String): LiveData<Boolean> {
-        return listDetailDao.itemExists(name).asLiveData()
-    }
 
     fun getListWithCategoriesAndItems(id: Long): LiveData<ListWithCategoriesAndItems> {
         return listDetailDao.getListWithCategoriesAndItemsById(id).asLiveData()
@@ -39,20 +41,50 @@ class ListDetailViewModel(
      */
     fun addItemToList(
         listId: Long,
-        itemId: Long,
-        done: Boolean
+        item: Item
     ) {
-        val listItem = ListItemCrossRef(
-            listId = listId,
-            itemId = itemId,
-            done = done
-        )
         viewModelScope.launch(Dispatchers.IO) {
-            listDetailDao.insertOrUpdate(listItem)
-            val catId = listDetailDao.getCategoryId(itemId)
-            if (catId > 0) {
-                val listCat = ListCategoryCrossRef(listId, catId)
-                listDetailDao.insert(listCat)
+            //Check is in list
+            val listItem = listDetailDao.getListItem(listId, item.itemId)
+            if (listItem != null) {
+                //Check if item have a category
+                val categoryId = listDetailDao.getCategoryId(listId, item.itemId)
+                if (categoryId > 0) {
+                    //If item have a Category do an update
+                    listDetailDao.updateItemOnList(
+                        ListCategoryItemCrossRef(
+                            listId,
+                            categoryId,
+                            item.itemId,
+                            false
+                        )
+                    )
+                } else {
+                    //If category is missing notify fragment
+                    message.postValue(
+                        Message(
+                            MessageType.ITEM_MISSING_CATEGORY,
+                            false,
+                            listId,
+                            -1,
+                            item.itemId,
+                            item.name
+                        )
+                    )
+                }
+            } else {
+                listDetailDao.insert(ListItemCrossRef(listId, item.itemId))
+                //Notify fragment item needs binding to category
+                message.postValue(
+                    Message(
+                        MessageType.ITEM_MISSING_CATEGORY,
+                        false,
+                        listId,
+                        -1,
+                        item.itemId,
+                        item.name
+                    )
+                )
             }
         }
     }
@@ -62,14 +94,15 @@ class ListDetailViewModel(
         itemId: Long,
         isDone: Boolean
     ) {
-        val listItem = ListItemCrossRef(
-            listId = listId,
-            itemId = itemId,
-            done = isDone
-        )
 
-        viewModelScope.launch {
-            listDetailDao.updateItemOnList(listItem)
+        viewModelScope.launch(Dispatchers.IO) {
+            val categoryId = listDetailDao.getCategoryId(listId, itemId)
+            listDetailDao.updateItemOnList(ListCategoryItemCrossRef(
+                listId,
+                categoryId,
+                itemId,
+                isDone
+            ))
         }
     }
 
@@ -85,7 +118,7 @@ class ListDetailViewModel(
                 @Suppress
                 return ListDetailViewModel(listDetailDao) as T
             }
-            throw IllegalArgumentException(Utils.getString(R.string.e_unknown_viewmodel_class))
+            throw IllegalArgumentException(StringUtil.getString(R.string.e_unknown_viewmodel_class))
         }
     }
 }

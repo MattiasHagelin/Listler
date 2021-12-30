@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.AddCategoryFragment"
+    tools:context=".ui.fragment.AddCategoryFragment"
     android:layout_margin="@dimen/standard_margin"
     android:padding="@dimen/standard_padding">
 

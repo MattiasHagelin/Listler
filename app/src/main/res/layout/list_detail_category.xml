@@ -19,7 +19,6 @@
             android:id="@+id/category_name"
             android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:layout_marginStart="@dimen/half_standard_margin"
             style="@style/Theme.Listler.Category.TextView"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"

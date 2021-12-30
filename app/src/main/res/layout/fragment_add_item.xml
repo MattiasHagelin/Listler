@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.AddItemFragment"
+    tools:context=".ui.fragment.AddItemFragment"
     android:layout_margin="@dimen/standard_margin"
     android:padding="@dimen/standard_padding">
 
@@ -34,8 +34,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/item_label"
-        app:endIconMode="custom"
-        app:endIconDrawable="@drawable/ic_add_24"
+        app:endIconMode="none"
         android:hint="@string/hint_add_category">
 
         <AutoCompleteTextView

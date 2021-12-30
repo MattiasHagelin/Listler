@@ -1,4 +1,4 @@
-package com.math3249.listler.ui
+package com.math3249.listler.ui.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.withStarted
 import androidx.navigation.fragment.findNavController
 import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentAddListBinding
@@ -38,23 +39,42 @@ class AddListFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
        // val id = navArgs.id
+
+        //Create a string array from enum of list types
         val types = enumValues<Type>()
         var typesAsString = arrayOfNulls<String>(types.count())
         for (i in types.indices) {
             typesAsString[i] = types[i].toString()
         }
+
+
         val adapter = ArrayAdapter(requireContext(), R.layout.add_list_dropdown, typesAsString)
         (binding.dropdown as? AutoCompleteTextView)?.setAdapter(adapter)
         binding.dropdown.setText(typesAsString[0], false)
+
+        viewModel.message.observe(this.viewLifecycleOwner) { message ->
+            if (message.success) {
+                when (message.type) {
+                    else -> {
+                        val action = AddListFragmentDirections
+                            .actionAddListFragmentToListDetailsFragment(message.listId)
+                        findNavController().navigate(action)
+                    }
+                }
+            }
+        }
 
         binding.saveBtn.setOnClickListener {
             viewModel.addList(
                 binding.nameInput.text.toString(),
                 binding.dropdown.text.toString()
             )
+            /*
             findNavController().navigate(
                 R.id.action_addListFragment_to_listOverviewFragment
             )
+
+             */
         }
 
     }

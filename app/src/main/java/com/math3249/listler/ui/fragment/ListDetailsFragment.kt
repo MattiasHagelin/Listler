@@ -1,4 +1,4 @@
-package com.math3249.listler.ui
+package com.math3249.listler.ui.fragment
 
 import android.os.Bundle
 import android.view.KeyEvent
@@ -13,14 +13,15 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentListDetailsBinding
-import com.math3249.listler.ui.adapter.ListDetailCategoryAdapter
 import com.math3249.listler.ui.viewmodel.ListDetailViewModel
 import com.math3249.listler.App
-import com.math3249.listler.model.CategoryWithItems
-import com.math3249.listler.model.ListCategoryOrItem
-import com.math3249.listler.model.ListItem
 import com.math3249.listler.model.entity.Item
+import com.math3249.listler.ui.listview.ListDetailCategory
+import com.math3249.listler.ui.listview.ListDetailItem
+import com.math3249.listler.ui.listview.RowType
 import com.math3249.listler.ui.adapter.ListDetailAdapter
+import com.math3249.listler.ui.listview.RowTypes
+import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.message.Type.MessageType
 import com.math3249.listler.util.Utils
 
@@ -35,7 +36,7 @@ class ListDetailsFragment: Fragment() {
     }
 
     private lateinit var items: List<Item>
-    private var selectedItem: Item? = null
+    //private var selectedItem: Item? = null
 
     private var _binding: FragmentListDetailsBinding? = null
     private val binding get() = _binding!!
@@ -51,19 +52,23 @@ class ListDetailsFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val id = navArgs.listId
-        val adapter = ListDetailAdapter()
+        val listId = navArgs.listId
+        val adapter = ListDetailAdapter { item ->
+            if (item.getRowType() == RowTypes.ITEM.ordinal) {
+                viewModel.updateItemOnList(listId, item.id, true)
+            }
+        }
         /*
         val adapter = ListDetailCategoryAdapter (
             {
                 //item -> viewModel.updateItemOnList(id, item.itemId, true)
-                //TODO: Implement clickLiserner for Category header
+                //TODO: Implement clickListener for Category header
         }, {/*
             item ->
                 val action = ListDetailsFragmentDirections
                     .actionListDetailsFragmentToAddItemFragment("", id, item.itemId)
             findNavController().navigate(action)
-            TODO: Implement longClickLisener for Category header
+            TODO: Implement longClickListener for Category header
             */
         })*/
 
@@ -81,56 +86,75 @@ class ListDetailsFragment: Fragment() {
                 binding.itemDropdown.setAdapter(dropDownAdapter)
             }
         }
-        viewModel.getListWithCategoriesAndItems(id).observe(this.viewLifecycleOwner) {
+        viewModel.getListWithCategoriesAndItems(listId).observe(this.viewLifecycleOwner) {
             selectedList ->
             selectedList.let { list ->
-                val listItemsById = list.listItems.associateBy { it.itemId }
-                val listData = mutableListOf<RowType>()
-                list.categories.map { category ->
-                    //TODO: Add check to se if category have any none finished items
-                    listData.add(ListDetailCategory(category.name, category.categoryId))
-                    list.items.groupBy { it.categoryId }.let { itemByCategory ->
-                        itemByCategory[category.categoryId]!!.map { item ->
-                            if (!listItemsById[item.itemId]!!.done) {
-                                listData.add(ListDetailItem(item.name, item.itemId))
+                val itemsById = list.items.associateBy { it.itemId } //list.listItems.filter {it.listId == list.list.listId}.associateBy { it.itemId }
+                val crossRefByCategory = list.listItems.groupBy { it.categoryId }
+                val listData  = mutableListOf<RowType>()
+                list.categories.forEach { category ->
+                    var first = true
+                    crossRefByCategory[category.categoryId]!!.forEach { crossRefItem ->
+                        val tempItem = itemsById[crossRefItem.itemId]
+                        if (tempItem != null) {
+                            if (!crossRefItem.done) {
+                                if (first) {
+                                    listData.add(ListDetailCategory(category.name, category.categoryId))
+                                    first = false
+                                }
+                                listData.add(ListDetailItem(tempItem.name, tempItem.itemId))
                             }
+
                         }
                     }
                 }
-                adapter.listData = listData
-                binding.categoryRecyclerview.adapter = adapter
+                adapter.submitList(listData)
                 (requireActivity() as AppCompatActivity).supportActionBar?.title = list.list.name
             }
         }
 
-
         viewModel.message.observe(this.viewLifecycleOwner) {
-            message -> message.let {
-                var isSent = false
-                if (message != null) {
-                    if (message.itemId > 0) {
-                        val item: Item? = items.find { it.itemId == message.itemId }
-                        if (item != null) {
-                            Utils.snackbar(message.type, binding.categoryRecyclerview, item.name)
-                            isSent = true
-                        }
+            message ->
+            if (!message!!.messageRead) {
+                when (message.type) {
+                    MessageType.ITEM_MISSING_CATEGORY -> {
+                        val action = ListDetailsFragmentDirections
+                            .actionListDetailsFragmentToAddItemFragment(
+                                message.listId,
+                                message.itemId,
+                                message.extra,
+                                -1,
+                                ""
+                            )
+                        message.clear()
+                        findNavController().navigate(action)
                     }
-                    if (!isSent) {
-                        Utils.snackbar(message.type, binding.categoryRecyclerview)
+                    MessageType.READ_MESSAGE -> {}
+                    else -> {
+                        val action = ListDetailsFragmentDirections
+                            .actionListDetailsFragmentToAddItemFragment(
+                                message.listId,
+                                message.itemId,
+                                message.extra,
+                                -1,
+                                ""
+                            )
+                        message.clear()
+                        findNavController().navigate(action)
                     }
-                    viewModel.message.value = null
                 }
             }
         }
 
         binding.apply {
-            //categoryRecyclerview.adapter = adapter
-
-            itemDropdown.setOnClickListener {
-                addToDatabase()
-            }
+            listRecyclerview.adapter = adapter
+            itemDropdown.requestFocus()
             itemDropdown.setOnItemClickListener { _, _, _, _ ->
                 addToList()
+            }
+
+            addItemToList.setEndIconOnClickListener {
+                addToDatabase()
             }
             itemDropdown.setOnKeyListener { _, keyCode, event ->
                 if (keyCode == KeyEvent.KEYCODE_ENTER
@@ -146,15 +170,15 @@ class ListDetailsFragment: Fragment() {
     clears text from item_dropdown
      */
     private fun addToList() {
-        selectedItem = items.find { it.name == getItemNameFromItemDropdown() }
+        val selectedItem = items.find { it.name == getItemNameFromItemDropdown() }
 
         if (selectedItem != null) {
-          if (selectedItem!!.itemId > 0) {
-              viewModel.addItemToList(navArgs.listId, selectedItem!!.itemId, false)
+          if (selectedItem.itemId > 0) {
+              viewModel.addItemToList(navArgs.listId, selectedItem)
               clearItemDropdown()
           }
         } else
-            Utils.snackbar(MessageType.ITEM_NOT_IN_DATABASE, binding.categoryRecyclerview)
+            Utils.snackbar(MessageType.ITEM_NOT_IN_DATABASE, binding.listRecyclerview)
     }
 
     /**
@@ -164,9 +188,8 @@ class ListDetailsFragment: Fragment() {
      */
     private fun addToDatabase(){
         //checks if itemDropdown has a value
-        if (getItemNameFromItemDropdown() != "") {
-            viewModel.itemExists(getItemNameFromItemDropdown()).observe(this.viewLifecycleOwner) {
-                if (!it) {
+        if (StringUtil.validateUserInput(getItemNameFromItemDropdown())) {
+                if (!itemExists()) {
                     //add new item to database
                     val action = ListDetailsFragmentDirections
                         .actionListDetailsFragmentToAddItemFragment(navArgs.listId
@@ -178,24 +201,20 @@ class ListDetailsFragment: Fragment() {
                 } else {
                     addToList()
                 }
-            }
         }
     }
     private fun clearItemDropdown() {
         binding.itemDropdown.setText("", false)
     }
     private fun getItemNameFromItemDropdown(): String {
-        val text = Utils.standardizeItemName(binding.itemDropdown.text.toString())
-        if (text == null) {
-            Utils.snackbar(MessageType.ITEM_INPUT_EMPTY, binding.categoryRecyclerview)
-            return ""
-        }
-        return text!!
+        val input = StringUtil.standardizeItemName(binding.itemDropdown.text.toString())
+        return if (!StringUtil.validateUserInput(input)) {
+            Utils.snackbar(MessageType.ITEM_INPUT_EMPTY, binding.listRecyclerview)
+            ""
+        } else input!!
     }
 
-    private fun bindList() {
-        binding.apply {
-            //name.text = list.list.name
-        }
+    private fun itemExists(): Boolean {
+        return items.count { it.name == getItemNameFromItemDropdown() } > 0
     }
 }

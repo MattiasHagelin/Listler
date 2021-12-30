@@ -3,20 +3,22 @@ package com.math3249.listler.ui.viewmodel
 import androidx.lifecycle.*
 import com.math3249.listler.R
 import com.math3249.listler.data.dao.ItemDao
+import com.math3249.listler.model.crossref.ListCategoryCrossRef
+import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
 import com.math3249.listler.model.entity.Item
 import com.math3249.listler.model.crossref.ListItemCrossRef
 import com.math3249.listler.model.entity.Category
-import com.math3249.listler.util.Utils
+import com.math3249.listler.util.StringUtil
+import com.math3249.listler.util.message.Message
+import com.math3249.listler.util.message.Type.MessageType
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
 class AddItemViewModel(
     private val itemDao: ItemDao
 ): ViewModel() {
-
-    val newItemId = MutableLiveData<Long?>()
+    val message = MutableLiveData<Message>()
     val newCategoryId = MutableLiveData<Long?>()
     val allCategories = itemDao.getCategories().asLiveData()
 
@@ -24,56 +26,66 @@ class AddItemViewModel(
         return itemDao.getItemById(id).asLiveData()
     }
 
-    fun addItem(
+    fun addItemAndCategory(
+        listId: Long,
         name: String,
         categoryName: String
     ) {
         viewModelScope.launch(Dispatchers.IO) {
+            var itemId = itemDao.getItemIdByName(name)
+            if (itemId <= 0) itemId = itemDao.insertItem(Item(name = name))
+
             var categoryId = itemDao.getCategoryIdByName(categoryName)
-            if (categoryId == 0L) addCategory(categoryName)
-            categoryId = newCategoryId.asFlow().first()!!
-            val item = Item(
-                name = name,
-                categoryId = categoryId
-            )
-            newItemId.postValue(itemDao.insertItem(item))
+            if (categoryId <= 0L) categoryId = itemDao.insert(Category(name = categoryName))
+            message.postValue(Message(
+                MessageType.ITEM_INSERTED,
+                true,
+                listId,
+                categoryId,
+                itemId
+            ))
         }
     }
 
     fun addItemToList(
-        itemId: Long,
         listId: Long,
+        categoryId: Long,
+        itemId: Long,
         isDone: Boolean
     ) {
-        val listItem = ListItemCrossRef(
-            listId = listId,
-            itemId = itemId,
-            done = isDone
-        )
-        viewModelScope.launch() {
-            itemDao.insertOrUpdate(listItem)
-            /*
-            try {
-                listDetailDao.insertItemToList(itemList)
-            } catch (e: SQLiteConstraintException) {
-                message.postValue(Message(MessageType.ITEM_IN_LIST, false, itemId))
-            }*/
+        viewModelScope.launch(Dispatchers.IO) {
+            itemDao.insert(ListItemCrossRef(listId, itemId))
+            itemDao.insert(ListCategoryCrossRef(listId, categoryId))
+            itemDao.insert(ListCategoryItemCrossRef(listId, categoryId, itemId, isDone))
         }
     }
 
     fun updateItem(
-        id: Long,
-        name: String,
+        listId: Long,
+        itemId: Long,
+        itemName: String,
         categoryName: String
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            val categoryId = itemDao.getCategoryIdByName(categoryName)
-            val item = Item(
-                itemId = id,
-                name = name,
-                categoryId = categoryId
+            itemDao.update(Item(itemId, itemName))
+
+            //Check if Category exists
+            var categoryId = itemDao.getCategoryIdByName(categoryName)
+            //If not insert new category
+            if (categoryId <= 0) categoryId = itemDao.insert(Category(name = categoryName))
+
+            //Add category to list
+            itemDao.insert(ListCategoryCrossRef(listId, categoryId))
+
+            //Update or insert ListCategoryItem
+            itemDao.insertOrUpdate(
+                ListCategoryItemCrossRef(
+                listId,
+                categoryId,
+                itemId,
+                false
             )
-            itemDao.updateItem(item)
+            )
         }
     }
 
@@ -92,7 +104,7 @@ class AddItemViewModel(
                 @Suppress
                 return AddItemViewModel(itemDao) as T
             }
-            throw IllegalArgumentException(Utils.getString(R.string.e_unknown_viewmodel_class))
+            throw IllegalArgumentException(StringUtil.getString(R.string.e_unknown_viewmodel_class))
         }
     }
 }

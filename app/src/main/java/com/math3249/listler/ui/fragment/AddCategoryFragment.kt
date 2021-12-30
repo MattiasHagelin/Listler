@@ -1,4 +1,4 @@
-package com.math3249.listler.ui
+package com.math3249.listler.ui.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,6 +11,7 @@ import androidx.navigation.fragment.navArgs
 import com.math3249.listler.App
 import com.math3249.listler.databinding.FragmentAddCategoryBinding
 import com.math3249.listler.ui.viewmodel.AddCategoryViewModel
+import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.Utils
 import com.math3249.listler.util.message.Type.MessageType
 
@@ -53,7 +54,7 @@ class AddCategoryFragment: Fragment() {
     }
 
     private fun addCategoryToDatabase() {
-        val name = Utils.standardizeItemName(binding.categoryInput.text.toString())
+        val name = StringUtil.standardizeItemName(binding.categoryInput.text.toString())
         if (name != null) {
             viewModel.addCategory(name!!)
             viewModel.insertId.observe(this.viewLifecycleOwner) {

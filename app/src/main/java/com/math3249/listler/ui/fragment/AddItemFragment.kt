@@ -57,6 +57,7 @@ class AddItemFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val itemId = navArgs.itemId
+        val categoryId = navArgs.categoryId
 
         viewModel.allCategories.observe(this.viewLifecycleOwner) {
             categories ->
@@ -89,6 +90,7 @@ class AddItemFragment: Fragment() {
                         navArgs.listId,
                         itemId,
                         itemName!!,
+                        categoryId,
                         categoryName!!)
                     navigateBack()
                 }
@@ -98,7 +100,7 @@ class AddItemFragment: Fragment() {
             binding.itemInput.setText(navArgs.itemName)
         }
 
-        viewModel.message.observe(this.viewLifecycleOwner) {
+        viewModel.addItemFragmentMessage.observe(this.viewLifecycleOwner) {
             message ->
             if (!message.messageRead) {
                 when (message.type) {

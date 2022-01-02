@@ -2,6 +2,7 @@ package com.math3249.listler.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.math3249.listler.databinding.ListDetailCategoryBinding
 import com.math3249.listler.databinding.ListDetailItemBinding

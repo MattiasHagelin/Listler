@@ -29,6 +29,9 @@ interface ListDetailDao {
     @Query("SELECT categoryId FROM listcategoryitemcrossref WHERE listId = :listId AND itemId = :itemId")
     fun getCategoryId(listId: Long, itemId: Long): Long
 
+    @Query("SELECT COUNT(*) FROM listcategoryitemcrossref WHERE categoryId = :categoryId AND listId = :listId")
+    fun countItemsInCategory(listId: Long, categoryId: Long): Int
+
     @Transaction
     @Query("SELECT * FROM list WHERE list.listId = :listId")
     fun getListWithCategoriesAndItemsById(listId: Long): Flow<ListWithCategoriesAndItems>
@@ -49,7 +52,13 @@ interface ListDetailDao {
     suspend fun updateItem(item: Item)
 
     @Delete
-    suspend fun deleteItemFromList(listItemCrossRef: ListItemCrossRef)
+    suspend fun deleteItemFromList(listCategoryItemCrossRef: ListCategoryItemCrossRef)
+
+    @Delete
+    suspend fun delete(listItem: ListItemCrossRef)
+
+    @Delete
+    suspend fun delete(listCategory: ListCategoryCrossRef)
 
     @Transaction
     suspend fun insertOrUpdate(listCategoryItemCrossRef: ListCategoryItemCrossRef) {

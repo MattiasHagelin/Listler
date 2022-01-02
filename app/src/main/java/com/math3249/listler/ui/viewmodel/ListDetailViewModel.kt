@@ -3,17 +3,14 @@ package com.math3249.listler.ui.viewmodel
 import androidx.lifecycle.*
 import com.math3249.listler.R
 import com.math3249.listler.data.dao.ListDetailDao
-import com.math3249.listler.model.CategoryWithItems
-import com.math3249.listler.model.ListItem
 import com.math3249.listler.model.ListWithCategoriesAndItems
 import com.math3249.listler.model.crossref.ListCategoryCrossRef
 import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
 import com.math3249.listler.model.crossref.ListItemCrossRef
+import com.math3249.listler.model.entity.Category
 import com.math3249.listler.model.entity.Item
-import com.math3249.listler.ui.fragment.ListDetailsFragmentDirections
 import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.message.Message
-import com.math3249.listler.util.Utils
 import com.math3249.listler.util.message.Type.MessageType
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +25,7 @@ class ListDetailViewModel(
         //TODO: Log error and find possible way to inform user of error
     }
 
-    val message = MutableLiveData<Message?>()
+    val listDetailFragmentMessage = MutableLiveData<Message?>()
     val allItems = listDetailDao.getItems().asLiveData()
 
 
@@ -61,7 +58,7 @@ class ListDetailViewModel(
                     )
                 } else {
                     //If category is missing notify fragment
-                    message.postValue(
+                    listDetailFragmentMessage.postValue(
                         Message(
                             MessageType.ITEM_MISSING_CATEGORY,
                             false,
@@ -75,7 +72,7 @@ class ListDetailViewModel(
             } else {
                 listDetailDao.insert(ListItemCrossRef(listId, item.itemId))
                 //Notify fragment item needs binding to category
-                message.postValue(
+                listDetailFragmentMessage.postValue(
                     Message(
                         MessageType.ITEM_MISSING_CATEGORY,
                         false,
@@ -97,18 +94,28 @@ class ListDetailViewModel(
 
         viewModelScope.launch(Dispatchers.IO) {
             val categoryId = listDetailDao.getCategoryId(listId, itemId)
-            listDetailDao.updateItemOnList(ListCategoryItemCrossRef(
+            listDetailDao.updateItemOnList(
+                ListCategoryItemCrossRef(
                 listId,
                 categoryId,
                 itemId,
                 isDone
-            ))
+            )
+            )
         }
     }
 
-    fun deleteItemFromList(listItemCrossRef: ListItemCrossRef) {
-        viewModelScope.launch {
-            listDetailDao.deleteItemFromList(listItemCrossRef)
+    fun deleteItemFromList(listCategoryItemCrossRef: ListCategoryItemCrossRef) {
+        viewModelScope.launch(Dispatchers.IO) {
+            //Delete item from list
+            listDetailDao.delete(ListItemCrossRef(listCategoryItemCrossRef.listId, listCategoryItemCrossRef.itemId))
+            //Check if there's more items in the same category
+            if (listDetailDao.countItemsInCategory(listCategoryItemCrossRef.listId, listCategoryItemCrossRef.categoryId) == 1){
+                //Delete category from list if there's no items in that category
+                listDetailDao.delete(ListCategoryCrossRef(listCategoryItemCrossRef.listId, listCategoryItemCrossRef.categoryId))
+            }
+            //Delete item category relation in list
+            listDetailDao.deleteItemFromList(listCategoryItemCrossRef)
         }
     }
 

@@ -5,11 +5,19 @@ import com.math3249.listler.ui.adapter.ViewHolderFactory
 
 class ListDetailCategory(//private val clickListener: (Long) -> Unit, // Long
                          //private val longClickListener: (Long) -> Unit,
-                         private val categoryName: String,
-                         override val id: Long): RowType {
+    private val categoryName: String,
+    override val id: Long
+): RowType {
 
     override fun getRowType(): Int {
         return RowTypes.CATEGORY.ordinal
+    }
+
+    override fun getData(): Map<RowTypeKey, String> {
+        return mapOf(
+            RowTypeKey.CATEGORY_ID to id.toString(),
+            RowTypeKey.CATEGORY to categoryName
+        )
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder) {

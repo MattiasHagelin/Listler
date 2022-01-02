@@ -18,7 +18,7 @@ import java.lang.IllegalArgumentException
 class AddItemViewModel(
     private val itemDao: ItemDao
 ): ViewModel() {
-    val message = MutableLiveData<Message>()
+    val addItemFragmentMessage = MutableLiveData<Message>()
     val newCategoryId = MutableLiveData<Long?>()
     val allCategories = itemDao.getCategories().asLiveData()
 
@@ -37,7 +37,7 @@ class AddItemViewModel(
 
             var categoryId = itemDao.getCategoryIdByName(categoryName)
             if (categoryId <= 0L) categoryId = itemDao.insert(Category(name = categoryName))
-            message.postValue(Message(
+            addItemFragmentMessage.postValue(Message(
                 MessageType.ITEM_INSERTED,
                 true,
                 listId,
@@ -64,18 +64,25 @@ class AddItemViewModel(
         listId: Long,
         itemId: Long,
         itemName: String,
+        categoryId: Long,
         categoryName: String
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             itemDao.update(Item(itemId, itemName))
+            var categoryId = categoryId
 
             //Check if Category exists
-            var categoryId = itemDao.getCategoryIdByName(categoryName)
-            //If not insert new category
-            if (categoryId <= 0) categoryId = itemDao.insert(Category(name = categoryName))
+            if (categoryId <= 0) {
+                categoryId = itemDao.getCategoryIdByName(categoryName)
+                if (categoryId <= 0) categoryId = itemDao.insert(Category(name = categoryName))//If not insert new category
 
-            //Add category to list
-            itemDao.insert(ListCategoryCrossRef(listId, categoryId))
+
+                //Add category to list
+                itemDao.insert(ListCategoryCrossRef(listId, categoryId))
+            } else {
+                //Update Category
+                itemDao.update(Category(categoryId, categoryName))
+            }
 
             //Update or insert ListCategoryItem
             itemDao.insertOrUpdate(

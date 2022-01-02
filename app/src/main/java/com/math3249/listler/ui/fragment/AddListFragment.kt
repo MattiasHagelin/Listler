@@ -15,6 +15,7 @@ import com.math3249.listler.databinding.FragmentAddListBinding
 import com.math3249.listler.ui.viewmodel.ListOverviewViewModel
 import com.math3249.listler.App
 import com.math3249.listler.util.Type
+import com.math3249.listler.util.message.Message
 
 class AddListFragment: Fragment() {
 
@@ -53,15 +54,11 @@ class AddListFragment: Fragment() {
         binding.dropdown.setText(typesAsString[0], false)
 
         viewModel.message.observe(this.viewLifecycleOwner) { message ->
-            if (message.success) {
-                when (message.type) {
-                    else -> {
-                        val action = AddListFragmentDirections
-                            .actionAddListFragmentToListDetailsFragment(message.listId)
-                        findNavController().navigate(action)
-                    }
-                }
-            }
+            Message.redirectMessage(message.type,
+                AddListFragmentDirections
+                    .actionAddListFragmentToListDetailsFragment(message.listId),
+                findNavController()
+            )
         }
 
         binding.saveBtn.setOnClickListener {

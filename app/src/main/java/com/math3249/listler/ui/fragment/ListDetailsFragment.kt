@@ -11,16 +11,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentListDetailsBinding
 import com.math3249.listler.ui.viewmodel.ListDetailViewModel
 import com.math3249.listler.App
+import com.math3249.listler.model.ListWithCategoriesAndItems
 import com.math3249.listler.model.entity.Item
-import com.math3249.listler.ui.listview.ListDetailCategory
-import com.math3249.listler.ui.listview.ListDetailItem
-import com.math3249.listler.ui.listview.RowType
 import com.math3249.listler.ui.adapter.ListDetailAdapter
-import com.math3249.listler.ui.listview.RowTypes
+import com.math3249.listler.ui.listview.*
 import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.message.Type.MessageType
 import com.math3249.listler.util.Utils
@@ -36,6 +35,7 @@ class ListDetailsFragment: Fragment() {
     }
 
     private lateinit var items: List<Item>
+    private  lateinit var selectedList: ListWithCategoriesAndItems
     //private var selectedItem: Item? = null
 
     private var _binding: FragmentListDetailsBinding? = null
@@ -53,11 +53,27 @@ class ListDetailsFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val listId = navArgs.listId
-        val adapter = ListDetailAdapter { item ->
+        val adapter = ListDetailAdapter ({ item ->
             if (item.getRowType() == RowTypes.ITEM.ordinal) {
                 viewModel.updateItemOnList(listId, item.id, true)
             }
-        }
+        },
+            { item ->
+                if (item.getRowType() == RowTypes.ITEM.ordinal) {
+                    val action = ListDetailsFragmentDirections
+                        .actionListDetailsFragmentToAddItemFragment(
+                            listId,
+                            item.getData()[RowTypeKey.ITEM_ID]?.toLongOrNull() ?: -1,
+                            item.getData()[RowTypeKey.ITEM] ?: "",
+                            item.getData()[RowTypeKey.CATEGORY_ID]?.toLongOrNull() ?: -1,
+                            item.getData()[RowTypeKey.CATEGORY] ?: ""
+                        )
+                    findNavController().navigate(action)
+                } else {
+                    //val action = ListDetailsFragmentDirections
+                      //  .
+                }
+            })
         /*
         val adapter = ListDetailCategoryAdapter (
             {
@@ -88,6 +104,7 @@ class ListDetailsFragment: Fragment() {
         }
         viewModel.getListWithCategoriesAndItems(listId).observe(this.viewLifecycleOwner) {
             selectedList ->
+            this.selectedList = selectedList
             selectedList.let { list ->
                 val itemsById = list.items.associateBy { it.itemId } //list.listItems.filter {it.listId == list.list.listId}.associateBy { it.itemId }
                 val crossRefByCategory = list.listItems.groupBy { it.categoryId }
@@ -102,9 +119,13 @@ class ListDetailsFragment: Fragment() {
                                     listData.add(ListDetailCategory(category.name, category.categoryId))
                                     first = false
                                 }
-                                listData.add(ListDetailItem(tempItem.name, tempItem.itemId))
+                                listData.add(ListDetailItem(
+                                    category.categoryId,
+                                    category.name,
+                                    tempItem.name,
+                                    tempItem.itemId
+                                ))
                             }
-
                         }
                     }
                 }
@@ -113,7 +134,7 @@ class ListDetailsFragment: Fragment() {
             }
         }
 
-        viewModel.message.observe(this.viewLifecycleOwner) {
+        viewModel.listDetailFragmentMessage.observe(this.viewLifecycleOwner) {
             message ->
             if (!message!!.messageRead) {
                 when (message.type) {
@@ -146,7 +167,10 @@ class ListDetailsFragment: Fragment() {
             }
         }
 
+        swipe(listId, viewModel, adapter)
+
         binding.apply {
+
             listRecyclerview.adapter = adapter
             itemDropdown.requestFocus()
             itemDropdown.setOnItemClickListener { _, _, _, _ ->
@@ -216,5 +240,10 @@ class ListDetailsFragment: Fragment() {
 
     private fun itemExists(): Boolean {
         return items.count { it.name == getItemNameFromItemDropdown() } > 0
+    }
+
+    private fun swipe(listId: Long, viewModel: ListDetailViewModel, adapter: ListDetailAdapter){
+        val itemTouchHelper = ItemTouchHelper(ListDetailAdapter.Swipe(listId, viewModel, adapter))
+        itemTouchHelper.attachToRecyclerView(binding.listRecyclerview)
     }
 }

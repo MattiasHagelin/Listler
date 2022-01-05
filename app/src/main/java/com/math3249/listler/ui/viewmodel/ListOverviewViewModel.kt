@@ -58,9 +58,13 @@ class ListOverviewViewModel (
         }
     }
 
-    fun deleteList(list: List) {
+    fun deleteList(listId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            listDao.deleteList(list)
+            val deleteList = listDao.getDeleteList(listId)
+            listDao.delete(deleteList.list,
+                deleteList.categories.toTypedArray(),
+                deleteList.items.toTypedArray(),
+                deleteList.listItems.toTypedArray())
         }
     }
 

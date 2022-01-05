@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -17,10 +18,12 @@ import com.math3249.listler.databinding.FragmentListDetailsBinding
 import com.math3249.listler.ui.viewmodel.ListDetailViewModel
 import com.math3249.listler.App
 import com.math3249.listler.model.ListWithCategoriesAndItems
+import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
 import com.math3249.listler.model.entity.Item
 import com.math3249.listler.ui.adapter.ListDetailAdapter
 import com.math3249.listler.ui.listview.*
 import com.math3249.listler.util.StringUtil
+import com.math3249.listler.util.Swipe
 import com.math3249.listler.util.message.Type.MessageType
 import com.math3249.listler.util.Utils
 
@@ -243,7 +246,22 @@ class ListDetailsFragment: Fragment() {
     }
 
     private fun swipe(listId: Long, viewModel: ListDetailViewModel, adapter: ListDetailAdapter){
-        val itemTouchHelper = ItemTouchHelper(ListDetailAdapter.Swipe(listId, viewModel, adapter))
+        val itemTouchHelper = ItemTouchHelper(Swipe(
+            AppCompatResources.getDrawable(this.requireContext(), R.drawable.ic_delete_24)
+        ) { position ->
+            val item = adapter.getRowType(position)
+            if (item.getRowType() == RowTypes.ITEM.ordinal) {
+                viewModel.deleteItemFromList(
+                    ListCategoryItemCrossRef(
+                        listId = listId,
+                        itemId = item.getData()[RowTypeKey.ITEM_ID]?.toLongOrNull() ?: 0,
+                        categoryId = item.getData()[RowTypeKey.CATEGORY_ID]?.toLongOrNull() ?: 0
+                    )
+                )
+            }
+        })
+
+            //ListDetailAdapter.Swipe(listId, viewModel, adapter))
         itemTouchHelper.attachToRecyclerView(binding.listRecyclerview)
     }
 }

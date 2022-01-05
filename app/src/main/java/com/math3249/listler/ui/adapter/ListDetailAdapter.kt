@@ -42,6 +42,10 @@ class ListDetailAdapter(private val clickListener: (RowType) -> Unit,
         view.onBindViewHolder(holder)
     }
 
+    fun getRowType(position: Int): RowType {
+        return getItem(position)
+    }
+
     override fun getItemCount(): Int {
         return currentList.size
     }
@@ -49,7 +53,7 @@ class ListDetailAdapter(private val clickListener: (RowType) -> Unit,
     override fun getItemViewType(position: Int): Int {
         return currentList[position].getRowType()
     }
-
+/*
     class Swipe(val listId: Long,
                 val viewModel: ListDetailViewModel,
                 private val adapter: ListDetailAdapter): ItemTouchHelper.SimpleCallback(0,
@@ -81,4 +85,5 @@ class ListDetailAdapter(private val clickListener: (RowType) -> Unit,
         }
 
     }
+ */
 }

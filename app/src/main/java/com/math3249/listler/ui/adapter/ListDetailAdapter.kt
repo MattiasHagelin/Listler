@@ -1,16 +1,12 @@
+@file:Suppress("ReplaceCallWithBinaryOperator")
+
 package com.math3249.listler.ui.adapter
 
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
 import com.math3249.listler.ui.listview.RowType
-import com.math3249.listler.ui.listview.RowTypeKey
-import com.math3249.listler.ui.listview.RowTypes
-import com.math3249.listler.ui.viewmodel.ListDetailViewModel
 
 class ListDetailAdapter(private val clickListener: (RowType) -> Unit,
     private val longClickListener: (RowType) -> Unit

@@ -5,12 +5,12 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.math3249.listler.databinding.ActivityMainBinding
-import com.math3249.listler.ui.fragment.SettingsFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,11 +20,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        /*supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.action_settings, SettingsFragment())
-            .commit()*/
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -33,6 +28,8 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -59,6 +56,14 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
+    }
+
+    private fun setHomeDestination(navController: NavController){
+        val graphInflater = navController.navInflater
+        val navGraph = graphInflater.inflate(R.navigation.nav_graph)
+        val destination: Int? = null //TODO: Replace with destination Id from settings
+        navGraph.setStartDestination(destination!!)
+        navController.graph = navGraph
     }
 
 }

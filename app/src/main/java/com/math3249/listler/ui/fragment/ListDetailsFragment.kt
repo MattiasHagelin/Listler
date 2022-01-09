@@ -10,22 +10,19 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
+import com.math3249.listler.App
 import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentListDetailsBinding
-import com.math3249.listler.ui.viewmodel.ListDetailViewModel
-import com.math3249.listler.App
 import com.math3249.listler.model.ListWithCategoriesAndItems
 import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
 import com.math3249.listler.model.entity.Item
 import com.math3249.listler.ui.adapter.ListDetailAdapter
 import com.math3249.listler.ui.listview.*
-import com.math3249.listler.util.StringUtil
-import com.math3249.listler.util.Swipe
+import com.math3249.listler.ui.viewmodel.ListDetailViewModel
+import com.math3249.listler.util.*
 import com.math3249.listler.util.message.Type.MessageType
-import com.math3249.listler.util.Utils
 
 class ListDetailsFragment: Fragment() {
-
     private val navArgs: ListDetailsFragmentArgs by navArgs()
 
     private val viewModel: ListDetailViewModel by activityViewModels {
@@ -36,7 +33,6 @@ class ListDetailsFragment: Fragment() {
 
     private lateinit var items: List<Item>
     private  lateinit var selectedList: ListWithCategoriesAndItems
-    //private var selectedItem: Item? = null
 
     private var _binding: FragmentListDetailsBinding? = null
     private val binding get() = _binding!!
@@ -45,25 +41,26 @@ class ListDetailsFragment: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentListDetailsBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
         return binding.root
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_list_details, menu)
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        MenuUtil().prepareMenu(menu, LIST_DETAIL_FRAGMENT)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        if (id == R.id.list_details_to_completed_items) {
-            val action = ListDetailsFragmentDirections
-                .actionListDetailsFragmentToCompletedDetailsFragment(navArgs.listId)
-            findNavController().navigate(action)
-            return true
+        return when (item.itemId) {
+            R.id.list_details_to_completed_items -> {
+                val action = ListDetailsFragmentDirections
+                    .actionListDetailsFragmentToCompletedDetailsFragment(navArgs.listId)
+                findNavController().navigate(action)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -215,7 +212,7 @@ class ListDetailsFragment: Fragment() {
                         item.getData()[RowTypeKey.CATEGORY] ?: ""
                     )
                 findNavController().navigate(action)
-            } else {
+            }// else {
                 /*
         val adapter = ListDetailCategoryAdapter (
             {
@@ -229,7 +226,7 @@ class ListDetailsFragment: Fragment() {
             TODO: Implement longClickListener for Category header
             */
         })*/
-            }
+           // }
         })
 
     /** Adds item to current list and

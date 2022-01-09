@@ -7,7 +7,6 @@
     <string name="save">Save</string>
     <string name="medicine_list">Medicine list</string>
     <string name="hint_add_item">Add item</string>
-    <string name="test">Test</string>
 
     <!-- INFORMATION -->
     <string name="i_c_item_in_list">%1$s is already in this list.</string>
@@ -34,5 +33,9 @@
 
     <!-- SETTINGS KEYS -->
     <string name="key_completed_item_time_limit">completed_item_time_limit</string>
+    <string name="completed_item_time_limit_summary">Sets time limit before item is hidden from completed list</string>
+    <string name="completed_item_time_limit_title">Completed item time limit</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

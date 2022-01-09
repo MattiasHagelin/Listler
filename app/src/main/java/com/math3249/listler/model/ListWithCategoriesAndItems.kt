@@ -2,7 +2,6 @@ package com.math3249.listler.model
 
 import androidx.room.Embedded
 import androidx.room.Junction
-import androidx.room.PrimaryKey
 import androidx.room.Relation
 import com.math3249.listler.model.crossref.ListCategoryCrossRef
 import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
@@ -23,12 +22,6 @@ data class ListWithCategoriesAndItems(
         parentColumn = "listId",
         entity = ListCategoryItemCrossRef::class,
         entityColumn = "listId"
-        /*,
-        associateBy = (Junction(
-            parentColumn = "listId",
-            entityColumn = "listId",
-            value = ListCategoryItemCrossRef::class
-        ))*/
     )
     val listItems: kotlin.collections.List<ListCategoryItemCrossRef>,
     @Relation(

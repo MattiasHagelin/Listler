@@ -2,7 +2,6 @@ package com.math3249.listler.ui.listview
 
 import androidx.recyclerview.widget.RecyclerView
 import com.math3249.listler.ui.adapter.ViewHolderFactory
-import kotlin.reflect.KClass
 
 class ListDetailItem(
     private val categoryId: Long,

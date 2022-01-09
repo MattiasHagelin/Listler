@@ -1,25 +1,21 @@
 package com.math3249.listler.ui.viewmodel
 
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.math3249.listler.R
 import com.math3249.listler.data.dao.CategoryDao
 import com.math3249.listler.model.entity.Category
 import com.math3249.listler.util.StringUtil
-import com.math3249.listler.util.Utils
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.DisposableHandle
 import kotlinx.coroutines.launch
-import java.lang.IllegalArgumentException
 
 class AddCategoryViewModel(
     private val categoryDao: CategoryDao
 ): ViewModel() {
 
     val insertId = MutableLiveData<Long?>()
-
-    fun exist(name: String): LiveData<Boolean> {
-        return categoryDao.categoryExists(name).asLiveData()
-    }
 
     fun addCategory(name: String) {
         val category = Category(

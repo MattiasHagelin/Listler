@@ -8,6 +8,7 @@
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/drawable/ic_delete_24.xml" value="0.2125" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/drawable/ic_shopping_cart_24.xml" value="0.1388888888888889" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/drawable/tab_icon_color_selector.xml" value="0.20677083333333332" />
+        <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/font-v26/font.xml" value="0.228125" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/font/font.xml" value="0.20462962962962963" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/activity_settings.xml" value="0.30570652173913043" />
@@ -24,6 +25,7 @@
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/fragment_list_details.xml" value="0.14666666666666667" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/fragment_list_overview.xml" value="0.1" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/fragment_shopping_list.xml" value="0.19322916666666667" />
+        <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/fragment_store_details.xml" value="0.30570652173913043" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/list_detail_category.xml" value="0.1" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/list_detail_category_item.xml" value="0.1" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/list_detail_item.xml" value="0.2694746376811594" />

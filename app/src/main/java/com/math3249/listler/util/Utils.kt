@@ -1,11 +1,8 @@
 package com.math3249.listler.util
 
 import android.view.View
-import androidx.navigation.NavController
-import androidx.navigation.NavDirections
 import com.google.android.material.snackbar.Snackbar
 import com.math3249.listler.R
-import com.math3249.listler.util.message.Message
 import com.math3249.listler.util.message.Type.MessageType
 
 object Utils {

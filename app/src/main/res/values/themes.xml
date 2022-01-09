@@ -23,12 +23,6 @@
 
     <style name="Theme.Listler.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="Widget.Listler.ExposedDropdownMenu" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-        <item name="materialThemeOverlay">@style/ThemeOverlay.Listler.ExposedDropdownMenu</item>
-        <item name="hintTextColor">?attr/colorOnSurface</item>
-        <item name="endIconTint">?attr/colorOnSurface</item>
-    </style>
-
     <style name="Theme.Listler.Category">
         <item name="android:background">@color/purple_500</item>
         <item name="android:layout_marginTop">@dimen/half_standard_margin</item>
@@ -66,11 +60,6 @@
     <style name="TextAppearance.Listler.Caption" parent="TextAppearance.MaterialComponents.Caption">
         <item name="fontFamily">@font/rubik_regular</item>
         <item name="android:fontFamily">@font/rubik_regular</item>
-    </style>
-
-    <style name="ShapeAppearance.Listler.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
-        <item name="cornerFamily">cut</item>
-        <item name="cornerSize">4dp</item>
     </style>
 
 </resources>

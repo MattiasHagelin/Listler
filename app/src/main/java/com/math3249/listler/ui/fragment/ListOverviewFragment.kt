@@ -9,15 +9,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
+import com.math3249.listler.App
 import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentListOverviewBinding
 import com.math3249.listler.ui.adapter.ListOverviewAdapter
 import com.math3249.listler.ui.viewmodel.ListOverviewViewModel
-import com.math3249.listler.App
-import com.math3249.listler.ui.adapter.ListDetailAdapter
-import com.math3249.listler.ui.viewmodel.ListDetailViewModel
 import com.math3249.listler.util.Swipe
-import com.math3249.listler.util.Utils
 
 class ListOverviewFragment : Fragment() {
     private val viewModel: ListOverviewViewModel by activityViewModels {
@@ -34,7 +31,7 @@ class ListOverviewFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentListOverviewBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -57,8 +54,8 @@ class ListOverviewFragment : Fragment() {
         swipe(viewModel, adapter)
 
         binding.apply {
-            recyclerView.adapter = adapter
-            addNewList.setOnClickListener {
+            listOverviewRecyclerview.adapter = adapter
+            addNewListButton.setOnClickListener {
                 findNavController().navigate(
                     R.id.action_listOverviewFragment_to_addListFragment
                 )
@@ -71,6 +68,6 @@ class ListOverviewFragment : Fragment() {
             AppCompatResources.getDrawable(this.requireContext(), R.drawable.ic_delete_24)// Get Icon
         )
         { position -> viewModel.deleteList(adapter.getItemsItemId(position)) })
-        itemTouchHelper.attachToRecyclerView(binding.recyclerView)
+        itemTouchHelper.attachToRecyclerView(binding.listOverviewRecyclerview)
     }
 }

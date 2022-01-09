@@ -7,23 +7,16 @@ import com.math3249.listler.model.ListWithCategoriesAndItems
 import com.math3249.listler.model.crossref.ListCategoryCrossRef
 import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
 import com.math3249.listler.model.crossref.ListItemCrossRef
-import com.math3249.listler.model.entity.Category
 import com.math3249.listler.model.entity.Item
 import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.message.Message
 import com.math3249.listler.util.message.Type.MessageType
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.lang.IllegalArgumentException
 
 class ListDetailViewModel(
     private val listDetailDao: ListDetailDao
 ): ViewModel() {
-    //Can be used to handle exceptions inside coroutine thread
-    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, _ ->
-        //TODO: Log error and find possible way to inform user of error
-    }
 
     val listDetailFragmentMessage = MutableLiveData<Message?>()
     val allItems = listDetailDao.getItems().asLiveData()

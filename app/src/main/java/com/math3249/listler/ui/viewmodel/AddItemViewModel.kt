@@ -5,21 +5,19 @@ import com.math3249.listler.R
 import com.math3249.listler.data.dao.ItemDao
 import com.math3249.listler.model.crossref.ListCategoryCrossRef
 import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
-import com.math3249.listler.model.entity.Item
 import com.math3249.listler.model.crossref.ListItemCrossRef
 import com.math3249.listler.model.entity.Category
+import com.math3249.listler.model.entity.Item
 import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.message.Message
 import com.math3249.listler.util.message.Type.MessageType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.lang.IllegalArgumentException
 
 class AddItemViewModel(
     private val itemDao: ItemDao
 ): ViewModel() {
     val addItemFragmentMessage = MutableLiveData<Message>()
-    val newCategoryId = MutableLiveData<Long?>()
     val allCategories = itemDao.getCategories().asLiveData()
 
     fun getItem(id: Long): LiveData<Item> {
@@ -93,15 +91,6 @@ class AddItemViewModel(
                 false
             )
             )
-        }
-    }
-
-    fun addCategory(name: String) {
-        val category = Category(
-            name = name
-        )
-        viewModelScope.launch(Dispatchers.IO) {
-            newCategoryId.postValue(itemDao.insert(category))
         }
     }
 

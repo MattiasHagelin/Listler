@@ -44,7 +44,7 @@ class AddItemFragment: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentAddItemBinding
             .inflate(
                 inflater,
@@ -138,8 +138,8 @@ class AddItemFragment: Fragment() {
 
     private fun checkUserInput(itemName:String?, categoryName: String?): Boolean {
 
-        if (!StringUtil.validateUserInput(itemName)) Utils.snackbar(MessageType.ITEM_INPUT_EMPTY, binding.rootLayout)
-        if (!StringUtil.validateUserInput(categoryName)) Utils.snackbar(MessageType.CATEGORY_INPUT_EMPTY, binding.rootLayout)
+        if (!StringUtil.validateUserInput(itemName)) Utils.snackbar(MessageType.ITEM_INPUT_EMPTY, binding.root)
+        if (!StringUtil.validateUserInput(categoryName)) Utils.snackbar(MessageType.CATEGORY_INPUT_EMPTY, binding.root)
 
         return StringUtil.validateUserInput(itemName)
                 && StringUtil.validateUserInput(categoryName)
@@ -153,13 +153,4 @@ class AddItemFragment: Fragment() {
         return StringUtil.standardizeItemName(binding.categoryDropdown.text.toString())
     }
 
-    private fun addCategoryToDatabase() {
-            viewModel.addCategory(getCategoryName()!!)
-            viewModel.newCategoryId.observe(this.viewLifecycleOwner) {
-            if (it != null && it < 0) {
-                Utils.snackbar(MessageType.CATEGORY_IN_DATABASE, binding.rootLayout, getCategoryName()!!)
-            }
-        }
-
-    }
 }

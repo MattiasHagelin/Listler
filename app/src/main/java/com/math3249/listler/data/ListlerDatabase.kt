@@ -4,10 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.math3249.listler.data.dao.CategoryDao
-import com.math3249.listler.data.dao.ItemDao
-import com.math3249.listler.data.dao.ListDao
-import com.math3249.listler.data.dao.ListDetailDao
+import com.math3249.listler.data.dao.*
 import com.math3249.listler.model.crossref.ListCategoryCrossRef
 import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
 import com.math3249.listler.model.crossref.ListItemCrossRef
@@ -16,6 +13,7 @@ import com.math3249.listler.model.entity.Category
 import com.math3249.listler.model.entity.Item
 import com.math3249.listler.model.entity.List
 import com.math3249.listler.model.entity.Store
+import com.math3249.listler.util.DATABASE_NAME
 
 @Database(version = 8,
     entities = [
@@ -35,6 +33,7 @@ abstract class ListlerDatabase : RoomDatabase(){
     abstract fun listDao(): ListDao
     abstract fun listDetailDao(): ListDetailDao
     abstract fun categoryDao(): CategoryDao
+    abstract fun storeDao(): StoreDao
 
     companion object{
         private var INSTANCE: ListlerDatabase? = null
@@ -44,7 +43,7 @@ abstract class ListlerDatabase : RoomDatabase(){
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     ListlerDatabase::class.java,
-                    "listler_database"
+                    DATABASE_NAME
                 )
                     .fallbackToDestructiveMigration()
                     .build()

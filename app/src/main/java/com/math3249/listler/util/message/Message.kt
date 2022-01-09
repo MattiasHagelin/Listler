@@ -2,7 +2,6 @@ package com.math3249.listler.util.message
 
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
-import com.math3249.listler.ui.fragment.AddListFragmentDirections
 import com.math3249.listler.util.message.Type.MessageType
 
 class Message (private var _type: MessageType = MessageType.READ_MESSAGE,
@@ -14,7 +13,6 @@ class Message (private var _type: MessageType = MessageType.READ_MESSAGE,
 ){
     private var _messageRead = _type == MessageType.READ_MESSAGE
     val type get() = _type
-    val success get() = _success
     val listId get() = _listId
     val categoryId get() = _categoryId
     val itemId get() = _itemId

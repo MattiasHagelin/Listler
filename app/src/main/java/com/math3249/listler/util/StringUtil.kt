@@ -11,16 +11,6 @@ object StringUtil {
         return App.instance.getString(stringRes, *formatArgs)
     }
 
-    /**
-     * Check that user input is valid
-     */
-    fun validateUserInput(vararg stringArgs: String? = emptyArray()): Boolean {
-        for (s in stringArgs) {
-            if (s.isNullOrBlank()) return false
-        }
-        return true
-    }
-
     fun validateUserInput(input: String?): Boolean {
         return !input.isNullOrBlank()
     }

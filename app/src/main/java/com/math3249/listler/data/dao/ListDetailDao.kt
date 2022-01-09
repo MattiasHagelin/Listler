@@ -4,9 +4,7 @@ import androidx.room.*
 import com.math3249.listler.model.ListWithCategoriesAndItems
 import com.math3249.listler.model.crossref.ListCategoryCrossRef
 import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
-import com.math3249.listler.model.entity.Item
 import com.math3249.listler.model.crossref.ListItemCrossRef
-import com.math3249.listler.model.entity.Category
 import kotlinx.coroutines.flow.Flow
 
 @Dao

@@ -1,9 +1,8 @@
 package com.math3249.listler
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.app.AppCompatActivity
 import com.math3249.listler.databinding.ActivitySettingsBinding
 import com.math3249.listler.ui.fragment.SettingsFragment
 import com.math3249.listler.util.StringUtil
@@ -25,7 +24,7 @@ class SettingsActivity : AppCompatActivity() {
 
         if (binding.settingsLayout != null) {
             if (savedInstanceState != null) {
-                return;
+                return
             }
             // below line is to inflate our fragment.
             supportFragmentManager.beginTransaction().replace(R.id.settings_layout, SettingsFragment()).commit()

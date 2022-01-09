@@ -11,7 +11,7 @@
             android:key="@string/key_completed_item_time_limit"
             android:entries="@array/completedItemTimeLimit"
             android:entryValues="@array/completedItemTimeLimitData"
-            android:title="Completed item time limit"
-            android:summary="Set how long a completed item is visible in completed list"/>
+            android:title="@string/completed_item_time_limit_title"
+            android:summary="@string/completed_item_time_limit_summary"/>
     </PreferenceCategory>
 </PreferenceScreen>

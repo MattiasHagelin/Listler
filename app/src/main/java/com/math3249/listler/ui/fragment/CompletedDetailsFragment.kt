@@ -1,6 +1,5 @@
 package com.math3249.listler.ui.fragment
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
@@ -9,17 +8,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.ItemTouchHelper
-import com.math3249.listler.R
-import com.math3249.listler.ui.viewmodel.ListDetailViewModel
 import com.math3249.listler.App
+import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentCompletedDetailsBinding
 import com.math3249.listler.model.ListWithCategoriesAndItems
 import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
-import com.math3249.listler.model.entity.Item
 import com.math3249.listler.ui.adapter.ListDetailAdapter
 import com.math3249.listler.ui.listview.*
+import com.math3249.listler.ui.viewmodel.ListDetailViewModel
 import com.math3249.listler.util.Settings
 import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.Swipe
@@ -34,7 +31,6 @@ class CompletedDetailsFragment: Fragment() {
         )
     }
 
-    private lateinit var items: List<Item>
     private  lateinit var selectedList: ListWithCategoriesAndItems
     //private var selectedItem: Item? = null
 
@@ -49,7 +45,7 @@ class CompletedDetailsFragment: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentCompletedDetailsBinding.inflate(inflater, container, false)
         _settings = Settings(requireContext())
         setHasOptionsMenu(true)
@@ -89,10 +85,10 @@ class CompletedDetailsFragment: Fragment() {
                             item.getData()[RowTypeKey.CATEGORY] ?: ""
                         )
                     findNavController().navigate(action)
-                } else {
+                }// else {
                     //val action = ListDetailsFragmentDirections
                       //  .
-                }
+                //}
             })
         /*
         val adapter = ListDetailCategoryAdapter (

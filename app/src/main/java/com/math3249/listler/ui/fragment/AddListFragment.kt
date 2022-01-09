@@ -8,12 +8,11 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.withStarted
 import androidx.navigation.fragment.findNavController
+import com.math3249.listler.App
 import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentAddListBinding
 import com.math3249.listler.ui.viewmodel.ListOverviewViewModel
-import com.math3249.listler.App
 import com.math3249.listler.util.Type
 import com.math3249.listler.util.message.Message
 
@@ -32,7 +31,7 @@ class AddListFragment: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentAddListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -43,15 +42,15 @@ class AddListFragment: Fragment() {
 
         //Create a string array from enum of list types
         val types = enumValues<Type>()
-        var typesAsString = arrayOfNulls<String>(types.count())
+        val typesAsString = arrayOfNulls<String>(types.count())
         for (i in types.indices) {
             typesAsString[i] = types[i].toString()
         }
 
 
         val adapter = ArrayAdapter(requireContext(), R.layout.add_list_dropdown, typesAsString)
-        (binding.dropdown as? AutoCompleteTextView)?.setAdapter(adapter)
-        binding.dropdown.setText(typesAsString[0], false)
+        (binding.listTypeDropdown as? AutoCompleteTextView)?.setAdapter(adapter)
+        binding.listTypeDropdown.setText(typesAsString[0], false)
 
         viewModel.message.observe(this.viewLifecycleOwner) { message ->
             Message.redirectMessage(message.type,
@@ -61,10 +60,10 @@ class AddListFragment: Fragment() {
             )
         }
 
-        binding.saveBtn.setOnClickListener {
+        binding.addList.setOnClickListener {
             viewModel.addList(
                 binding.nameInput.text.toString(),
-                binding.dropdown.text.toString()
+                binding.listTypeDropdown.text.toString()
             )
             /*
             findNavController().navigate(

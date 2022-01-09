@@ -32,7 +32,7 @@ class AddCategoryFragment: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentAddCategoryBinding
             .inflate(
                 inflater,
@@ -56,7 +56,7 @@ class AddCategoryFragment: Fragment() {
     private fun addCategoryToDatabase() {
         val name = StringUtil.standardizeItemName(binding.categoryInput.text.toString())
         if (name != null) {
-            viewModel.addCategory(name!!)
+            viewModel.addCategory(name)
             viewModel.insertId.observe(this.viewLifecycleOwner) {
                 if (it != null) {
                     val action = AddCategoryFragmentDirections
@@ -68,10 +68,10 @@ class AddCategoryFragment: Fragment() {
 
                     findNavController().navigate(action)
                 } else {
-                    Utils.snackbar(MessageType.CATEGORY_IN_DATABASE, binding.rootLayout, name)
+                    Utils.snackbar(MessageType.CATEGORY_IN_DATABASE, binding.root, name)
                 }
             }
-        } else Utils.snackbar(MessageType.CATEGORY_INPUT_EMPTY, binding.rootLayout)
+        } else Utils.snackbar(MessageType.CATEGORY_INPUT_EMPTY, binding.root)
 
     }
 }

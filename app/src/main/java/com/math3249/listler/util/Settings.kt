@@ -8,7 +8,7 @@ import androidx.preference.PreferenceManager
  * Also got exceptions when trying to invoke the get functions in SharedPreferences
  */
 
-class Settings(private val context: Context) {
+class Settings(context: Context) {
 
     private val settings = PreferenceManager.getDefaultSharedPreferences(context)
 

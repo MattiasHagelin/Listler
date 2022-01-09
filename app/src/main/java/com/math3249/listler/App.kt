@@ -1,7 +1,6 @@
 package com.math3249.listler
 
 import android.app.Application
-import androidx.annotation.StringRes
 import com.math3249.listler.data.ListlerDatabase
 
 class App: Application() {

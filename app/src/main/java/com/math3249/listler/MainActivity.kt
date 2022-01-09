@@ -1,5 +1,6 @@
 package com.math3249.listler
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -9,6 +10,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.math3249.listler.databinding.ActivityMainBinding
+import com.math3249.listler.ui.fragment.SettingsFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,6 +19,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        /*supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.action_settings, SettingsFragment())
+            .commit()*/
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -39,7 +46,11 @@ class MainActivity : AppCompatActivity() {
         //automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity on AndroidManifest.xml
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_settings -> {
+                val i = Intent(this@MainActivity, SettingsActivity::class.java)
+                startActivity(i)
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

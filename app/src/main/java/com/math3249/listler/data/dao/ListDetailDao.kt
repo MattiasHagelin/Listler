@@ -10,61 +10,31 @@ import com.math3249.listler.model.entity.Category
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface ListDetailDao {
-    @Query("SELECT * FROM Item")
-    fun getItems(): Flow<List<Item>>
-
-    @Query("SELECT * FROM Item WHERE itemId = :id")
-    fun getItem(id: Long): Flow<Item>
+abstract class ListDetailDao: BaseDao() {
 
     @Query ("SELECT EXISTS (SELECT 1 FROM item WHERE item.name = :name)")
-    fun itemExists(name: String): Boolean
+    abstract fun itemExists(name: String): Boolean
 
     @Query("SELECT * FROM ListItemCrossRef WHERE listId = :listId AND itemId = :itemId")
-    fun getListItem(listId: Long, itemId: Long): ListItemCrossRef?
-
-    @Query("SELECT * FROM category WHERE categoryId IN (:categoryIds)")
-    fun getCategories(categoryIds: List<Long>): List<Category>
-
-    @Query("SELECT categoryId FROM listcategoryitemcrossref WHERE listId = :listId AND itemId = :itemId")
-    fun getCategoryId(listId: Long, itemId: Long): Long
+    abstract fun getListItem(listId: Long, itemId: Long): ListItemCrossRef?
 
     @Query("SELECT COUNT(*) FROM listcategoryitemcrossref WHERE categoryId = :categoryId AND listId = :listId")
-    fun countItemsInCategory(listId: Long, categoryId: Long): Int
+    abstract fun countItemsInCategory(listId: Long, categoryId: Long): Int
 
     @Transaction
     @Query("SELECT * FROM list WHERE list.listId = :listId")
-    fun getListWithCategoriesAndItemsById(listId: Long): Flow<ListWithCategoriesAndItems>
+    abstract fun getListWithCategoriesAndItemsById(listId: Long): Flow<ListWithCategoriesAndItems>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(listItemCrossRef: ListItemCrossRef): Long
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(listCategory: ListCategoryCrossRef): Long
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(listCategoryItemCrossRef: ListCategoryItemCrossRef): Long
-
-    @Update
-    suspend fun updateItemOnList(listCategoryItemCrossRef: ListCategoryItemCrossRef)
-
-    @Update
-    suspend fun updateItem(item: Item)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun insert(listCategory: ListCategoryCrossRef): Long
 
     @Delete
-    suspend fun deleteItemFromList(listCategoryItemCrossRef: ListCategoryItemCrossRef)
+    abstract suspend fun deleteItemFromList(listCategoryItemCrossRef: ListCategoryItemCrossRef)
 
     @Delete
-    suspend fun delete(listItem: ListItemCrossRef)
+    abstract suspend fun delete(listItem: ListItemCrossRef)
 
     @Delete
-    suspend fun delete(listCategory: ListCategoryCrossRef)
-
-    @Transaction
-    suspend fun insertOrUpdate(listCategoryItemCrossRef: ListCategoryItemCrossRef) {
-        if (insert(listCategoryItemCrossRef) == -1L) {
-            updateItemOnList(listCategoryItemCrossRef)
-        }
-    }
+    abstract suspend fun delete(listCategory: ListCategoryCrossRef)
 
 }

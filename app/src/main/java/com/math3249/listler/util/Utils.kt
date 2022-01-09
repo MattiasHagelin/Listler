@@ -9,7 +9,6 @@ import com.math3249.listler.util.message.Message
 import com.math3249.listler.util.message.Type.MessageType
 
 object Utils {
-
     /**
      * creates a snackbar of short duration
      */

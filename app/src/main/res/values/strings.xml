@@ -27,4 +27,12 @@
     <string name="hint_add_category">Add category</string>
     <string name="hint_category_name">Category name</string>
     <string name="add_category">Add category</string>
+    <string name="completed_items">Completed items</string>
+
+    <!-- SETTINGS -->
+    <string name="settings_title">Settings</string>
+
+    <!-- SETTINGS KEYS -->
+    <string name="key_completed_item_time_limit">completed_item_time_limit</string>
+
 </resources>

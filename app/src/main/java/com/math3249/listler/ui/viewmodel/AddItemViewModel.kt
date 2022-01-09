@@ -56,7 +56,7 @@ class AddItemViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             itemDao.insert(ListItemCrossRef(listId, itemId))
             itemDao.insert(ListCategoryCrossRef(listId, categoryId))
-            itemDao.insert(ListCategoryItemCrossRef(listId, categoryId, itemId, isDone))
+            itemDao.insertWithTimeStamp(ListCategoryItemCrossRef(listId, categoryId, itemId, isDone))
         }
     }
 

@@ -1,10 +1,7 @@
 package com.math3249.listler.ui.fragment
 
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
@@ -50,95 +47,65 @@ class ListDetailsFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentListDetailsBinding.inflate(inflater, container, false)
+        setHasOptionsMenu(true)
         return binding.root
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_list_details, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+        if (id == R.id.list_details_to_completed_items) {
+            val action = ListDetailsFragmentDirections
+                .actionListDetailsFragmentToCompletedDetailsFragment(navArgs.listId)
+            findNavController().navigate(action)
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val listId = navArgs.listId
-        val adapter = ListDetailAdapter ({ item ->
-            if (item.getRowType() == RowTypes.ITEM.ordinal) {
-                viewModel.updateItemOnList(listId, item.id, true)
+        val adapter = createAdapter()
+
+
+        subscribeToItems()
+        subscribeToList(adapter)
+        subscribeToViewmodelMessage()
+
+        swipe(listId, viewModel, adapter)
+
+        bind(adapter)
+    }
+
+    private fun bind(adapter: ListDetailAdapter) {
+        binding.apply {
+
+            listRecyclerview.adapter = adapter
+            itemDropdown.requestFocus()
+            itemDropdown.setOnItemClickListener { _, _, _, _ ->
+                addToList()
             }
-        },
-            { item ->
-                if (item.getRowType() == RowTypes.ITEM.ordinal) {
-                    val action = ListDetailsFragmentDirections
-                        .actionListDetailsFragmentToAddItemFragment(
-                            listId,
-                            item.getData()[RowTypeKey.ITEM_ID]?.toLongOrNull() ?: -1,
-                            item.getData()[RowTypeKey.ITEM] ?: "",
-                            item.getData()[RowTypeKey.CATEGORY_ID]?.toLongOrNull() ?: -1,
-                            item.getData()[RowTypeKey.CATEGORY] ?: ""
-                        )
-                    findNavController().navigate(action)
-                } else {
-                    //val action = ListDetailsFragmentDirections
-                      //  .
-                }
-            })
-        /*
-        val adapter = ListDetailCategoryAdapter (
-            {
-                //item -> viewModel.updateItemOnList(id, item.itemId, true)
-                //TODO: Implement clickListener for Category header
-        }, {/*
-            item ->
-                val action = ListDetailsFragmentDirections
-                    .actionListDetailsFragmentToAddItemFragment("", id, item.itemId)
-            findNavController().navigate(action)
-            TODO: Implement longClickListener for Category header
-            */
-        })*/
 
-        viewModel.allItems.observe(this.viewLifecycleOwner) {
-            allItems ->
-            items = allItems
-            allItems.let {
-                val arr = mutableListOf<String>()
-                for (value in it){
-                    arr.add(value.name)
+            addItemToList.setEndIconOnClickListener {
+                addToDatabase()
+            }
+            itemDropdown.setOnKeyListener { _, keyCode, event ->
+                if (keyCode == KeyEvent.KEYCODE_ENTER
+                    && event.action == KeyEvent.ACTION_UP
+                ) {
+                    addToDatabase()
+                    return@setOnKeyListener true
                 }
-                val dropDownAdapter: ArrayAdapter<String> =
-                    ArrayAdapter(requireContext(), R.layout.add_list_dropdown, arr)
-
-                binding.itemDropdown.setAdapter(dropDownAdapter)
+                return@setOnKeyListener false
             }
         }
-        viewModel.getListWithCategoriesAndItems(listId).observe(this.viewLifecycleOwner) {
-            selectedList ->
-            this.selectedList = selectedList
-            selectedList.let { list ->
-                val itemsById = list.items.associateBy { it.itemId } //list.listItems.filter {it.listId == list.list.listId}.associateBy { it.itemId }
-                val crossRefByCategory = list.listItems.groupBy { it.categoryId }
-                val listData  = mutableListOf<RowType>()
-                list.categories.forEach { category ->
-                    var first = true
-                    crossRefByCategory[category.categoryId]!!.forEach { crossRefItem ->
-                        val tempItem = itemsById[crossRefItem.itemId]
-                        if (tempItem != null) {
-                            if (!crossRefItem.done) {
-                                if (first) {
-                                    listData.add(ListDetailCategory(category.name, category.categoryId))
-                                    first = false
-                                }
-                                listData.add(ListDetailItem(
-                                    category.categoryId,
-                                    category.name,
-                                    tempItem.name,
-                                    tempItem.itemId
-                                ))
-                            }
-                        }
-                    }
-                }
-                adapter.submitList(listData)
-                (requireActivity() as AppCompatActivity).supportActionBar?.title = list.list.name
-            }
-        }
+    }
 
-        viewModel.listDetailFragmentMessage.observe(this.viewLifecycleOwner) {
-            message ->
+    private fun subscribeToViewmodelMessage() {
+        viewModel.listDetailFragmentMessage.observe(this.viewLifecycleOwner) { message ->
             if (!message!!.messageRead) {
                 when (message.type) {
                     MessageType.ITEM_MISSING_CATEGORY -> {
@@ -169,30 +136,102 @@ class ListDetailsFragment: Fragment() {
                 }
             }
         }
+    }
 
-        swipe(listId, viewModel, adapter)
-
-        binding.apply {
-
-            listRecyclerview.adapter = adapter
-            itemDropdown.requestFocus()
-            itemDropdown.setOnItemClickListener { _, _, _, _ ->
-                addToList()
-            }
-
-            addItemToList.setEndIconOnClickListener {
-                addToDatabase()
-            }
-            itemDropdown.setOnKeyListener { _, keyCode, event ->
-                if (keyCode == KeyEvent.KEYCODE_ENTER
-                    && event.action == KeyEvent.ACTION_UP) {
-                    addToDatabase()
-                    return@setOnKeyListener true
+    private fun subscribeToList(
+        adapter: ListDetailAdapter
+    ) {
+        viewModel.getListWithCategoriesAndItems(navArgs.listId)
+            .observe(this.viewLifecycleOwner) { selectedList ->
+                this.selectedList = selectedList
+                selectedList.let { list ->
+                    val itemsById =
+                        list.items.associateBy { it.itemId } //list.listItems.filter {it.listId == list.list.listId}.associateBy { it.itemId }
+                    val crossRefByCategory = list.listItems.groupBy { it.categoryId }
+                    val listData = mutableListOf<RowType>()
+                    list.categories.forEach { category ->
+                        var first = true
+                        crossRefByCategory[category.categoryId]!!.forEach { crossRefItem ->
+                            val tempItem = itemsById[crossRefItem.itemId]
+                            if (tempItem != null) {
+                                if (!crossRefItem.done) {
+                                    if (first) {
+                                        listData.add(
+                                            ListDetailCategory(
+                                                category.name,
+                                                category.categoryId
+                                            )
+                                        )
+                                        first = false
+                                    }
+                                    listData.add(
+                                        ListDetailItem(
+                                            category.categoryId,
+                                            category.name,
+                                            tempItem.name,
+                                            tempItem.itemId
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    adapter.submitList(listData)
+                    (requireActivity() as AppCompatActivity).supportActionBar?.title =
+                        list.list.name
                 }
-                return@setOnKeyListener false
+            }
+    }
+
+    private fun subscribeToItems() {
+        viewModel.allItems.observe(this.viewLifecycleOwner) { allItems ->
+            items = allItems
+            allItems.let {
+                val arr = mutableListOf<String>()
+                for (value in it) {
+                    arr.add(value.name)
+                }
+                val dropDownAdapter: ArrayAdapter<String> =
+                    ArrayAdapter(requireContext(), R.layout.add_list_dropdown, arr)
+
+                binding.itemDropdown.setAdapter(dropDownAdapter)
             }
         }
     }
+
+    private fun createAdapter() = ListDetailAdapter({ item ->
+        if (item.getRowType() == RowTypes.ITEM.ordinal) {
+            viewModel.updateItemOnList(navArgs.listId, item.id, true)
+        }
+    },
+        { item ->
+            if (item.getRowType() == RowTypes.ITEM.ordinal) {
+                val action = ListDetailsFragmentDirections
+                    .actionListDetailsFragmentToAddItemFragment(
+                        navArgs.listId,
+                        item.getData()[RowTypeKey.ITEM_ID]?.toLongOrNull() ?: -1,
+                        item.getData()[RowTypeKey.ITEM] ?: "",
+                        item.getData()[RowTypeKey.CATEGORY_ID]?.toLongOrNull() ?: -1,
+                        item.getData()[RowTypeKey.CATEGORY] ?: ""
+                    )
+                findNavController().navigate(action)
+            } else {
+                /*
+        val adapter = ListDetailCategoryAdapter (
+            {
+                //item -> viewModel.updateItemOnList(id, item.itemId, true)
+                //TODO: Implement clickListener for Category header
+        }, {/*
+            item ->
+                val action = ListDetailsFragmentDirections
+                    .actionListDetailsFragmentToAddItemFragment("", id, item.itemId)
+            findNavController().navigate(action)
+            TODO: Implement longClickListener for Category header
+            */
+        })*/
+            }
+        })
+
     /** Adds item to current list and
     clears text from item_dropdown
      */
@@ -260,8 +299,6 @@ class ListDetailsFragment: Fragment() {
                 )
             }
         })
-
-            //ListDetailAdapter.Swipe(listId, viewModel, adapter))
         itemTouchHelper.attachToRecyclerView(binding.listRecyclerview)
     }
 }

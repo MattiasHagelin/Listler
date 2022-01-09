@@ -7,5 +7,6 @@ data class ListCategoryItemCrossRef(
     val listId: Long,
     val categoryId: Long,
     val itemId: Long,
-    val done: Boolean = false
+    val done: Boolean = false,
+    var modifiedAt: Long = 0
 )

@@ -41,11 +41,18 @@
             app:argType="long" />
         <action
             android:id="@+id/action_listDetailsFragment_to_addItemFragment"
-            app:destination="@id/addItemFragment" />
+            app:destination="@id/addItemFragment"
+            app:popUpTo="@id/addItemFragment"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_listDetailsFragment_to_listOverviewFragment"
             app:destination="@id/listOverviewFragment"
             app:popUpTo="@id/listOverviewFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_listDetailsFragment_to_completedDetailsFragment"
+            app:destination="@id/completedDetailsFragment"
+            app:popUpTo="@id/completedDetailsFragment"
             app:popUpToInclusive="true" />
     </fragment>
     <fragment
@@ -99,5 +106,19 @@
         <argument
             android:name="categoryName"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/completedDetailsFragment"
+        android:name="com.math3249.listler.ui.fragment.CompletedDetailsFragment"
+        android:label="fragment_completed_details"
+        tools:layout="@layout/fragment_completed_details" >
+        <argument
+            android:name="listId"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_completedDetailsFragment_to_listDetailsFragment"
+            app:destination="@id/listDetailsFragment"
+            app:popUpTo="@id/listDetailsFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

@@ -48,7 +48,7 @@ class ListDetailViewModel(
                 val categoryId = listDetailDao.getCategoryId(listId, item.itemId)
                 if (categoryId > 0) {
                     //If item have a Category do an update
-                    listDetailDao.updateItemOnList(
+                    listDetailDao.updateWithTimeStamp(
                         ListCategoryItemCrossRef(
                             listId,
                             categoryId,
@@ -94,7 +94,7 @@ class ListDetailViewModel(
 
         viewModelScope.launch(Dispatchers.IO) {
             val categoryId = listDetailDao.getCategoryId(listId, itemId)
-            listDetailDao.updateItemOnList(
+            listDetailDao.updateWithTimeStamp(
                 ListCategoryItemCrossRef(
                 listId,
                 categoryId,

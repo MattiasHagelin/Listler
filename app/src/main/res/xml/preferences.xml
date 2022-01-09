@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+    app:key="shopping_list_category"
+    app:title="Shopping list">
+
+        <ListPreference
+            android:key="@string/key_completed_item_time_limit"
+            android:entries="@array/completedItemTimeLimit"
+            android:entryValues="@array/completedItemTimeLimitData"
+            android:title="Completed item time limit"
+            android:summary="Set how long a completed item is visible in completed list"/>
+    </PreferenceCategory>
+</PreferenceScreen>

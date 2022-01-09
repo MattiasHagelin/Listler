@@ -16,8 +16,8 @@ data class StoreWithCategories(
     )
     val categories: List<Category>,
     @Relation(
-        parentColumn = "listId",
-        entityColumn = "listId",
+        parentColumn = "storeId",
+        entityColumn = "storeId",
         entity = StoreCategoryCrossRef::class
     )
     val storeCategories: List<StoreCategoryCrossRef>

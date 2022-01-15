@@ -14,9 +14,11 @@ import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentAddItemBinding
 import com.math3249.listler.model.entity.Item
 import com.math3249.listler.ui.viewmodel.AddItemViewModel
+import com.math3249.listler.util.CATEGORY_ID
+import com.math3249.listler.util.ITEM_ID
 import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.Utils
-import com.math3249.listler.util.message.Type.MessageType
+import com.math3249.listler.util.message.type.MessageType
 
 class AddItemFragment: Fragment() {
 
@@ -102,14 +104,14 @@ class AddItemFragment: Fragment() {
 
         viewModel.addItemFragmentMessage.observe(this.viewLifecycleOwner) {
             message ->
-            if (!message.messageRead) {
+            if (!message.read) {
                 when (message.type) {
                     else -> {
                         //MessageType.ITEM_INSERTED ->
                         viewModel.addItemToList(
                             navArgs.listId,
-                            message.categoryId,
-                            message.itemId,
+                            message.getId(CATEGORY_ID),
+                            message.getId(ITEM_ID),
                             false
                         )
                         message.clear()

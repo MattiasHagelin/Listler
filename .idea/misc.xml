@@ -19,6 +19,7 @@
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/fragment_add_category.xml" value="0.1" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/fragment_add_item.xml" value="0.19166666666666668" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/fragment_add_list.xml" value="0.1" />
+        <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/fragment_add_store.xml" value="0.302536231884058" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/fragment_completed_details.xml" value="0.18645833333333334" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/fragment_completed_items.xml" value="0.18645833333333334" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/fragment_list_detail_tab.xml" value="0.190625" />
@@ -26,6 +27,7 @@
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/fragment_list_overview.xml" value="0.1" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/fragment_shopping_list.xml" value="0.19322916666666667" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/fragment_store_details.xml" value="0.30570652173913043" />
+        <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/fragment_stores.xml" value="0.2921195652173913" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/list_detail_category.xml" value="0.1" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/list_detail_category_item.xml" value="0.1" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/list_detail_item.xml" value="0.2694746376811594" />
@@ -33,6 +35,10 @@
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/list_details_category.xml" value="0.1" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/list_details_category_item.xml" value="0.19010416666666666" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/list_item_list.xml" value="0.1" />
+        <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/store.xml" value="0.2966485507246377" />
+        <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/store_category.xml" value="0.2966485507246377" />
+        <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/switch_item.xml" value="0.2" />
+        <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/menu/menu_add_store.xml" value="0.3671875" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/menu/menu_completed_details.xml" value="0.18645833333333334" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/menu/menu_list_details.xml" value="0.18645833333333334" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/menu/menu_main.xml" value="0.1" />

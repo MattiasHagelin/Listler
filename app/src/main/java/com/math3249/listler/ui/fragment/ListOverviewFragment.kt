@@ -14,7 +14,7 @@ import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentListOverviewBinding
 import com.math3249.listler.ui.adapter.ListOverviewAdapter
 import com.math3249.listler.ui.viewmodel.ListOverviewViewModel
-import com.math3249.listler.util.Swipe
+import com.math3249.listler.util.DragSwipe
 
 class ListOverviewFragment : Fragment() {
     private val viewModel: ListOverviewViewModel by activityViewModels {
@@ -64,10 +64,10 @@ class ListOverviewFragment : Fragment() {
     }
 
     private fun swipe(viewModel: ListOverviewViewModel, adapter: ListOverviewAdapter){
-        val itemTouchHelper = ItemTouchHelper(Swipe(
-            AppCompatResources.getDrawable(this.requireContext(), R.drawable.ic_delete_24)// Get Icon
-        )
-        { position -> viewModel.deleteList(adapter.getItemsItemId(position)) })
+        val itemTouchHelper = ItemTouchHelper(DragSwipe(
+            icon = AppCompatResources.getDrawable(this.requireContext(), R.drawable.ic_delete_24),// Get Icon
+            swipeDirs = ItemTouchHelper.LEFT,
+            swipeLeft = { position -> viewModel.deleteList(adapter.getItemsItemId(position)) }))
         itemTouchHelper.attachToRecyclerView(binding.listOverviewRecyclerview)
     }
 }

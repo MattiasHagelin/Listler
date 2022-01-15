@@ -9,25 +9,33 @@ import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
-class Swipe(
+class DragSwipe(
+    val dragDirs: Int = 0,
+    val swipeDirs: Int = 0,
     private val icon: Drawable? = null,
-    val swipeLeft: (position: Int) -> Unit
+    val onMove: (from: Int, to: Int) -> Unit = {_,_ ->},
+    val swipeLeft: (position: Int) -> Unit = {},
+    val swipeRight: (position: Int) -> Unit = {}
 ): ItemTouchHelper.SimpleCallback(
-    0,
-    ItemTouchHelper.LEFT
-            or ItemTouchHelper.RIGHT) {
+    dragDirs,
+    swipeDirs) {
 
     override fun onMove(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder,
         target: RecyclerView.ViewHolder
     ): Boolean {
-        return false
+        val from = viewHolder.adapterPosition
+        val to = target.adapterPosition
+        onMove(from, to)
+        if (dragDirs == 0) return false
+        return true
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         when (direction) {
             ItemTouchHelper.LEFT -> swipeLeft(viewHolder.adapterPosition)
+            ItemTouchHelper.RIGHT -> swipeRight(viewHolder.adapterPosition)
         }
     }
 

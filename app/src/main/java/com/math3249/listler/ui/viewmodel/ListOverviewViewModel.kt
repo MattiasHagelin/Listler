@@ -4,10 +4,11 @@ import androidx.lifecycle.*
 import com.math3249.listler.R
 import com.math3249.listler.data.dao.ListDao
 import com.math3249.listler.model.entity.List
+import com.math3249.listler.util.LIST_ID
 import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.UNCHECKED_CAST
 import com.math3249.listler.util.message.Message
-import com.math3249.listler.util.message.Type.MessageType
+import com.math3249.listler.util.message.type.MessageType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -31,9 +32,7 @@ class ListOverviewViewModel (
             if (listId > 0) message.postValue(Message(
                 MessageType.LIST_INSERTED,
                 true,
-                listId,
-            -1,
-            -1))
+                mutableMapOf(LIST_ID to listId)))
         }
     }
 

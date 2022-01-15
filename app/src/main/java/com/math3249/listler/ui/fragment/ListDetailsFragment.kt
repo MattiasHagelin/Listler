@@ -20,7 +20,7 @@ import com.math3249.listler.ui.adapter.ListDetailAdapter
 import com.math3249.listler.ui.listview.*
 import com.math3249.listler.ui.viewmodel.ListDetailViewModel
 import com.math3249.listler.util.*
-import com.math3249.listler.util.message.Type.MessageType
+import com.math3249.listler.util.message.type.MessageType
 
 class ListDetailsFragment: Fragment() {
     private val navArgs: ListDetailsFragmentArgs by navArgs()
@@ -103,13 +103,13 @@ class ListDetailsFragment: Fragment() {
 
     private fun subscribeToViewmodelMessage() {
         viewModel.listDetailFragmentMessage.observe(this.viewLifecycleOwner) { message ->
-            if (!message!!.messageRead) {
+            if (!message!!.read) {
                 when (message.type) {
                     MessageType.ITEM_MISSING_CATEGORY -> {
                         val action = ListDetailsFragmentDirections
                             .actionListDetailsFragmentToAddItemFragment(
-                                message.listId,
-                                message.itemId,
+                                message.getId(LIST_ID),
+                                message.getId(ITEM_ID),
                                 message.extra,
                                 -1,
                                 ""
@@ -121,8 +121,8 @@ class ListDetailsFragment: Fragment() {
                     else -> {
                         val action = ListDetailsFragmentDirections
                             .actionListDetailsFragmentToAddItemFragment(
-                                message.listId,
-                                message.itemId,
+                                message.getId(LIST_ID),
+                                message.getId(ITEM_ID),
                                 message.extra,
                                 -1,
                                 ""
@@ -238,7 +238,7 @@ class ListDetailsFragment: Fragment() {
         if (selectedItem != null) {
           if (selectedItem.itemId > 0) {
               viewModel.addItemToList(navArgs.listId, selectedItem)
-              clearItemDropdown()
+              Utils.clearItemDropdown(binding.itemDropdown)
           }
         } else
             Utils.snackbar(MessageType.ITEM_NOT_IN_DATABASE, binding.listRecyclerview)
@@ -266,9 +266,7 @@ class ListDetailsFragment: Fragment() {
                 }
         }
     }
-    private fun clearItemDropdown() {
-        binding.itemDropdown.setText("", false)
-    }
+
     private fun getItemNameFromItemDropdown(): String {
         val input = StringUtil.standardizeItemName(binding.itemDropdown.text.toString())
         return if (!StringUtil.validateUserInput(input)) {
@@ -282,20 +280,20 @@ class ListDetailsFragment: Fragment() {
     }
 
     private fun swipe(listId: Long, viewModel: ListDetailViewModel, adapter: ListDetailAdapter){
-        val itemTouchHelper = ItemTouchHelper(Swipe(
-            AppCompatResources.getDrawable(this.requireContext(), R.drawable.ic_delete_24)
-        ) { position ->
-            val item = adapter.getRowType(position)
-            if (item.getRowType() == RowTypes.ITEM.ordinal) {
-                viewModel.deleteItemFromList(
-                    ListCategoryItemCrossRef(
-                        listId = listId,
-                        itemId = item.getData()[RowTypeKey.ITEM_ID]?.toLongOrNull() ?: 0,
-                        categoryId = item.getData()[RowTypeKey.CATEGORY_ID]?.toLongOrNull() ?: 0
-                    )
-                )
-            }
-        })
+        val itemTouchHelper = ItemTouchHelper(DragSwipe(
+            swipeDirs = ItemTouchHelper.LEFT,
+            icon = AppCompatResources.getDrawable(this.requireContext(), R.drawable.ic_delete_24),
+            swipeLeft = { position ->
+                val item = adapter.getRowType(position)
+                if (item.getRowType() == RowTypes.ITEM.ordinal) {
+                    viewModel.deleteItemFromList(
+                        ListCategoryItemCrossRef(
+                            listId = listId,
+                            itemId = item.getData()[RowTypeKey.ITEM_ID]?.toLongOrNull() ?: 0,
+                            categoryId = item.getData()[RowTypeKey.CATEGORY_ID]?.toLongOrNull() ?: 0
+                        ))
+                }
+            }))
         itemTouchHelper.attachToRecyclerView(binding.listRecyclerview)
     }
 }

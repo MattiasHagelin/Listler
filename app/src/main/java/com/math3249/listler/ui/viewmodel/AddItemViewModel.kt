@@ -8,9 +8,12 @@ import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
 import com.math3249.listler.model.crossref.ListItemCrossRef
 import com.math3249.listler.model.entity.Category
 import com.math3249.listler.model.entity.Item
+import com.math3249.listler.util.CATEGORY_ID
+import com.math3249.listler.util.ITEM_ID
+import com.math3249.listler.util.LIST_ID
 import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.message.Message
-import com.math3249.listler.util.message.Type.MessageType
+import com.math3249.listler.util.message.type.MessageType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -38,9 +41,9 @@ class AddItemViewModel(
             addItemFragmentMessage.postValue(Message(
                 MessageType.ITEM_INSERTED,
                 true,
-                listId,
-                categoryId,
-                itemId
+                mutableMapOf(LIST_ID to listId,
+                    CATEGORY_ID to categoryId,
+                    ITEM_ID to itemId)
             ))
         }
     }

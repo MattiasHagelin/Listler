@@ -62,4 +62,6 @@
         <item name="android:fontFamily">@font/rubik_regular</item>
     </style>
 
+    <style name="Theme.Listler.CardLayout" parent="Widget.MaterialComponents.CardView"/>
+
 </resources>

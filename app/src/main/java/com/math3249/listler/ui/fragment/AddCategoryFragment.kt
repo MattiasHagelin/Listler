@@ -13,7 +13,7 @@ import com.math3249.listler.databinding.FragmentAddCategoryBinding
 import com.math3249.listler.ui.viewmodel.AddCategoryViewModel
 import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.Utils
-import com.math3249.listler.util.message.Type.MessageType
+import com.math3249.listler.util.message.type.MessageType
 
 class AddCategoryFragment: Fragment() {
 

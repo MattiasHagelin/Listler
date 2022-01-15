@@ -5,28 +5,37 @@ import android.view.MenuItem
 import com.math3249.listler.R
 
 class MenuUtil {
-        fun hide(item: MenuItem){
-            item.isVisible = false
-            item.isEnabled = false
+    private val actionSettings = R.id.action_settings
+    private val toStoreManagement = R.id.to_store_management
+    private val listDetailsToCompletedItems = R.id.list_details_to_completed_items
+
+    fun hide(item: MenuItem){
+        item.isVisible = false
+        item.isEnabled = false
+    }
+
+    fun show(item: MenuItem) {
+        item.isVisible = true
+        item.isEnabled = true
+    }
+
+    fun prepareMenu(menu: Menu, fragment: String) {
+        when (fragment) {
+            LIST_DETAIL_FRAGMENT -> hideListOverViewMenuItems(menu)
+            ADD_STORE_FRAGMENT -> hideListOverViewMenuItems(menu)
+            STORE_DETAILS_FRAGMENT -> hideListOverViewMenuItems(menu)
+            STORES_FRAGMENT -> hideListOverViewMenuItems(menu)
         }
 
-        fun show(item: MenuItem) {
-            item.isVisible = true
-            item.isEnabled = true
-        }
+    }
 
-        fun prepareMenu(menu: Menu, fragment: String) {
-            when (fragment) {
-                LIST_DETAIL_FRAGMENT -> {
-                    hide(menu.findItem(R.id.action_settings))
-                    show(menu.findItem(R.id.list_details_to_completed_items))
-                }
-            }
+    private fun hideListOverViewMenuItems(menu: Menu) {
+        hide(menu.findItem(toStoreManagement))
+        hide(menu.findItem(actionSettings))
+    }
 
-        }
-
-        fun toggle(item: MenuItem) {
-            if (item.isVisible) hide(item)
-            else show(item)
-        }
+    fun toggle(item: MenuItem) {
+        if (item.isVisible) hide(item)
+        else show(item)
+    }
 }

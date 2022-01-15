@@ -6,5 +6,5 @@ import androidx.room.Entity
 data class StoreCategoryCrossRef(
     val storeId: Long = 0,
     val categoryId: Long = 0,
-    val sortOrder: Int
+    val sortOrder: Long = -1
 )

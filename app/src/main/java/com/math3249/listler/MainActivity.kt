@@ -48,6 +48,10 @@ class MainActivity : AppCompatActivity() {
                 startActivity(i)
                 true
             }
+            R.id.to_store_management -> {
+                findNavController(R.id.nav_host_fragment_content_main).navigate(R.id.action_listOverviewFragment_to_storesFragment)
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

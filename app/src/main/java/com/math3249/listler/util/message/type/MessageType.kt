@@ -1,6 +1,7 @@
-package com.math3249.listler.util.message.Type
+package com.math3249.listler.util.message.type
 
 enum class MessageType {
+    STORE_INSERTED,
     LIST_INSERTED,
     CATEGORY_IN_DATABASE,
     CATEGORY_INPUT_EMPTY,
@@ -10,5 +11,6 @@ enum class MessageType {
     ITEM_IN_DATABASE,
     ITEM_INPUT_EMPTY,
     ITEM_MISSING_CATEGORY,
+    INVALID_INPUT,
     READ_MESSAGE;
 }

@@ -13,6 +13,7 @@ import com.math3249.listler.App
 import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentAddListBinding
 import com.math3249.listler.ui.viewmodel.ListOverviewViewModel
+import com.math3249.listler.util.LIST_ID
 import com.math3249.listler.util.Type
 import com.math3249.listler.util.message.Message
 
@@ -55,7 +56,7 @@ class AddListFragment: Fragment() {
         viewModel.message.observe(this.viewLifecycleOwner) { message ->
             Message.redirectMessage(message.type,
                 AddListFragmentDirections
-                    .actionAddListFragmentToListDetailsFragment(message.listId),
+                    .actionAddListFragmentToListDetailsFragment(message.getId(LIST_ID)),
                 findNavController()
             )
         }

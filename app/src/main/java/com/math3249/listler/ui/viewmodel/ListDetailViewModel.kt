@@ -8,9 +8,12 @@ import com.math3249.listler.model.crossref.ListCategoryCrossRef
 import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
 import com.math3249.listler.model.crossref.ListItemCrossRef
 import com.math3249.listler.model.entity.Item
+import com.math3249.listler.util.CATEGORY_ID
+import com.math3249.listler.util.ITEM_ID
+import com.math3249.listler.util.LIST_ID
 import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.message.Message
-import com.math3249.listler.util.message.Type.MessageType
+import com.math3249.listler.util.message.type.MessageType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -55,9 +58,10 @@ class ListDetailViewModel(
                         Message(
                             MessageType.ITEM_MISSING_CATEGORY,
                             false,
-                            listId,
-                            -1,
-                            item.itemId,
+                            mutableMapOf(LIST_ID to listId,
+                                CATEGORY_ID to -1,
+                                ITEM_ID to item.itemId
+                            ),
                             item.name
                         )
                     )
@@ -69,9 +73,10 @@ class ListDetailViewModel(
                     Message(
                         MessageType.ITEM_MISSING_CATEGORY,
                         false,
-                        listId,
-                        -1,
-                        item.itemId,
+                        mutableMapOf(LIST_ID to listId,
+                            CATEGORY_ID to -1,
+                            ITEM_ID to item.itemId
+                        ),
                         item.name
                     )
                 )

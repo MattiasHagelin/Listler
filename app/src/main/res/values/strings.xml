@@ -37,5 +37,8 @@
     <string name="completed_item_time_limit_title">Completed item time limit</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="store_management">Store management</string>
+    <string name="hint_store_name">Store name</string>
+    <string name="add_store">Add store</string>
 
 </resources>

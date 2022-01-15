@@ -1,9 +1,10 @@
 package com.math3249.listler.util
 
 import android.view.View
+import android.widget.AutoCompleteTextView
 import com.google.android.material.snackbar.Snackbar
 import com.math3249.listler.R
-import com.math3249.listler.util.message.Type.MessageType
+import com.math3249.listler.util.message.type.MessageType
 
 object Utils {
     /**
@@ -32,6 +33,10 @@ object Utils {
             MessageType.CATEGORY_INPUT_EMPTY -> snackbar(view, StringUtil.getString(R.string.i_category_input_empty))
             else -> return
         }
+    }
+
+    fun clearItemDropdown(dropDown: AutoCompleteTextView) {
+        dropDown.setText("", false)
     }
     /*
     fun messageHandler(message: Message,

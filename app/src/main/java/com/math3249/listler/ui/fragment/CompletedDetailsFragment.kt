@@ -17,10 +17,8 @@ import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
 import com.math3249.listler.ui.adapter.ListDetailAdapter
 import com.math3249.listler.ui.listview.*
 import com.math3249.listler.ui.viewmodel.ListDetailViewModel
-import com.math3249.listler.util.Settings
-import com.math3249.listler.util.StringUtil
-import com.math3249.listler.util.Swipe
-import com.math3249.listler.util.message.Type.MessageType
+import com.math3249.listler.util.*
+import com.math3249.listler.util.message.type.MessageType
 
 class CompletedDetailsFragment: Fragment() {
 
@@ -139,13 +137,13 @@ class CompletedDetailsFragment: Fragment() {
 
         viewModel.listDetailFragmentMessage.observe(this.viewLifecycleOwner) {
             message ->
-            if (!message!!.messageRead) {
+            if (!message!!.read) {
                 when (message.type) {
                     MessageType.ITEM_MISSING_CATEGORY -> {
                         val action = ListDetailsFragmentDirections
                             .actionListDetailsFragmentToAddItemFragment(
-                                message.listId,
-                                message.itemId,
+                                message.getId(LIST_ID),
+                                message.getId(ITEM_ID),
                                 message.extra,
                                 -1,
                                 ""
@@ -157,8 +155,8 @@ class CompletedDetailsFragment: Fragment() {
                     else -> {
                         val action = ListDetailsFragmentDirections
                             .actionListDetailsFragmentToAddItemFragment(
-                                message.listId,
-                                message.itemId,
+                                message.getId(LIST_ID),
+                                message.getId(ITEM_ID),
                                 message.extra,
                                 -1,
                                 ""
@@ -178,9 +176,10 @@ class CompletedDetailsFragment: Fragment() {
     }
 
     private fun swipe(listId: Long, viewModel: ListDetailViewModel, adapter: ListDetailAdapter){
-        val itemTouchHelper = ItemTouchHelper(Swipe(
-            AppCompatResources.getDrawable(this.requireContext(), R.drawable.ic_delete_24)
-        ) { position ->
+        val itemTouchHelper = ItemTouchHelper(DragSwipe(
+            swipeDirs = ItemTouchHelper.LEFT,
+            icon = AppCompatResources.getDrawable(this.requireContext(), R.drawable.ic_delete_24),
+         swipeLeft = { position ->
             val item = adapter.getRowType(position)
             if (item.getRowType() == RowTypes.ITEM.ordinal) {
                 viewModel.deleteItemFromList(
@@ -191,7 +190,7 @@ class CompletedDetailsFragment: Fragment() {
                     )
                 )
             }
-        })
+        }))
         itemTouchHelper.attachToRecyclerView(binding.listRecyclerview)
     }
 

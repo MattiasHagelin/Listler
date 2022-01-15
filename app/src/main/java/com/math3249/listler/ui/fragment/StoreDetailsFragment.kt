@@ -48,7 +48,7 @@ class StoreDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _adapter = StoreDetailsAdapter()
+        _adapter = StoreDetailsAdapter(mutableListOf())
         subscribeToStoreCategories()
         subscribeToCategories()
         swipe(adapter)

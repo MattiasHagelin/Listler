@@ -7,12 +7,11 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.math3249.listler.databinding.StoreCategoryBinding
 import com.math3249.listler.model.StoreCategoryWithCategoryName
+import com.math3249.listler.ui.adapter.adapterinterface.PersistMovement
 import java.util.*
 
-class StoreDetailsAdapter : ListAdapter<StoreCategoryWithCategoryName, StoreDetailsAdapter.StoreDetailsHolder>(DiffCallback), AdapterType {
-
-    private var _list = mutableListOf<StoreCategoryWithCategoryName>()
-    val list get() = _list
+class StoreDetailsAdapter(override var _list: MutableList<StoreCategoryWithCategoryName>) : ListAdapter<StoreCategoryWithCategoryName, StoreDetailsAdapter.StoreDetailsHolder>(DiffCallback),
+    AdapterType, PersistMovement<StoreCategoryWithCategoryName> {
 
     class StoreDetailsHolder(
         private val list: MutableList<StoreCategoryWithCategoryName>,
@@ -49,14 +48,18 @@ class StoreDetailsAdapter : ListAdapter<StoreCategoryWithCategoryName, StoreDeta
         holder.bind(category)
     }
 
-    fun moveItem(from: Int, to: Int) {
-        Collections.swap(list, from, to)
-    }
-
-    fun removeItem(position: Int) {
-        list.removeAt(position)
-    }
     override fun getAdapterType(): Adapters {
         return Adapters.STORE_DETAIL_ADAPTER
     }
+
+    override fun moveItem(from: Int, to: Int) {
+        Collections.swap(list, from, to)
+    }
+
+    override fun removeItem(position: Int) {
+        list.removeAt(position)
+    }
+
+    override val list get() = _list
+
 }

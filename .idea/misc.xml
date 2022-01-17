@@ -3,9 +3,17 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.20572916666666666" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/drawable/ic_add_24.xml" value="0.21458333333333332" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/drawable/ic_add_24_foreground.xml" value="0.21458333333333332" />
+        <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/drawable/ic_cancel_24.xml" value="0.20625" />
+        <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/drawable/ic_completed_items_24.xml" value="0.20572916666666666" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/drawable/ic_delete_24.xml" value="0.2125" />
+        <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/drawable/ic_done_24.xml" value="0.20625" />
+        <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/drawable/ic_launcher_background.xml" value="0.20572916666666666" />
+        <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/drawable/ic_medication_24.xml" value="0.20572916666666666" />
+        <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/drawable/ic_menu_24.xml" value="0.20572916666666666" />
+        <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/drawable/ic_search_black_24dp.xml" value="0.20572916666666666" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/drawable/ic_shopping_cart_24.xml" value="0.1388888888888889" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/drawable/tab_icon_color_selector.xml" value="0.20677083333333332" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/font-v26/font.xml" value="0.228125" />
@@ -24,6 +32,7 @@
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/fragment_completed_items.xml" value="0.18645833333333334" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/fragment_list_detail_tab.xml" value="0.190625" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/fragment_list_details.xml" value="0.14666666666666667" />
+        <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/fragment_list_details_tab.xml" value="0.2586050724637681" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/fragment_list_overview.xml" value="0.1" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/fragment_shopping_list.xml" value="0.19322916666666667" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/fragment_store_details.xml" value="0.30570652173913043" />
@@ -35,13 +44,17 @@
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/list_details_category.xml" value="0.1" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/list_details_category_item.xml" value="0.19010416666666666" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/list_item_list.xml" value="0.1" />
+        <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/standard_toolbar.xml" value="0.2" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/store.xml" value="0.2966485507246377" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/store_category.xml" value="0.25" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/switch_item.xml" value="0.2" />
+        <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/toolbar_standard.xml" value="0.2" />
+        <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/layout/toolbar_two_buttons.xml" value="0.22" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/menu/menu_add_store.xml" value="0.3671875" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/menu/menu_completed_details.xml" value="0.18645833333333334" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/menu/menu_list_details.xml" value="0.18645833333333334" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/menu/menu_main.xml" value="0.1" />
+        <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/menu/menu_two_buttons.xml" value="0.35572916666666665" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/mipmap-anydpi-v26/ic_add_24.xml" value="0.13425925925925927" />
         <entry key="..\:/Users/matti/Documents/AndroidStudioProjects/Listler/app/src/main/res/xml/preferences.xml" value="0.19791666666666666" />
       </map>

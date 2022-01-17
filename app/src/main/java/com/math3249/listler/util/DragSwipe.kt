@@ -8,6 +8,7 @@ import android.view.View
 import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.math3249.listler.ui.adapter.ViewHolderFactory
 
 class DragSwipe(
     val dragDirs: Int = 0,
@@ -39,6 +40,14 @@ class DragSwipe(
         }
     }
 
+    override fun getSwipeDirs(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder
+    ): Int {
+        return if (viewHolder is ViewHolderFactory.ListDetailCategoryHolder) 0
+            else super.getSwipeDirs(recyclerView, viewHolder)
+    }
+
     override fun onChildDraw(
         c: Canvas,
         recyclerView: RecyclerView,
@@ -54,6 +63,20 @@ class DragSwipe(
             setIcon(itemView, c, icon)
         }
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+    }
+
+    override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+        super.onSelectedChanged(viewHolder, actionState)
+        if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
+            viewHolder?.itemView?.scaleY = 1.3f
+            viewHolder?.itemView?.alpha = 0.7f
+        }
+    }
+
+    override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        super.clearView(recyclerView, viewHolder)
+        viewHolder.itemView.scaleY = 1.0f
+        viewHolder.itemView.alpha = 1.0f
     }
 
     private fun setBackground(view: View, dX: Float, c: Canvas, @ColorInt color: Int) {

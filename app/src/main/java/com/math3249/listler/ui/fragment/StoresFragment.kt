@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.math3249.listler.App
+import com.math3249.listler.MainActivity
 import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentStoresBinding
 import com.math3249.listler.ui.adapter.StoresAdapter
@@ -33,6 +34,7 @@ class StoresFragment : Fragment() {
     ): View {
         _binding = FragmentStoresBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
+        (activity as MainActivity).supportActionBar?.show()
         return binding.root
     }
 
@@ -51,7 +53,7 @@ class StoresFragment : Fragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        MenuUtil().prepareMenu(menu, STORES_FRAGMENT)
+        MenuUtil.prepareMenu(menu, STORES_FRAGMENT)
     }
 
     private fun createStoreAdapter(): StoresAdapter {

@@ -1,7 +1,7 @@
 package com.math3249.listler.data.dao
 
 import androidx.room.*
-import com.math3249.listler.model.ListWithCategoriesAndItems
+import com.math3249.listler.model.ListWithData
 import com.math3249.listler.model.crossref.ListCategoryCrossRef
 import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
 import com.math3249.listler.model.crossref.ListItemCrossRef
@@ -21,7 +21,7 @@ abstract class ListDetailDao: BaseDao() {
 
     @Transaction
     @Query("SELECT * FROM list WHERE list.listId = :listId")
-    abstract fun getListWithCategoriesAndItemsById(listId: Long): Flow<ListWithCategoriesAndItems>
+    abstract fun getListData(listId: Long): Flow<ListWithData>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insert(listCategory: ListCategoryCrossRef): Long

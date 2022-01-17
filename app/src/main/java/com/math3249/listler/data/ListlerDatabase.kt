@@ -15,7 +15,7 @@ import com.math3249.listler.model.entity.List
 import com.math3249.listler.model.entity.Store
 import com.math3249.listler.util.DATABASE_NAME
 
-@Database(version = 9,
+@Database(version = 10,
     entities = [
     Item::class,
     List::class,

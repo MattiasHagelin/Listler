@@ -6,7 +6,12 @@
         android:id="@+id/list_details_to_completed_items"
         android:title="@string/completed_items"
         android:orderInCategory="10"
-        android:icon="@drawable/ic_completed_items_24"
+        android:icon="@drawable/ic_menu_24"
         app:showAsAction="always">
+        <menu>
+            <item
+                android:title="Test" />
+
+        </menu>
     </item>
 </menu>

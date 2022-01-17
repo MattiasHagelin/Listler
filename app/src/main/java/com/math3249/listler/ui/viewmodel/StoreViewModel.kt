@@ -49,7 +49,7 @@ class StoreViewModel(
         }
     }
 
-    fun addCategoryToStore(storeId: Long, name: String){
+    fun addCategoryToStore(storeId: Long, name: String, sortOrder: Long){
         viewModelScope.launch(Dispatchers.IO) {
             var categoryId = storeDao.getCategoryIdByName(name)
             if (categoryId <= 0) categoryId = storeDao.insert(Category(name = name))//If not insert new category
@@ -57,7 +57,8 @@ class StoreViewModel(
             storeDao.insert(
                 StoreCategoryCrossRef(
                     storeId,
-                    categoryId
+                    categoryId,
+                    sortOrder
             ))
         }
     }

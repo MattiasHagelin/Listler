@@ -8,8 +8,13 @@
             name="item"
             type="com.math3249.listler.model.entity.Item" />
     </data>
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Theme.Listler.CardLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp">
+
     <androidx.constraintlayout.widget.ConstraintLayout
-        style="@style/Theme.Listler.Category.Item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -30,4 +35,5 @@
             app:layout_constraintTop_toBottomOf="@id/item_name"
             app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
 </layout>

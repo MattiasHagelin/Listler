@@ -10,9 +10,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.math3249.listler.App
+import com.math3249.listler.MainActivity
 import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentListOverviewBinding
 import com.math3249.listler.ui.adapter.ListOverviewAdapter
+import com.math3249.listler.ui.fragment.navargs.ListDetailsArgs
 import com.math3249.listler.ui.viewmodel.ListOverviewViewModel
 import com.math3249.listler.util.DragSwipe
 
@@ -33,6 +35,8 @@ class ListOverviewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentListOverviewBinding.inflate(inflater, container, false)
+        setHasOptionsMenu(true)
+        (activity as MainActivity).supportActionBar?.show()
         return binding.root
     }
 
@@ -41,8 +45,16 @@ class ListOverviewFragment : Fragment() {
 
         val adapter = ListOverviewAdapter {
             list -> val action = ListOverviewFragmentDirections
+            .actionListOverviewFragmentToListDetailsTabFragment2(
+                ListDetailsArgs(
+                    list.listId,
+                    list.name
+                )
+            )
+            findNavController().navigate(action)/*val action = ListOverviewFragmentDirections
             .actionListOverviewFragmentToListDetailsFragment(list.listId)
             findNavController().navigate(action)
+            */
         }
 
         viewModel.allLists.observe(this.viewLifecycleOwner) {

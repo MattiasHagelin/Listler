@@ -10,11 +10,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.math3249.listler.App
+import com.math3249.listler.MainActivity
 import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentStoreDetailsBinding
+import com.math3249.listler.model.StoreCategoryWithCategoryName
 import com.math3249.listler.model.crossref.StoreCategoryCrossRef
 import com.math3249.listler.ui.adapter.StoreDetailsAdapter
 import com.math3249.listler.ui.viewmodel.StoreViewModel
@@ -42,13 +45,14 @@ class StoreDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentStoreDetailsBinding.inflate(inflater, container, false)
-        setHasOptionsMenu(true)
+        setHasOptionsMenu(false)
+        (activity as MainActivity).supportActionBar?.hide()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _adapter = StoreDetailsAdapter(mutableListOf())
+        _adapter = StoreDetailsAdapter()
         subscribeToStoreCategories()
         subscribeToCategories()
         swipe(adapter)
@@ -57,22 +61,30 @@ class StoreDetailsFragment : Fragment() {
             addCategoryToStore.setEndIconOnClickListener{
                 val input = StringUtil.standardizeItemName(categoryDropdown.text.toString())
                 if (input != null)
-                    viewModel.addCategoryToStore(navArgs.storeId, input)
+                    addCategoryToStore(input)
                 else
                     Utils.snackbar(MessageType.INVALID_INPUT, binding.categoryRecyclerview)
-                Utils.clearItemDropdown(binding.categoryDropdown)
+                Utils.clearDropdown(binding.categoryDropdown)
+            }
+
+            categoryDropdown.setOnItemClickListener { _, _, _, _ ->
+                addCategoryToStore(categoryDropdown.text.toString())
+                Utils.clearDropdown(categoryDropdown)
+            }
+            actionBar.cancelButton.setOnClickListener {
+                findNavController().navigate(R.id.action_storeDetailsFragment_to_storesFragment)
+            }
+            actionBar.saveButton.setOnClickListener {
+                //Persist movement changes when the fragment is destroyed
+                viewModel.updateSortOrder(navArgs.storeId, adapter.list)
+                findNavController().navigate(R.id.action_storeDetailsFragment_to_storesFragment)
             }
         }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        MenuUtil().prepareMenu(menu, STORE_DETAILS_FRAGMENT)
-    }
-    override fun onDestroy() {
-        super.onDestroy()
-        //Persist movement changes when the fragment is destroyed
-        viewModel.updateSortOrder(navArgs.storeId, adapter.list)
+        MenuUtil.prepareMenu(menu, STORE_DETAILS_FRAGMENT)
     }
 
     private fun subscribeToStoreCategories() {
@@ -92,6 +104,11 @@ class StoreDetailsFragment : Fragment() {
                 ArrayAdapter(requireContext(), R.layout.add_list_dropdown, arr
             ))
         }
+    }
+
+    private fun addCategoryToStore(input: String) {
+        viewModel.addCategoryToStore(navArgs.storeId, input, calculateNextSortOrder()
+            )
     }
 
     private fun swipe(adapter: StoreDetailsAdapter) {
@@ -116,5 +133,18 @@ class StoreDetailsFragment : Fragment() {
         )
         val itemTouchHelper = ItemTouchHelper(dragSwipe)
         itemTouchHelper.attachToRecyclerView(binding.categoryRecyclerview)
+    }
+
+    internal object Compare{
+        fun max(first: StoreCategoryWithCategoryName,
+                second: StoreCategoryWithCategoryName): StoreCategoryWithCategoryName {
+            return if (first.storeCat.sortOrder > second.storeCat.sortOrder) first
+                else second
+        }
+    }
+
+    private fun calculateNextSortOrder(): Long {
+        val maxSort = adapter.list.reduceOrNull(Compare::max)
+        return  maxSort?.storeCat?.sortOrder?.plus(1) ?: 0
     }
 }

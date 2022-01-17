@@ -23,7 +23,7 @@
             android:name=".MainActivity"
             android:exported="true"
             android:label="Listler"
-            android:theme="@style/Theme.Listler.NoActionBar">
+            android:theme="@style/Theme.Listler">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

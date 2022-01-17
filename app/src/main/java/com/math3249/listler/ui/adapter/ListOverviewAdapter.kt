@@ -10,7 +10,8 @@ import com.math3249.listler.databinding.ListItemListBinding
 import com.math3249.listler.model.entity.List
 import com.math3249.listler.util.StringUtil
 
-class ListOverviewAdapter(private val clickListener: (List) -> Unit
+class ListOverviewAdapter(
+    private val clickListener: (List) -> Unit
 ): ListAdapter<List, ListOverviewAdapter.ListOverviewHolder>(DiffCallback) {
 
     class ListOverviewHolder(

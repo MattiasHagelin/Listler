@@ -6,14 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.math3249.listler.App
 import com.math3249.listler.databinding.FragmentAddCategoryBinding
 import com.math3249.listler.ui.viewmodel.AddCategoryViewModel
-import com.math3249.listler.util.StringUtil
-import com.math3249.listler.util.Utils
-import com.math3249.listler.util.message.type.MessageType
 
 class AddCategoryFragment: Fragment() {
 
@@ -54,13 +50,14 @@ class AddCategoryFragment: Fragment() {
     }
 
     private fun addCategoryToDatabase() {
-        val name = StringUtil.standardizeItemName(binding.categoryInput.text.toString())
+        /*val name = StringUtil.standardizeItemName(binding.categoryInput.text.toString())
         if (name != null) {
             viewModel.addCategory(name)
             viewModel.insertId.observe(this.viewLifecycleOwner) {
                 if (it != null) {
                     val action = AddCategoryFragmentDirections
-                        .actionAddCategoryFragmentToAddItemFragment(navArgs.listId
+                        .actionAddCategoryFragmentToAddItemFragment(
+                            navArgs.listId
                                 , navArgs.itemId
                                 , navArgs.itemName
                                 , it
@@ -72,6 +69,6 @@ class AddCategoryFragment: Fragment() {
                 }
             }
         } else Utils.snackbar(MessageType.CATEGORY_INPUT_EMPTY, binding.root)
-
+        */
     }
 }

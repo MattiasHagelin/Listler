@@ -13,6 +13,7 @@ import com.math3249.listler.App
 import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentAddItemBinding
 import com.math3249.listler.model.entity.Item
+import com.math3249.listler.ui.fragment.navargs.ListDetailsArgs
 import com.math3249.listler.ui.viewmodel.AddItemViewModel
 import com.math3249.listler.util.CATEGORY_ID
 import com.math3249.listler.util.ITEM_ID
@@ -58,8 +59,8 @@ class AddItemFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val itemId = navArgs.itemId
-        val categoryId = navArgs.categoryId
+        val itemId = navArgs.addItemData.itemId
+        val categoryId = navArgs.addItemData.catId
 
         viewModel.allCategories.observe(this.viewLifecycleOwner) {
             categories ->
@@ -89,7 +90,7 @@ class AddItemFragment: Fragment() {
 
                 if (checkUserInput(itemName, categoryName)) {
                     viewModel.updateItem(
-                        navArgs.listId,
+                        navArgs.addItemData.listId,
                         itemId,
                         itemName!!,
                         categoryId,
@@ -99,7 +100,7 @@ class AddItemFragment: Fragment() {
             }
         } else {
             binding.addItem.visibility = View.VISIBLE
-            binding.itemInput.setText(navArgs.itemName)
+            binding.itemInput.setText(navArgs.addItemData.itemName)
         }
 
         viewModel.addItemFragmentMessage.observe(this.viewLifecycleOwner) {
@@ -109,7 +110,7 @@ class AddItemFragment: Fragment() {
                     else -> {
                         //MessageType.ITEM_INSERTED ->
                         viewModel.addItemToList(
-                            navArgs.listId,
+                            navArgs.addItemData.listId,
                             message.getId(CATEGORY_ID),
                             message.getId(ITEM_ID),
                             false
@@ -122,11 +123,11 @@ class AddItemFragment: Fragment() {
 
         }
         binding.apply {
-            itemInput.setText(navArgs.itemName)
-            categoryDropdown.setText(navArgs.categoryName)
+            itemInput.setText(navArgs.addItemData.itemName)
+            categoryDropdown.setText(navArgs.addItemData.catName)
             addItem.setOnClickListener {
                 if (checkUserInput(getItemName(), getCategoryName())) {
-                    viewModel.addItemAndCategory(navArgs.listId, getItemName()!!, getCategoryName()!!)
+                    viewModel.addItemAndCategory(navArgs.addItemData.listId, getItemName()!!, getCategoryName()!!)
                 }
             }
         }
@@ -134,7 +135,9 @@ class AddItemFragment: Fragment() {
 
     private fun navigateBack() {
         val action = AddItemFragmentDirections
-            .actionAddItemFragmentToListDetailsFragment(navArgs.listId)
+            .actionAddItemFragmentToListDetailsTabFragment(
+                ListDetailsArgs(navArgs.addItemData.listId, navArgs.addItemData.listName)
+            )
         findNavController().navigate(action)
     }
 

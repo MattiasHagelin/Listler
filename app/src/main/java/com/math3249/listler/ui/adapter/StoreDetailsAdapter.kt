@@ -10,8 +10,10 @@ import com.math3249.listler.model.StoreCategoryWithCategoryName
 import com.math3249.listler.ui.adapter.adapterinterface.PersistMovement
 import java.util.*
 
-class StoreDetailsAdapter(override var _list: MutableList<StoreCategoryWithCategoryName>) : ListAdapter<StoreCategoryWithCategoryName, StoreDetailsAdapter.StoreDetailsHolder>(DiffCallback),
+class StoreDetailsAdapter: ListAdapter<StoreCategoryWithCategoryName, StoreDetailsAdapter.StoreDetailsHolder>(DiffCallback),
     AdapterType, PersistMovement<StoreCategoryWithCategoryName> {
+
+    override val list = mutableListOf<StoreCategoryWithCategoryName>()
 
     class StoreDetailsHolder(
         private val list: MutableList<StoreCategoryWithCategoryName>,
@@ -59,7 +61,5 @@ class StoreDetailsAdapter(override var _list: MutableList<StoreCategoryWithCateg
     override fun removeItem(position: Int) {
         list.removeAt(position)
     }
-
-    override val list get() = _list
 
 }

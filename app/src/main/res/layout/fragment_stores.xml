@@ -7,6 +7,9 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragment.StoresFragment">
 
+    <!-- include layout="@layout/toolbar_standard"
+        android:id="@+id/action_bar" / -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/stores_recyclerview"
         android:layout_width="match_parent"

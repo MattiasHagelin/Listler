@@ -8,5 +8,6 @@ data class ListCategoryItemCrossRef(
     val categoryId: Long,
     val itemId: Long,
     val done: Boolean = false,
-    var modifiedAt: Long = 0
+    var modifiedAt: Long = 0,
+    var sortOrder: Long = -1
 )

@@ -35,7 +35,7 @@ object Utils {
         }
     }
 
-    fun clearItemDropdown(dropDown: AutoCompleteTextView) {
+    fun clearDropdown(dropDown: AutoCompleteTextView) {
         dropDown.setText("", false)
     }
     /*

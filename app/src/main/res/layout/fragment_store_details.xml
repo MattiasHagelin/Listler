@@ -10,6 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:context=".ui.fragment.StoreDetailsFragment">
+        <include layout="@layout/toolbar_two_buttons"
+            android:id="@+id/action_bar"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/add_category_to_Store"
@@ -17,9 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/half_standard_margin"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/action_bar"
             app:endIconMode="custom"
             app:endIconDrawable="@drawable/ic_add_24"
             android:hint="@string/hint_add_category"

@@ -3,7 +3,7 @@ package com.math3249.listler.ui.viewmodel
 import androidx.lifecycle.*
 import com.math3249.listler.R
 import com.math3249.listler.data.dao.ListDetailDao
-import com.math3249.listler.model.ListWithCategoriesAndItems
+import com.math3249.listler.model.ListWithData
 import com.math3249.listler.model.crossref.ListCategoryCrossRef
 import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
 import com.math3249.listler.model.crossref.ListItemCrossRef
@@ -25,8 +25,8 @@ class ListDetailViewModel(
     val allItems = listDetailDao.getItems().asLiveData()
 
 
-    fun getListWithCategoriesAndItems(id: Long): LiveData<ListWithCategoriesAndItems> {
-        return listDetailDao.getListWithCategoriesAndItemsById(id).asLiveData()
+    fun getListWithCategoriesAndItems(id: Long): LiveData<ListWithData> {
+        return listDetailDao.getListData(id).asLiveData()
     }
 
     /**

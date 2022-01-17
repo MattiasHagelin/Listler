@@ -4,6 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SettingsActivity">
+    <include layout="@layout/toolbar_standard"
+        android:id="@+id/action_bar" />
 
     <FrameLayout
         android:id="@+id/settings_layout"

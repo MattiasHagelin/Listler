@@ -8,22 +8,23 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.math3249.listler.App
 import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentListDetailsBinding
-import com.math3249.listler.model.ListWithCategoriesAndItems
+import com.math3249.listler.model.ListWithData
 import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
 import com.math3249.listler.model.entity.Item
 import com.math3249.listler.ui.adapter.ListDetailAdapter
+import com.math3249.listler.ui.fragment.navargs.AddItemArgs
+import com.math3249.listler.ui.fragment.navargs.ListDetailsArgs
 import com.math3249.listler.ui.listview.*
 import com.math3249.listler.ui.viewmodel.ListDetailViewModel
 import com.math3249.listler.util.*
 import com.math3249.listler.util.message.type.MessageType
 
-class ListDetailsFragment: Fragment() {
-    private val navArgs: ListDetailsFragmentArgs by navArgs()
+class ListDetailsFragment(val listDetailsArgs: ListDetailsArgs): Fragment() {
+    private val listId = listDetailsArgs.listId
 
     private val viewModel: ListDetailViewModel by activityViewModels {
         ListDetailViewModel.ListDetailViewModelFactory (
@@ -32,7 +33,7 @@ class ListDetailsFragment: Fragment() {
     }
 
     private lateinit var items: List<Item>
-    private  lateinit var selectedList: ListWithCategoriesAndItems
+    private  lateinit var selectedList: ListWithData
 
     private var _binding: FragmentListDetailsBinding? = null
     private val binding get() = _binding!!
@@ -47,24 +48,9 @@ class ListDetailsFragment: Fragment() {
         return binding.root
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        MenuUtil().prepareMenu(menu, LIST_DETAIL_FRAGMENT)
-    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.list_details_to_completed_items -> {
-                val action = ListDetailsFragmentDirections
-                    .actionListDetailsFragmentToCompletedDetailsFragment(navArgs.listId)
-                findNavController().navigate(action)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val listId = navArgs.listId
         val adapter = createAdapter()
 
 
@@ -106,26 +92,32 @@ class ListDetailsFragment: Fragment() {
             if (!message!!.read) {
                 when (message.type) {
                     MessageType.ITEM_MISSING_CATEGORY -> {
-                        val action = ListDetailsFragmentDirections
-                            .actionListDetailsFragmentToAddItemFragment(
-                                message.getId(LIST_ID),
-                                message.getId(ITEM_ID),
-                                message.extra,
-                                -1,
-                                ""
+                        val action = ListDetailsTabFragmentDirections
+                            .actionListDetailsTabFragmentToAddItemFragment(
+                                AddItemArgs(
+                                    listId,
+                                    listDetailsArgs.listName,
+                                    -1,
+                                    "",
+                                    message.getId(ITEM_ID),
+                                    message.extra
+                                )
                             )
                         message.clear()
                         findNavController().navigate(action)
                     }
                     MessageType.READ_MESSAGE -> {}
                     else -> {
-                        val action = ListDetailsFragmentDirections
-                            .actionListDetailsFragmentToAddItemFragment(
-                                message.getId(LIST_ID),
-                                message.getId(ITEM_ID),
-                                message.extra,
-                                -1,
-                                ""
+                        val action = ListDetailsTabFragmentDirections
+                            .actionListDetailsTabFragmentToAddItemFragment(
+                                AddItemArgs(
+                                    listId,
+                                    listDetailsArgs.listName,
+                                    -1,
+                                    "",
+                                    message.getId(ITEM_ID),
+                                    message.extra
+                                )
                             )
                         message.clear()
                         findNavController().navigate(action)
@@ -138,7 +130,7 @@ class ListDetailsFragment: Fragment() {
     private fun subscribeToList(
         adapter: ListDetailAdapter
     ) {
-        viewModel.getListWithCategoriesAndItems(navArgs.listId)
+        viewModel.getListWithCategoriesAndItems(listId)
             .observe(this.viewLifecycleOwner) { selectedList ->
                 this.selectedList = selectedList
                 selectedList.let { list ->
@@ -198,18 +190,21 @@ class ListDetailsFragment: Fragment() {
 
     private fun createAdapter() = ListDetailAdapter({ item ->
         if (item.getRowType() == RowTypes.ITEM.ordinal) {
-            viewModel.updateItemOnList(navArgs.listId, item.id, true)
+            viewModel.updateItemOnList(listId, item.id, true)
         }
     },
         { item ->
             if (item.getRowType() == RowTypes.ITEM.ordinal) {
-                val action = ListDetailsFragmentDirections
-                    .actionListDetailsFragmentToAddItemFragment(
-                        navArgs.listId,
-                        item.getData()[RowTypeKey.ITEM_ID]?.toLongOrNull() ?: -1,
-                        item.getData()[RowTypeKey.ITEM] ?: "",
-                        item.getData()[RowTypeKey.CATEGORY_ID]?.toLongOrNull() ?: -1,
-                        item.getData()[RowTypeKey.CATEGORY] ?: ""
+                val action = ListDetailsTabFragmentDirections
+                    .actionListDetailsTabFragmentToAddItemFragment(
+                        AddItemArgs(
+                            listId,
+                            listDetailsArgs.listName,
+                            item.getData()[RowTypeKey.CATEGORY_ID]?.toLongOrNull() ?: -1,
+                            item.getData()[RowTypeKey.CATEGORY] ?: "",
+                            item.getData()[RowTypeKey.ITEM_ID]?.toLongOrNull() ?: -1,
+                            item.getData()[RowTypeKey.ITEM] ?: ""
+                        )
                     )
                 findNavController().navigate(action)
             }// else {
@@ -237,8 +232,8 @@ class ListDetailsFragment: Fragment() {
 
         if (selectedItem != null) {
           if (selectedItem.itemId > 0) {
-              viewModel.addItemToList(navArgs.listId, selectedItem)
-              Utils.clearItemDropdown(binding.itemDropdown)
+              viewModel.addItemToList(listId, selectedItem)
+              Utils.clearDropdown(binding.itemDropdown)
           }
         } else
             Utils.snackbar(MessageType.ITEM_NOT_IN_DATABASE, binding.listRecyclerview)
@@ -254,12 +249,17 @@ class ListDetailsFragment: Fragment() {
         if (StringUtil.validateUserInput(getItemNameFromItemDropdown())) {
                 if (!itemExists()) {
                     //add new item to database
-                    val action = ListDetailsFragmentDirections
-                        .actionListDetailsFragmentToAddItemFragment(navArgs.listId
-                            , 0
-                            , getItemNameFromItemDropdown()
-                            , 0
-                            , "")
+                    val action = ListDetailsTabFragmentDirections
+                        .actionListDetailsTabFragmentToAddItemFragment(
+                            AddItemArgs(
+                                listId,
+                                listDetailsArgs.listName,
+                                0,
+                                "",
+                                0,
+                                getItemNameFromItemDropdown()
+                            )
+                        )
                     findNavController().navigate(action)
                 } else {
                     addToList()

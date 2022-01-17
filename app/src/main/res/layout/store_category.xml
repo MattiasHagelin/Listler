@@ -14,7 +14,7 @@
         style="@style/Theme.Listler.CardLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="1dp">
+        android:layout_margin="2dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -22,24 +22,25 @@
 
             <TextView
                 android:id="@+id/category_name"
-                style="@style/Theme.Listler.Category.Item.TextView"
+                style="@style/Theme.Listler.StandardText"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/standard_margin"
-                android:gravity="center"
+                android:layout_margin="@dimen/half_standard_margin"
                 android:text="@{storeCat.categoryName}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="Name" />
 
             <TextView
                 android:id="@+id/category_id"
-                style="@style/Theme.Listler.Category.Item.TextView"
+                style="@style/Theme.Listler.StandardText"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/standard_margin"
+                android:layout_margin="@dimen/half_standard_margin"
                 app:layout_constraintStart_toEndOf="@id/category_name"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="Name" />
 
             <TextView
@@ -47,9 +48,10 @@
                 style="@style/Theme.Listler.Category.Item.TextView"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/standard_margin"
+                android:layout_margin="@dimen/half_standard_margin"
                 app:layout_constraintStart_toEndOf="@id/category_id"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="Name" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>

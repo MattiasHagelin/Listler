@@ -10,7 +10,7 @@ import com.math3249.listler.model.entity.Category
 import com.math3249.listler.model.entity.Item
 import com.math3249.listler.model.entity.List
 
-data class ListWithCategoriesAndItems(
+data class ListWithData(
     @Embedded val list: List,
     @Relation(
         parentColumn = "listId",

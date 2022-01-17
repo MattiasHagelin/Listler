@@ -17,6 +17,7 @@ class SettingsActivity : AppCompatActivity() {
 
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(binding.actionBar.toolbar)
 
         supportActionBar?.title = StringUtil.getString(R.string.settings_title)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

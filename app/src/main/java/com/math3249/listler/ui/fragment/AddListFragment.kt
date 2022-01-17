@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.math3249.listler.App
 import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentAddListBinding
+import com.math3249.listler.ui.fragment.navargs.ListDetailsArgs
 import com.math3249.listler.ui.viewmodel.ListOverviewViewModel
 import com.math3249.listler.util.LIST_ID
 import com.math3249.listler.util.Type
@@ -56,7 +57,9 @@ class AddListFragment: Fragment() {
         viewModel.message.observe(this.viewLifecycleOwner) { message ->
             Message.redirectMessage(message.type,
                 AddListFragmentDirections
-                    .actionAddListFragmentToListDetailsFragment(message.getId(LIST_ID)),
+                    .actionAddListFragmentToListDetailsTabFragment(
+                        ListDetailsArgs(message.getId(LIST_ID), binding.nameInput.text.toString())
+                    ),
                 findNavController()
             )
         }

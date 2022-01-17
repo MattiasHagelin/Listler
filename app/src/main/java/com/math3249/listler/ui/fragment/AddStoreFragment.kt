@@ -1,12 +1,15 @@
 package com.math3249.listler.ui.fragment
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.math3249.listler.App
-import com.math3249.listler.R
+import com.math3249.listler.MainActivity
 import com.math3249.listler.databinding.FragmentAddStoreBinding
 import com.math3249.listler.model.entity.Store
 import com.math3249.listler.ui.viewmodel.StoreViewModel
@@ -31,34 +34,30 @@ class AddStoreFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentAddStoreBinding.inflate(inflater, container, false)
+        setHasOptionsMenu(false)
+        (activity as MainActivity).supportActionBar?.hide()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setHasOptionsMenu(true)
+
         subscribeToMessage()
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        super.onPrepareOptionsMenu(menu)
-        MenuUtil().prepareMenu(menu, ADD_STORE_FRAGMENT)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_add_store, menu)
-        //super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.menu_save_store -> {
+        binding.apply {
+            actionBar.saveButton.setOnClickListener {
                 viewModel.addStore(
                     Store(name = binding.nameInput.text.toString())
                 )
             }
+            actionBar.cancelButton.setOnClickListener {
+                findNavController().navigateUp()
+            }
         }
-        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        MenuUtil.prepareMenu(menu, ADD_STORE_FRAGMENT)
     }
 
     private fun subscribeToMessage() {

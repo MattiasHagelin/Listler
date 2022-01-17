@@ -1,35 +1,36 @@
 package com.math3249.listler.ui.fragment
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.math3249.listler.App
 import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentCompletedDetailsBinding
-import com.math3249.listler.model.ListWithCategoriesAndItems
+import com.math3249.listler.model.ListWithData
 import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
 import com.math3249.listler.ui.adapter.ListDetailAdapter
 import com.math3249.listler.ui.listview.*
 import com.math3249.listler.ui.viewmodel.ListDetailViewModel
-import com.math3249.listler.util.*
-import com.math3249.listler.util.message.type.MessageType
+import com.math3249.listler.util.DragSwipe
+import com.math3249.listler.util.Settings
+import com.math3249.listler.util.StringUtil
 
-class CompletedDetailsFragment: Fragment() {
+class CompletedDetailsFragment(val listId: Long): Fragment() {
 
-    private val navArgs: ListDetailsFragmentArgs by navArgs()
+    //TODO:private val navArgs: ListDetailsFragmentArgs by navArgs()
     private val viewModel: ListDetailViewModel by activityViewModels {
         ListDetailViewModel.ListDetailViewModelFactory (
             (activity?.application as App).database.listDetailDao()
         )
     }
 
-    private  lateinit var selectedList: ListWithCategoriesAndItems
+    private  lateinit var selectedList: ListWithData
     //private var selectedItem: Item? = null
 
     private var _binding: FragmentCompletedDetailsBinding? = null
@@ -50,43 +51,37 @@ class CompletedDetailsFragment: Fragment() {
         return binding.root
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_completed_details, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        if (id == R.id.completed_items_to_list_details) {
-            val action = CompletedDetailsFragmentDirections
-                .actionCompletedDetailsFragmentToListDetailsFragment(navArgs.listId)
-            findNavController().navigate(action)
-            return true
-        }
-        return super.onOptionsItemSelected(item)
-    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val listId = navArgs.listId
+        //TODO:val listId = navArgs.listId
         val adapter = ListDetailAdapter ({ item ->
             if (item.getRowType() == RowTypes.ITEM.ordinal) {
                 viewModel.updateItemOnList(listId, item.id, false)
             }
         },
             { item ->
-                if (item.getRowType() == RowTypes.ITEM.ordinal) {
-                    val action = ListDetailsFragmentDirections
-                        .actionListDetailsFragmentToAddItemFragment(
-                            listId,
-                            item.getData()[RowTypeKey.ITEM_ID]?.toLongOrNull() ?: -1,
-                            item.getData()[RowTypeKey.ITEM] ?: "",
-                            item.getData()[RowTypeKey.CATEGORY_ID]?.toLongOrNull() ?: -1,
-                            item.getData()[RowTypeKey.CATEGORY] ?: ""
+                /*if (item.getRowType() == RowTypes.ITEM.ordinal) {
+                    val action = ListDetailsTabFragmentDirections
+                        .actionListDetailsTabFragmentToAddItemFragment(
+                            AddItemArgs(
+                                listId,
+                                "",
+                                item.getData()[RowTypeKey.CATEGORY_ID]?.toLongOrNull() ?: -1,
+                                item.getData()[RowTypeKey.CATEGORY] ?: "",
+                                item.getData()[RowTypeKey.ITEM_ID]?.toLongOrNull() ?: -1,
+                                item.getData()[RowTypeKey.ITEM] ?: ""
+                            )
+
+
+
+
+
                         )
                     findNavController().navigate(action)
                 }// else {
                     //val action = ListDetailsFragmentDirections
                       //  .
-                //}
+                //}*/
             })
         /*
         val adapter = ListDetailCategoryAdapter (
@@ -138,6 +133,7 @@ class CompletedDetailsFragment: Fragment() {
         viewModel.listDetailFragmentMessage.observe(this.viewLifecycleOwner) {
             message ->
             if (!message!!.read) {
+                /*
                 when (message.type) {
                     MessageType.ITEM_MISSING_CATEGORY -> {
                         val action = ListDetailsFragmentDirections
@@ -165,6 +161,7 @@ class CompletedDetailsFragment: Fragment() {
                         findNavController().navigate(action)
                     }
                 }
+                */
             }
         }
 

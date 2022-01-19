@@ -5,17 +5,21 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.math3249.listler.App
 import com.math3249.listler.MainActivity
 import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentStoresBinding
+import com.math3249.listler.model.entity.Store
 import com.math3249.listler.ui.adapter.StoresAdapter
 import com.math3249.listler.ui.viewmodel.StoreViewModel
-import com.math3249.listler.util.MenuUtil
-import com.math3249.listler.util.STORES_FRAGMENT
+import com.math3249.listler.util.*
+import com.math3249.listler.util.dialogs.InputDialog
+import com.math3249.listler.util.message.type.MessageType
 
 class StoresFragment : Fragment() {
 
@@ -42,11 +46,19 @@ class StoresFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val adapter = createStoreAdapter()
         subscribeToStores(adapter)
+        subscribeToMessage()
+        swipe(adapter)
+        childFragmentManager.setFragmentResultListener(REQUEST_KEY, this.viewLifecycleOwner) { _, bundle ->
+            val input = bundle.getString(INPUT_KEY)
+            viewModel.addStore(Store(name = input!!))
+        }
 
         binding.apply {
             storesRecyclerview.adapter = adapter
             addStoreButton.setOnClickListener {
-                findNavController().navigate(R.id.action_storesFragment_to_addStoreFragment)
+                InputDialog(
+                    getString(R.string.add_store))
+                    .show(childFragmentManager, InputDialog.TAG)
             }
         }
     }
@@ -68,5 +80,35 @@ class StoresFragment : Fragment() {
         viewModel.stores.observe(this.viewLifecycleOwner) { stores ->
             adapter.submitList(stores)
         }
+    }
+
+    private fun subscribeToMessage() {
+        viewModel.message.observe(this.viewLifecycleOwner) { message ->
+            if (!message.read) {
+                when (message.type) {
+                    MessageType.STORE_INSERTED -> {
+                        val action = StoresFragmentDirections
+                            .actionStoresFragmentToStoreDetailsFragment(message.getId(STORE_ID), message.extra)
+                        findNavController().navigate(action)
+                    }
+                    MessageType.STORE_NEW -> {
+                        viewModel.addStore(Store(name = message.extra))
+                    }
+                    else -> {}
+                }
+                message.clear()
+            }
+        }
+    }
+
+    private fun swipe(adapter: StoresAdapter) {
+        val itemTouchHelper = ItemTouchHelper(DragSwipe(
+            swipeDirs = ItemTouchHelper.LEFT,
+            icon = AppCompatResources.getDrawable(this.requireContext(), R.drawable.ic_delete_24),
+            swipeLeft = { position ->
+                val item = adapter.getItemViewType(position)
+                viewModel.delete(adapter.getSelectedStore(position))
+            }))
+        itemTouchHelper.attachToRecyclerView(binding.storesRecyclerview)
     }
 }

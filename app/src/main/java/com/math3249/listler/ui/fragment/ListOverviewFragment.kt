@@ -17,6 +17,11 @@ import com.math3249.listler.ui.adapter.ListOverviewAdapter
 import com.math3249.listler.ui.fragment.navargs.ListDetailsArgs
 import com.math3249.listler.ui.viewmodel.ListOverviewViewModel
 import com.math3249.listler.util.DragSwipe
+import com.math3249.listler.util.INPUT_KEY
+import com.math3249.listler.util.KEY_LIST_TYPE
+import com.math3249.listler.util.REQUEST_KEY
+import com.math3249.listler.util.dialogs.AddListDialog
+import com.math3249.listler.util.dialogs.InputDialog
 
 class ListOverviewFragment : Fragment() {
     private val viewModel: ListOverviewViewModel by activityViewModels {
@@ -63,14 +68,22 @@ class ListOverviewFragment : Fragment() {
             }
         }
 
+        childFragmentManager.setFragmentResultListener(REQUEST_KEY, this.viewLifecycleOwner) { _, bundle ->
+            viewModel.addList(
+                name = bundle.getString(INPUT_KEY)!!,
+                type = bundle.getString(KEY_LIST_TYPE)!!
+            )
+        }
+
         swipe(viewModel, adapter)
 
         binding.apply {
             listOverviewRecyclerview.adapter = adapter
             addNewListButton.setOnClickListener {
-                findNavController().navigate(
-                    R.id.action_listOverviewFragment_to_addListFragment
-                )
+                AddListDialog().show(childFragmentManager, InputDialog.TAG)
+                //findNavController().navigate(
+                //    R.id.action_listOverviewFragment_to_addListFragment
+                //)
             }
         }
     }

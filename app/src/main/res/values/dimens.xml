@@ -4,6 +4,7 @@
     <dimen name="standard_padding">16dp</dimen>
     <dimen name="half_standard_margin">8dp</dimen>
     <dimen name="double_standard_margin">32dp</dimen>
-    <dimen name="standard_toolbar_height">56dp</dimen>
-    <dimen name="half_actionbar_size">28dp</dimen>
+    <dimen name="half_action_bar_height">28dp</dimen>
+    <dimen name="standard_action_bar_height">56dp</dimen>
+    <dimen name="double_action_bar_height">112dp</dimen>
 </resources>

@@ -2,11 +2,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.math3249.listler.MainActivity">
-    <item
-        android:title="@string/settings_title"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_menu_24">
-        <menu>
             <item
                 android:id="@+id/action_settings"
                 android:orderInCategory="100"
@@ -18,8 +13,6 @@
                 android:orderInCategory="20"
                 android:title="@string/store_management"
                 app:showAsAction="never" />
-        </menu>
-    </item>
 
 
     <!-- <item

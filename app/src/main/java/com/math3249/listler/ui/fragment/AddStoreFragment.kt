@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.math3249.listler.App
 import com.math3249.listler.MainActivity
+import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentAddStoreBinding
 import com.math3249.listler.model.entity.Store
 import com.math3249.listler.ui.viewmodel.StoreViewModel
@@ -44,6 +45,7 @@ class AddStoreFragment : Fragment() {
 
         subscribeToMessage()
         binding.apply {
+            actionBar.title.text = getString(R.string.add_store)
             actionBar.saveButton.setOnClickListener {
                 viewModel.addStore(
                     Store(name = binding.nameInput.text.toString())

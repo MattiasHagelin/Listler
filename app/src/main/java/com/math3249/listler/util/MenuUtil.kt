@@ -9,7 +9,6 @@ import com.math3249.listler.R
 object MenuUtil {
     private val actionSettings = R.id.action_settings
     private val toStoreManagement = R.id.to_store_management
-    private val listDetailsToCompletedItems = R.id.list_details_to_completed_items
 
     fun prepareToolBar(activity: MainActivity, toolbar: Toolbar, inflateMenu: Boolean) {
         activity.supportActionBar?.hide()

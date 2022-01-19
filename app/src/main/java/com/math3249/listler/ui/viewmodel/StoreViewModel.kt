@@ -49,6 +49,12 @@ class StoreViewModel(
         }
     }
 
+    fun delete(store: Store) {
+        viewModelScope.launch {
+            storeDao.delete(store)
+        }
+    }
+
     fun addCategoryToStore(storeId: Long, name: String, sortOrder: Long){
         viewModelScope.launch(Dispatchers.IO) {
             var categoryId = storeDao.getCategoryIdByName(name)

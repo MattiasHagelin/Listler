@@ -23,15 +23,14 @@
         <TextView
             android:id="@+id/name"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/double_standard_margin"
-            android:gravity="center_vertical"
             android:text="@{store.name}"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintStart_toEndOf="parent"
-            tools:text="Name" />
+            tools:text="Name"
+            style="@style/Theme.Listler.StandardText"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>

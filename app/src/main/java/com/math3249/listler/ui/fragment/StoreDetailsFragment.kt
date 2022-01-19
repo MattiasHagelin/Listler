@@ -71,6 +71,7 @@ class StoreDetailsFragment : Fragment() {
                 addCategoryToStore(categoryDropdown.text.toString())
                 Utils.clearDropdown(categoryDropdown)
             }
+            actionBar.title.text = navArgs.storeName
             actionBar.cancelButton.setOnClickListener {
                 findNavController().navigate(R.id.action_storeDetailsFragment_to_storesFragment)
             }

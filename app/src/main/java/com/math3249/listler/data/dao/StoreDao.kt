@@ -36,5 +36,8 @@ abstract class StoreDao: BaseDao() {
     @Delete
     abstract suspend fun delete(storeCategory: StoreCategoryCrossRef)
 
+    @Delete
+    abstract suspend fun delete(store: Store)
+
 
 }

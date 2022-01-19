@@ -47,4 +47,8 @@ class StoresAdapter(
         }
         holder.bind(store)
     }
+
+    fun getSelectedStore(position: Int): Store {
+        return getItem(position)
+    }
 }

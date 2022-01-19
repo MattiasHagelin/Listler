@@ -2,6 +2,7 @@ package com.math3249.listler.util.message.type
 
 enum class MessageType {
     STORE_INSERTED,
+    STORE_NEW,
     LIST_INSERTED,
     CATEGORY_IN_DATABASE,
     CATEGORY_INPUT_EMPTY,

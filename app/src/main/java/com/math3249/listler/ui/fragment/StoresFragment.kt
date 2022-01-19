@@ -16,9 +16,9 @@ import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentStoresBinding
 import com.math3249.listler.model.entity.Store
 import com.math3249.listler.ui.adapter.StoresAdapter
+import com.math3249.listler.ui.fragment.dialog.AddStoreDialog
 import com.math3249.listler.ui.viewmodel.StoreViewModel
 import com.math3249.listler.util.*
-import com.math3249.listler.util.dialogs.InputDialog
 import com.math3249.listler.util.message.type.MessageType
 
 class StoresFragment : Fragment() {
@@ -38,7 +38,7 @@ class StoresFragment : Fragment() {
     ): View {
         _binding = FragmentStoresBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
-        (activity as MainActivity).supportActionBar?.show()
+        prepareActionBar()
         return binding.root
     }
 
@@ -49,16 +49,18 @@ class StoresFragment : Fragment() {
         subscribeToMessage()
         swipe(adapter)
         childFragmentManager.setFragmentResultListener(REQUEST_KEY, this.viewLifecycleOwner) { _, bundle ->
-            val input = bundle.getString(INPUT_KEY)
-            viewModel.addStore(Store(name = input!!))
+            val error = bundle.getString(KEY_ERROR)
+            if (error == null) {
+                val input = bundle.getString(INPUT_KEY)
+                viewModel.addStore(Store(name = input!!))
+            } else
+                Utils.snackbar(MessageType.INVALID_INPUT, binding.root)
         }
 
         binding.apply {
             storesRecyclerview.adapter = adapter
             addStoreButton.setOnClickListener {
-                InputDialog(
-                    getString(R.string.add_store))
-                    .show(childFragmentManager, InputDialog.TAG)
+                AddStoreDialog().show(childFragmentManager, AddStoreDialog.TAG)
             }
         }
     }
@@ -110,5 +112,11 @@ class StoresFragment : Fragment() {
                 viewModel.delete(adapter.getSelectedStore(position))
             }))
         itemTouchHelper.attachToRecyclerView(binding.storesRecyclerview)
+    }
+
+    private fun prepareActionBar() {
+        val actionBar = (activity as MainActivity).supportActionBar
+        actionBar?.show()
+        actionBar?.title = getString(R.string.title_stores)
     }
 }

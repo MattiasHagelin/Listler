@@ -37,9 +37,9 @@
                 app:layout_constraintEnd_toStartOf="@id/save_button"
                 android:padding="0dp"
                 android:layout_weight="1"
-                android:text="@string/cancel"
+                android:text="@string/btn_cancel"
                 app:icon="@drawable/ic_cancel_24"
-                android:contentDescription="@string/cancel" />
+                android:contentDescription="@string/btn_cancel" />
 
             <Button
                 android:id="@+id/save_button"
@@ -51,9 +51,9 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:padding="0dp"
                 android:layout_weight="1"
-                android:text="@string/save"
+                android:text="@string/btn_save"
                 app:icon="@drawable/ic_done_24"
-                android:contentDescription="@string/save" />
+                android:contentDescription="@string/btn_save" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.appcompat.widget.Toolbar>
 

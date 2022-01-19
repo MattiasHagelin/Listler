@@ -1,4 +1,4 @@
-package com.math3249.listler.util.dialogs
+package com.math3249.listler.ui.fragment.dialog
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -22,15 +22,15 @@ class AddListDialog: DialogFragment() {
         val layout = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_add_list, null)
         val inputEditText = layout.findViewById<TextInputEditText>(R.id.dialog_input)
-        layout.findViewById<TextInputLayout>(R.id.dialog_label).hint = getString(R.string.name_list_hint)
+        layout.findViewById<TextInputLayout>(R.id.dialog_label).hint = getString(R.string.hint_name_list)
 
 
         val dropDown = layout.findViewById<AutoCompleteTextView>(R.id.list_type_dropdown)
         prepareListTypeDropDown(dropDown)
 
         builder.setView(layout)
-            .setTitle(getString(R.string.add_new_list))
-            .setPositiveButton(StringUtil.getString(R.string.add_new_list)) { _, _->
+            .setTitle(getString(R.string.title_new_list))
+            .setPositiveButton(StringUtil.getString(R.string.btn_add_list)) { _, _->
                 val input = StringUtil.standardizeItemName(
                     inputEditText.text.toString())
                 val type = StringUtil.standardizeItemName(dropDown.text.toString())
@@ -38,7 +38,7 @@ class AddListDialog: DialogFragment() {
                     Utils.snackbar(MessageType.INVALID_INPUT, layout)
                 else
                     setFragmentResult(REQUEST_KEY, bundleOf(INPUT_KEY to input, KEY_LIST_TYPE to type))
-            }.setNegativeButton(StringUtil.getString(R.string.cancel)) { dialog, _ ->
+            }.setNegativeButton(StringUtil.getString(R.string.btn_cancel)) { dialog, _ ->
                 dialog.cancel()
             }
         return builder.create()

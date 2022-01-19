@@ -40,7 +40,7 @@ class ListDetailsTabFragment : Fragment() {
     private fun getTabTitle(position: Int): String {
         return when (position) {
             UNFINISHED_ITEMS -> navArgs.listData.listName
-            else -> getString(R.string.finished_items)
+            else -> getString(R.string.title_finished_items)
         }
     }
 

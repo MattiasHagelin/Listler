@@ -20,8 +20,8 @@ import com.math3249.listler.util.DragSwipe
 import com.math3249.listler.util.INPUT_KEY
 import com.math3249.listler.util.KEY_LIST_TYPE
 import com.math3249.listler.util.REQUEST_KEY
-import com.math3249.listler.util.dialogs.AddListDialog
-import com.math3249.listler.util.dialogs.InputDialog
+import com.math3249.listler.ui.fragment.dialog.AddListDialog
+import com.math3249.listler.ui.fragment.dialog.AddStoreDialog
 
 class ListOverviewFragment : Fragment() {
     private val viewModel: ListOverviewViewModel by activityViewModels {
@@ -41,6 +41,7 @@ class ListOverviewFragment : Fragment() {
     ): View {
         _binding = FragmentListOverviewBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
+
         (activity as MainActivity).supportActionBar?.show()
         return binding.root
     }
@@ -80,7 +81,7 @@ class ListOverviewFragment : Fragment() {
         binding.apply {
             listOverviewRecyclerview.adapter = adapter
             addNewListButton.setOnClickListener {
-                AddListDialog().show(childFragmentManager, InputDialog.TAG)
+                AddListDialog().show(childFragmentManager, AddStoreDialog.TAG)
                 //findNavController().navigate(
                 //    R.id.action_listOverviewFragment_to_addListFragment
                 //)

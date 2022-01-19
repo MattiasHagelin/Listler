@@ -45,7 +45,7 @@ class AddStoreFragment : Fragment() {
 
         subscribeToMessage()
         binding.apply {
-            actionBar.title.text = getString(R.string.add_store)
+            actionBar.title.text = getString(R.string.btn_add_store)
             actionBar.saveButton.setOnClickListener {
                 viewModel.addStore(
                     Store(name = binding.nameInput.text.toString())

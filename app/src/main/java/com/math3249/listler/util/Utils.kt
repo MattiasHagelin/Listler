@@ -31,6 +31,7 @@ object Utils {
             MessageType.ITEM_NOT_IN_DATABASE -> snackbar(view, StringUtil.getString(R.string.e_item_does_not_exist))
             MessageType.ITEM_INPUT_EMPTY -> snackbar(view, StringUtil.getString(R.string.i_item_input_empty))
             MessageType.CATEGORY_INPUT_EMPTY -> snackbar(view, StringUtil.getString(R.string.i_category_input_empty))
+            MessageType.INVALID_INPUT -> snackbar(view, StringUtil.getString(R.string.i_list_name_empty))//TODO: make more flexible to handle all types of empty name errors
             else -> return
         }
     }

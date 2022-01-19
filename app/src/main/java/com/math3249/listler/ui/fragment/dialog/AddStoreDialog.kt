@@ -1,4 +1,4 @@
-package com.math3249.listler.util.dialogs
+package com.math3249.listler.ui.fragment.dialog
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -11,14 +11,11 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.math3249.listler.R
 import com.math3249.listler.util.INPUT_KEY
+import com.math3249.listler.util.KEY_ERROR
 import com.math3249.listler.util.REQUEST_KEY
 import com.math3249.listler.util.StringUtil
-import com.math3249.listler.util.Utils
-import com.math3249.listler.util.message.type.MessageType
 
-class InputDialog(
-    val title: String
-    ): DialogFragment(){
+class AddStoreDialog(): DialogFragment(){
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireContext())
@@ -28,21 +25,21 @@ class InputDialog(
         layout.findViewById<TextInputLayout>(R.id.dialog_label).hint = getString(R.string.hint_store_name)
 
         builder.setView(layout)
-            .setTitle(title)
-            .setPositiveButton(StringUtil.getString(R.string.add_store)) { _, _->
+            .setTitle(getString(R.string.title_new_store))
+            .setPositiveButton(StringUtil.getString(R.string.btn_add_store)) { _, _->
                 val input = StringUtil.standardizeItemName(
                     inputEditText.text.toString())
                 if (input == null || input.trim() == "")
-                    Utils.snackbar(MessageType.INVALID_INPUT, layout)
+                    setFragmentResult(REQUEST_KEY, bundleOf(KEY_ERROR to getString(R.string.i_list_name_empty)))
                 else
                     setFragmentResult(REQUEST_KEY, bundleOf(INPUT_KEY to input))
-            }.setNegativeButton(StringUtil.getString(R.string.cancel)) { dialog, _ ->
+            }.setNegativeButton(StringUtil.getString(R.string.btn_cancel)) { dialog, _ ->
                 dialog.cancel()
             }
         return builder.create()
     }
 
     companion object {
-        const val TAG = "InputDialog"
+        const val TAG = "AddStoreDialog"
     }
 }

@@ -39,18 +39,18 @@
             android:id="@+id/add_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/add_category"/>
+            android:text="@string/btn_add_category"/>
         <com.google.android.material.button.MaterialButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="@string/update_item"
+            android:text="@string/btn_update_item"
             android:visibility="gone" />
         <com.google.android.material.button.MaterialButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="@string/delete_item"
+            android:text="@string/btn_delete_item"
             android:visibility="gone" />
     </LinearLayout>
 

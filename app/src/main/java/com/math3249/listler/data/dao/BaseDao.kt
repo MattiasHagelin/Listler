@@ -17,6 +17,8 @@ abstract class BaseDao {
     @Query("SELECT * FROM Item WHERE itemId = :itemId")
     abstract fun getItemById(itemId: Long): Flow<Item>
 
+    @Query("SELECT COUNT(*) FROM listcategoryitemcrossref WHERE categoryId = :categoryId AND listId = :listId")
+    abstract fun countItemsInCategory(listId: Long, categoryId: Long): Int
 
     //CATEGORY
     @Query("SELECT categoryId FROM listcategoryitemcrossref WHERE listId = :listId AND itemId = :itemId")

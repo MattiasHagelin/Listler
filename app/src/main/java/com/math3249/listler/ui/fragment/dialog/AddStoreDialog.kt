@@ -10,10 +10,10 @@ import androidx.fragment.app.setFragmentResult
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.math3249.listler.R
-import com.math3249.listler.util.INPUT_KEY
-import com.math3249.listler.util.KEY_ERROR
-import com.math3249.listler.util.REQUEST_KEY
+import com.math3249.listler.util.KEY_INPUT
+import com.math3249.listler.util.KEY_REQUEST
 import com.math3249.listler.util.StringUtil
+import com.math3249.listler.util.message.Message
 
 class AddStoreDialog(): DialogFragment(){
 
@@ -29,10 +29,17 @@ class AddStoreDialog(): DialogFragment(){
             .setPositiveButton(StringUtil.getString(R.string.btn_add_store)) { _, _->
                 val input = StringUtil.standardizeItemName(
                     inputEditText.text.toString())
-                if (input == null || input.trim() == "")
-                    setFragmentResult(REQUEST_KEY, bundleOf(KEY_ERROR to getString(R.string.i_list_name_empty)))
+                if (input == null)
+                    setFragmentResult(KEY_REQUEST, bundleOf(KEY_INPUT to Message(
+                        Message.Type.INVALID_INPUT,
+                        false
+                    )))
                 else
-                    setFragmentResult(REQUEST_KEY, bundleOf(INPUT_KEY to input))
+                    setFragmentResult(KEY_REQUEST, bundleOf(KEY_INPUT to Message(
+                        Message.Type.STORE_NEW,
+                        true,
+                        _extra = input
+                    )))
             }.setNegativeButton(StringUtil.getString(R.string.btn_cancel)) { dialog, _ ->
                 dialog.cancel()
             }

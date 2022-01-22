@@ -1,17 +1,4 @@
 package com.math3249.listler.util.message.type
 
 enum class MessageType {
-    STORE_INSERTED,
-    STORE_NEW,
-    LIST_INSERTED,
-    CATEGORY_IN_DATABASE,
-    CATEGORY_INPUT_EMPTY,
-    ITEM_IN_LIST,
-    ITEM_NOT_IN_DATABASE,
-    ITEM_INSERTED,
-    ITEM_IN_DATABASE,
-    ITEM_INPUT_EMPTY,
-    ITEM_MISSING_CATEGORY,
-    INVALID_INPUT,
-    READ_MESSAGE;
 }

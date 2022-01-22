@@ -10,14 +10,13 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.math3249.listler.App
 import com.math3249.listler.MainActivity
-import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentAddStoreBinding
 import com.math3249.listler.model.entity.Store
 import com.math3249.listler.ui.viewmodel.StoreViewModel
 import com.math3249.listler.util.ADD_STORE_FRAGMENT
 import com.math3249.listler.util.MenuUtil
 import com.math3249.listler.util.STORE_ID
-import com.math3249.listler.util.message.type.MessageType
+import com.math3249.listler.util.message.Message.Type
 
 class AddStoreFragment : Fragment() {
 
@@ -45,7 +44,7 @@ class AddStoreFragment : Fragment() {
 
         subscribeToMessage()
         binding.apply {
-            actionBar.title.text = getString(R.string.btn_add_store)
+            //actionBar.title.text = getString(R.string.btn_add_store)
             actionBar.saveButton.setOnClickListener {
                 viewModel.addStore(
                     Store(name = binding.nameInput.text.toString())
@@ -64,9 +63,9 @@ class AddStoreFragment : Fragment() {
 
     private fun subscribeToMessage() {
         viewModel.message.observe(this.viewLifecycleOwner) { message ->
-            if (!message.read) {
+            if (message.type != null) {
                 when (message.type) {
-                    MessageType.STORE_INSERTED -> {
+                    Type.STORE_INSERTED -> {
                         val action = AddStoreFragmentDirections
                             .actionAddStoreFragmentToStoreDetailsFragment(message.getId(STORE_ID), message.extra)
                         findNavController().navigate(action)

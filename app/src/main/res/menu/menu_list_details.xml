@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-            <item
-                android:title="Test" />
-
+    <item
+        android:id="@+id/action_list_history"
+        android:orderInCategory="10"
+        app:showAsAction="never"
+        android:title="@string/title_history" />
+    <item
+        android:id="@+id/manage_categories"
+        android:orderInCategory="20"
+        app:showAsAction="never"
+        android:title="@string/category_management" />
+    <item
+        android:id="@+id/list_settings"
+        android:orderInCategory="30"
+        app:showAsAction="never"
+        android:title="@string/list_settings" />
 </menu>

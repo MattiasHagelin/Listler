@@ -13,7 +13,8 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.math3249.listler.R
 import com.math3249.listler.util.*
-import com.math3249.listler.util.message.type.MessageType
+import com.math3249.listler.util.message.Message
+import com.math3249.listler.util.message.Message.Type
 
 class AddListDialog: DialogFragment() {
 
@@ -34,10 +35,17 @@ class AddListDialog: DialogFragment() {
                 val input = StringUtil.standardizeItemName(
                     inputEditText.text.toString())
                 val type = StringUtil.standardizeItemName(dropDown.text.toString())
-                if (input == null || type == null || input.trim() == "" || type.trim() == "")
-                    Utils.snackbar(MessageType.INVALID_INPUT, layout)
+                if (input == null || type == null)
+                    setFragmentResult(KEY_REQUEST, bundleOf(KEY_INPUT to Message(
+                        Type.INVALID_INPUT,
+                        false
+                    )))
                 else
-                    setFragmentResult(REQUEST_KEY, bundleOf(INPUT_KEY to input, KEY_LIST_TYPE to type))
+                    setFragmentResult(KEY_REQUEST, bundleOf(KEY_INPUT to Message(
+                        Type.NEW_LIST,
+                        true,
+                        _data = mutableMapOf(KEY_LIST_TYPE to type, KEY_LIST_NAME to input)
+                    )))
             }.setNegativeButton(StringUtil.getString(R.string.btn_cancel)) { dialog, _ ->
                 dialog.cancel()
             }
@@ -48,7 +56,7 @@ class AddListDialog: DialogFragment() {
         dropDown: AutoCompleteTextView
     ) {
         //Create a string array from enum of list types
-        val types = enumValues<Type>()
+        val types = enumValues<com.math3249.listler.util.Type>()
         val typesAsString = arrayOfNulls<String>(types.count())
         for (i in types.indices) {
             typesAsString[i] = types[i].toString()

@@ -16,7 +16,6 @@ import com.math3249.listler.ui.fragment.navargs.ListDetailsArgs
 import com.math3249.listler.ui.viewmodel.ListOverviewViewModel
 import com.math3249.listler.util.LIST_ID
 import com.math3249.listler.util.Type
-import com.math3249.listler.util.message.Message
 
 class AddListFragment: Fragment() {
 
@@ -55,13 +54,10 @@ class AddListFragment: Fragment() {
         binding.listTypeDropdown.setText(typesAsString[0], false)
 
         viewModel.message.observe(this.viewLifecycleOwner) { message ->
-            Message.redirectMessage(message.type,
-                AddListFragmentDirections
-                    .actionAddListFragmentToListDetailsTabFragment(
-                        ListDetailsArgs(message.getId(LIST_ID), binding.nameInput.text.toString())
-                    ),
-                findNavController()
-            )
+            val action = AddListFragmentDirections
+                .actionAddListFragmentToListDetailsTabFragment(
+                    ListDetailsArgs(message.getId(LIST_ID), binding.nameInput.text.toString()))
+                findNavController().navigate(action)
         }
 
         binding.addList.setOnClickListener {

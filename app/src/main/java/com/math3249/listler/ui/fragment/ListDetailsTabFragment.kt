@@ -2,9 +2,11 @@ package com.math3249.listler.ui.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -14,10 +16,9 @@ import com.math3249.listler.databinding.FragmentListDetailsTabBinding
 import com.math3249.listler.ui.adapter.ListDetailsTabAdapter
 import com.math3249.listler.ui.adapter.UNFINISHED_ITEMS
 
-class ListDetailsTabFragment : Fragment() {
+class ListDetailsTabFragment : Fragment(), Toolbar.OnMenuItemClickListener {
 
     private val navArgs: ListDetailsTabFragmentArgs by navArgs()
-
     private var _binding: FragmentListDetailsTabBinding? = null
     val binding get() = _binding!!
 
@@ -29,7 +30,7 @@ class ListDetailsTabFragment : Fragment() {
         val tabLayout = binding.tabs
         val viewPager = binding.viewPager
         viewPager.adapter = ListDetailsTabAdapter(this, navArgs.listData)
-        setupActionBar()
+        prepareActionbar()
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = getTabTitle(position)
         }.attach()
@@ -44,7 +45,7 @@ class ListDetailsTabFragment : Fragment() {
         }
     }
 
-    private fun setupActionBar() {
+    private fun prepareActionbar() {
         (activity as AppCompatActivity).supportActionBar?.hide()
         val toolbar = binding.toolbar
         toolbar.setNavigationIcon(R.drawable.ic_back_24)
@@ -52,5 +53,18 @@ class ListDetailsTabFragment : Fragment() {
             findNavController().navigateUp()
         }
         toolbar.inflateMenu(R.menu.menu_list_details)
+        toolbar.setOnMenuItemClickListener(this)
+    }
+
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        when(item?.itemId) {
+            R.id.action_list_history -> {
+                val action = ListDetailsTabFragmentDirections
+                    .actionListDetailsTabFragmentToListHistoryFragment(navArgs.listData)
+                findNavController().navigate(action)
+            }
+            else -> {}
+        }
+        return false
     }
 }

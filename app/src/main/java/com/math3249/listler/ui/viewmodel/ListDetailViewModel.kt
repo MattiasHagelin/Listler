@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.math3249.listler.R
 import com.math3249.listler.data.dao.ListDetailDao
 import com.math3249.listler.model.ListWithData
+import com.math3249.listler.model.ListWithItem
 import com.math3249.listler.model.crossref.ListCategoryCrossRef
 import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
 import com.math3249.listler.model.crossref.ListItemCrossRef
@@ -13,7 +14,6 @@ import com.math3249.listler.util.ITEM_ID
 import com.math3249.listler.util.LIST_ID
 import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.message.Message
-import com.math3249.listler.util.message.type.MessageType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -27,6 +27,10 @@ class ListDetailViewModel(
 
     fun getListWithCategoriesAndItems(id: Long): LiveData<ListWithData> {
         return listDetailDao.getListData(id).asLiveData()
+    }
+
+    fun getListItemHistory(listId: Long): LiveData<ListWithItem> {
+        return listDetailDao.getListItem(listId).asLiveData()
     }
 
     /**
@@ -56,13 +60,13 @@ class ListDetailViewModel(
                     //If category is missing notify fragment
                     listDetailFragmentMessage.postValue(
                         Message(
-                            MessageType.ITEM_MISSING_CATEGORY,
+                            Message.Type.ITEM_MISSING_CATEGORY,
                             false,
                             mutableMapOf(LIST_ID to listId,
                                 CATEGORY_ID to -1,
                                 ITEM_ID to item.itemId
                             ),
-                            item.name
+                            _extra = item.name
                         )
                     )
                 }
@@ -71,13 +75,13 @@ class ListDetailViewModel(
                 //Notify fragment item needs binding to category
                 listDetailFragmentMessage.postValue(
                     Message(
-                        MessageType.ITEM_MISSING_CATEGORY,
+                        Message.Type.ITEM_MISSING_CATEGORY,
                         false,
                         mutableMapOf(LIST_ID to listId,
                             CATEGORY_ID to -1,
                             ITEM_ID to item.itemId
                         ),
-                        item.name
+                        _extra = item.name
                     )
                 )
             }
@@ -89,7 +93,6 @@ class ListDetailViewModel(
         itemId: Long,
         isDone: Boolean
     ) {
-
         viewModelScope.launch(Dispatchers.IO) {
             val categoryId = listDetailDao.getCategoryId(listId, itemId)
             listDetailDao.updateWithTimeStamp(
@@ -105,15 +108,24 @@ class ListDetailViewModel(
 
     fun deleteItemFromList(listCategoryItemCrossRef: ListCategoryItemCrossRef) {
         viewModelScope.launch(Dispatchers.IO) {
+            val listId = listCategoryItemCrossRef.listId
+            val itemId = listCategoryItemCrossRef.itemId
+            val categoryId = if (listCategoryItemCrossRef.categoryId < 0)
+                listDetailDao.getCategoryId(listCategoryItemCrossRef.listId, listCategoryItemCrossRef.itemId)
+            else listCategoryItemCrossRef.categoryId
+
             //Delete item from list
-            listDetailDao.delete(ListItemCrossRef(listCategoryItemCrossRef.listId, listCategoryItemCrossRef.itemId))
+            listDetailDao.delete(ListItemCrossRef(listId, itemId))
+
             //Check if there's more items in the same category
-            if (listDetailDao.countItemsInCategory(listCategoryItemCrossRef.listId, listCategoryItemCrossRef.categoryId) == 1){
+            if (listDetailDao.countItemsInCategory(listId, categoryId) == 1)
                 //Delete category from list if there's no items in that category
-                listDetailDao.delete(ListCategoryCrossRef(listCategoryItemCrossRef.listId, listCategoryItemCrossRef.categoryId))
-            }
+                listDetailDao.delete(ListCategoryCrossRef(listId, categoryId))
+
             //Delete item category relation in list
-            listDetailDao.deleteItemFromList(listCategoryItemCrossRef)
+            listDetailDao.deleteItemFromList(
+                ListCategoryItemCrossRef(listId, categoryId, itemId)
+            )
         }
     }
 

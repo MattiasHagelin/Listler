@@ -6,4 +6,6 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="edit_blue">#1FA4D1</color>
+    <color name="delete_red">#BA1B1B</color>
 </resources>

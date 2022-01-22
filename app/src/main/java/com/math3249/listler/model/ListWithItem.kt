@@ -11,17 +11,6 @@ data class ListWithItem(
     @Embedded val list: List,
     @Relation(
         parentColumn = "listId",
-        entity = ListItemCrossRef::class,
-        entityColumn = "itemId",
-        associateBy = (Junction(
-            parentColumn = "listId",
-            entityColumn = "itemId",
-            value = ListItemCrossRef::class
-        ))
-    )
-    val listItems: kotlin.collections.List<ListItemCrossRef>,
-    @Relation(
-        parentColumn = "listId",
         entityColumn = "itemId",
         associateBy = Junction(ListItemCrossRef::class)
     )

@@ -2,7 +2,6 @@ package com.math3249.listler.data.dao
 
 import androidx.room.*
 import com.math3249.listler.model.DeleteList
-import com.math3249.listler.model.ListWithItem
 import com.math3249.listler.model.crossref.ListCategoryCrossRef
 import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
 import com.math3249.listler.model.crossref.ListItemCrossRef
@@ -13,9 +12,6 @@ import kotlinx.coroutines.flow.Flow
 interface ListDao {
     @Query("SELECT * FROM list")
     fun getAllLists(): Flow<kotlin.collections.List<List>>
-    @Transaction
-    @Query("SELECT * FROM list WHERE listId = :id")
-    fun getListWithItemsByListId(id: Long): Flow<ListWithItem>
 
     @Transaction
     @Query("SELECT * FROM list WHERE listId = :listId")

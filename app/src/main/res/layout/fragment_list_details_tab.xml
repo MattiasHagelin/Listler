@@ -29,10 +29,11 @@
 
             <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/toolbar"
-                    style="@style/Widget.MaterialComponents.Toolbar.Primary"
                     android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize">
-                <!-- Override tabIconTint attribute of style with selector -->
+                    android:layout_height="?attr/actionBarSize"
+                app:popupTheme="@style/Theme.Listler.PopupOverlay">
+                <!-- Override tabIconTint attribute of style with selector
+                    style="@style/Widget.MaterialComponents.Toolbar.Primary" -->
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">

@@ -19,6 +19,9 @@ abstract class ItemDao: BaseDao() {
     @Query("SELECT categoryId FROM listcategorycrossref WHERE listId = :listId")
     abstract fun getCategoryId(listId: Long): Long
 
+    @Query ("SELECT EXISTS (SELECT 1 FROM listcategorycrossref WHERE categoryId = :categoryId AND listId = :listId)")
+    abstract fun categoryExistsInList(listId: Long, categoryId: Long): Boolean
+
     @Insert(onConflict = OnConflictStrategy.ABORT)
     abstract suspend fun insertItem(item: Item): Long
 
@@ -39,6 +42,12 @@ abstract class ItemDao: BaseDao() {
 
     @Delete
     abstract suspend fun deleteItem(item: Item)
+
+    @Delete
+    abstract suspend fun delete(listCategory: ListCategoryCrossRef)
+
+    @Delete
+    abstract suspend fun delete(listCategoryItem: ListCategoryItemCrossRef)
 
     @Transaction
     open suspend fun insertOrUpdate(listCategoryItemCrossRef: ListCategoryItemCrossRef) {

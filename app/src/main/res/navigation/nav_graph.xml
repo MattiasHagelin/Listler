@@ -138,5 +138,17 @@
         <argument
             android:name="listData"
             app:argType="com.math3249.listler.ui.fragment.navargs.ListDetailsArgs" />
+        <action
+            android:id="@+id/action_listDetailsTabFragment_to_listHistoryFragment"
+            app:destination="@id/listHistoryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/listHistoryFragment"
+        android:name="com.math3249.listler.ui.fragment.ListHistoryFragment"
+        android:label="fragment_list_history"
+        tools:layout="@layout/fragment_list_history" >
+        <argument
+            android:name="listDetails"
+            app:argType="com.math3249.listler.ui.fragment.navargs.ListDetailsArgs" />
     </fragment>
 </navigation>

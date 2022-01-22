@@ -8,12 +8,8 @@ import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
 import com.math3249.listler.model.crossref.ListItemCrossRef
 import com.math3249.listler.model.entity.Category
 import com.math3249.listler.model.entity.Item
-import com.math3249.listler.util.CATEGORY_ID
-import com.math3249.listler.util.ITEM_ID
-import com.math3249.listler.util.LIST_ID
-import com.math3249.listler.util.StringUtil
+import com.math3249.listler.util.*
 import com.math3249.listler.util.message.Message
-import com.math3249.listler.util.message.type.MessageType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -39,7 +35,7 @@ class AddItemViewModel(
             var categoryId = itemDao.getCategoryIdByName(categoryName)
             if (categoryId <= 0L) categoryId = itemDao.insert(Category(name = categoryName))
             addItemFragmentMessage.postValue(Message(
-                MessageType.ITEM_INSERTED,
+                Message.Type.ITEM_INSERTED,
                 true,
                 mutableMapOf(LIST_ID to listId,
                     CATEGORY_ID to categoryId,
@@ -64,43 +60,57 @@ class AddItemViewModel(
     fun updateItem(
         listId: Long,
         itemId: Long,
-        itemName: String,
         categoryId: Long,
+        itemName: String,
         categoryName: String
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             itemDao.update(Item(itemId, itemName))
-            var categoryId = categoryId
+            var catIdByName = itemDao.getCategoryIdByName(categoryName)
 
             //Check if Category exists
-            if (categoryId <= 0) {
-                categoryId = itemDao.getCategoryIdByName(categoryName)
-                if (categoryId <= 0) categoryId = itemDao.insert(Category(name = categoryName))//If not insert new category
-
-
+            if (catIdByName <= 0) {
+                catIdByName = itemDao.insert(Category(name = categoryName))//If not insert new category
                 //Add category to list
-                itemDao.insert(ListCategoryCrossRef(listId, categoryId))
-            } else {
-                //Update Category
-                itemDao.update(Category(categoryId, categoryName))
-            }
+                updateCrossRef(listId, catIdByName, itemId, categoryId)
+            } else
+                updateCrossRef(listId, catIdByName, itemId, categoryId)
+        }
+    }
 
-            //Update or insert ListCategoryItem
-            itemDao.insertOrUpdate(
-                ListCategoryItemCrossRef(
+    private suspend fun updateCrossRef(
+        listId: Long,
+        catIdByName: Long,
+        itemId: Long,
+        categoryId: Long
+    ) {
+        if (!itemDao.categoryExistsInList(listId, catIdByName))
+            itemDao.insert(ListCategoryCrossRef(listId, catIdByName))
+
+        itemDao.insertOrUpdate(
+            ListCategoryItemCrossRef(
+                listId,
+                catIdByName,
+                itemId
+            )
+        )
+        //remove from old category
+        itemDao.delete(
+            ListCategoryItemCrossRef(
                 listId,
                 categoryId,
-                itemId,
-                false
+                itemId
             )
-            )
-        }
+        )
+        //Remove old category from list if there's no items left in it
+        if (itemDao.countItemsInCategory(listId, categoryId) <= 0)
+            itemDao.delete(ListCategoryCrossRef(listId, categoryId))
     }
 
     class AddItemViewModelFactory(private val itemDao: ItemDao): ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(AddItemViewModel::class.java)) {
-                @Suppress
+                @Suppress(UNCHECKED_CAST)
                 return AddItemViewModel(itemDao) as T
             }
             throw IllegalArgumentException(StringUtil.getString(R.string.e_unknown_viewmodel_class))

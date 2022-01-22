@@ -4,18 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragment.AddItemFragment"
-    android:layout_margin="@dimen/standard_margin"
-    android:padding="@dimen/standard_padding">
+    tools:context=".ui.fragment.AddItemFragment">
+
+    <include layout="@layout/toolbar_two_buttons"
+        android:id="@+id/action_bar" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/item_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/hint_item_name"
-        android:layout_marginBottom="@dimen/standard_margin"
+        android:layout_marginStart="@dimen/standard_margin"
+        android:layout_marginEnd="@dimen/standard_margin"
+        android:layout_marginTop="@dimen/half_standard_margin"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/action_bar"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/item_input"
@@ -30,6 +33,9 @@
         style="@style/ThemeOverlay.Listler.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/standard_margin"
+        android:layout_marginEnd="@dimen/standard_margin"
+        android:layout_marginTop="@dimen/half_standard_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/item_label"
         app:endIconMode="none"
@@ -49,35 +55,5 @@
             android:maxLength="20"
             />
     </com.google.android.material.textfield.TextInputLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/category_label"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:gravity="center">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/add_item"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/btn_add_item"/>
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/update_item"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@string/btn_update_item"
-            android:visibility="gone" />
-        <com.google.android.material.button.MaterialButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@string/btn_delete_item"
-            android:visibility="gone" />
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

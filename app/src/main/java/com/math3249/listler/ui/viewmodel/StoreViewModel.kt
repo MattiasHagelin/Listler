@@ -12,7 +12,6 @@ import com.math3249.listler.util.STORE_ID
 import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.UNCHECKED_CAST
 import com.math3249.listler.util.message.Message
-import com.math3249.listler.util.message.type.MessageType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -41,10 +40,10 @@ class StoreViewModel(
             val storeId = storeDao.insert(store)
             if (storeId > 0)
                 message.postValue(Message(
-                    MessageType.STORE_INSERTED,
+                    Message.Type.STORE_INSERTED,
                     true,
                     mutableMapOf(STORE_ID to storeId),
-                    store.name
+                    _extra = store.name
             ))
         }
     }

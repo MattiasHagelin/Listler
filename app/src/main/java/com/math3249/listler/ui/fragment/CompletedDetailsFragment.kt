@@ -1,14 +1,16 @@
 package com.math3249.listler.ui.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.math3249.listler.App
 import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentCompletedDetailsBinding
@@ -18,10 +20,12 @@ import com.math3249.listler.ui.adapter.ListDetailAdapter
 import com.math3249.listler.ui.listview.*
 import com.math3249.listler.ui.viewmodel.ListDetailViewModel
 import com.math3249.listler.util.DragSwipe
+import com.math3249.listler.util.LEFT
 import com.math3249.listler.util.Settings
 import com.math3249.listler.util.StringUtil
+import com.math3249.listler.util.utilinterface.Swipeable
 
-class CompletedDetailsFragment(val listId: Long): Fragment() {
+class CompletedDetailsFragment(val listId: Long): Fragment(), Swipeable<RowType> {
 
     //TODO:private val navArgs: ListDetailsFragmentArgs by navArgs()
     private val viewModel: ListDetailViewModel by activityViewModels {
@@ -36,6 +40,8 @@ class CompletedDetailsFragment(val listId: Long): Fragment() {
     private var _binding: FragmentCompletedDetailsBinding? = null
     private val binding get() = _binding!!
 
+    private var _adapter: ListDetailAdapter? = null
+    private val adapter get() = _adapter!!
 
     private lateinit var _settings: Settings
     private val settings get() = _settings
@@ -47,6 +53,14 @@ class CompletedDetailsFragment(val listId: Long): Fragment() {
     ): View {
         _binding = FragmentCompletedDetailsBinding.inflate(inflater, container, false)
         _settings = Settings(requireContext())
+        _adapter = ListDetailAdapter ({ item ->
+            if (item.getRowType() == RowTypes.ITEM.ordinal) {
+                viewModel.updateItemOnList(listId, item.id, false)
+            }
+        },
+            { item ->
+            })
+
         setHasOptionsMenu(true)
         return binding.root
     }
@@ -54,48 +68,6 @@ class CompletedDetailsFragment(val listId: Long): Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //TODO:val listId = navArgs.listId
-        val adapter = ListDetailAdapter ({ item ->
-            if (item.getRowType() == RowTypes.ITEM.ordinal) {
-                viewModel.updateItemOnList(listId, item.id, false)
-            }
-        },
-            { item ->
-                /*if (item.getRowType() == RowTypes.ITEM.ordinal) {
-                    val action = ListDetailsTabFragmentDirections
-                        .actionListDetailsTabFragmentToAddItemFragment(
-                            AddItemArgs(
-                                listId,
-                                "",
-                                item.getData()[RowTypeKey.CATEGORY_ID]?.toLongOrNull() ?: -1,
-                                item.getData()[RowTypeKey.CATEGORY] ?: "",
-                                item.getData()[RowTypeKey.ITEM_ID]?.toLongOrNull() ?: -1,
-                                item.getData()[RowTypeKey.ITEM] ?: ""
-                            )
-
-
-
-
-
-                        )
-                    findNavController().navigate(action)
-                }// else {
-                    //val action = ListDetailsFragmentDirections
-                      //  .
-                //}*/
-            })
-        /*
-        val adapter = ListDetailCategoryAdapter (
-            {
-                //item -> viewModel.updateItemOnList(id, item.itemId, true)
-                //TODO: Implement clickListener for Category header
-        }, {/*
-            item ->
-                val action = ListDetailsFragmentDirections
-                    .actionListDetailsFragmentToAddItemFragment("", id, item.itemId)
-            findNavController().navigate(action)
-            TODO: Implement longClickListener for Category header
-            */
-        })*/
 
         viewModel.getListWithCategoriesAndItems(listId).observe(this.viewLifecycleOwner) {
             selectedList ->
@@ -132,7 +104,7 @@ class CompletedDetailsFragment(val listId: Long): Fragment() {
 
         viewModel.listDetailFragmentMessage.observe(this.viewLifecycleOwner) {
             message ->
-            if (!message!!.read) {
+            if (message?.type != null) {
                 /*
                 when (message.type) {
                     MessageType.ITEM_MISSING_CATEGORY -> {
@@ -165,29 +137,15 @@ class CompletedDetailsFragment(val listId: Long): Fragment() {
             }
         }
 
-        swipe(listId, viewModel, adapter)
+        swipe()
 
         binding.apply {
             listRecyclerview.adapter = adapter
         }
     }
 
-    private fun swipe(listId: Long, viewModel: ListDetailViewModel, adapter: ListDetailAdapter){
-        val itemTouchHelper = ItemTouchHelper(DragSwipe(
-            swipeDirs = ItemTouchHelper.LEFT,
-            icon = AppCompatResources.getDrawable(this.requireContext(), R.drawable.ic_delete_24),
-         swipeLeft = { position ->
-            val item = adapter.getRowType(position)
-            if (item.getRowType() == RowTypes.ITEM.ordinal) {
-                viewModel.deleteItemFromList(
-                    ListCategoryItemCrossRef(
-                        listId = listId,
-                        itemId = item.getData()[RowTypeKey.ITEM_ID]?.toLongOrNull() ?: 0,
-                        categoryId = item.getData()[RowTypeKey.CATEGORY_ID]?.toLongOrNull() ?: 0
-                    )
-                )
-            }
-        }))
+    private fun swipe(){
+        val itemTouchHelper = ItemTouchHelper(DragSwipe(this))
         itemTouchHelper.attachToRecyclerView(binding.listRecyclerview)
     }
 
@@ -195,5 +153,29 @@ class CompletedDetailsFragment(val listId: Long): Fragment() {
         val elapsedTimeInHours = ((System.nanoTime() - modifiedTime)/1_000_000_000.0/3600.0)
         val timeLimit = settings.getInt(StringUtil.getString(R.string.key_completed_item_time_limit), 1)
         return elapsedTimeInHours <= timeLimit
+    }
+
+    override val swipeDirs: Int
+        get() = LEFT
+    override val parentContext: Context
+        get() = requireContext()
+    override val listAdapter: ListAdapter<RowType, RecyclerView.ViewHolder>
+        get() = adapter
+
+    override fun swipeLeft(position: Int) {
+        val item = adapter.getRowType(position)
+        if (item.getRowType() == RowTypes.ITEM.ordinal) {
+            viewModel.deleteItemFromList(
+                ListCategoryItemCrossRef(
+                    listId = listId,
+                    itemId = item.getData()[RowTypeKey.ITEM_ID]?.toLongOrNull() ?: 0,
+                    categoryId = item.getData()[RowTypeKey.CATEGORY_ID]?.toLongOrNull() ?: 0
+                )
+            )
+        }
+    }
+
+    override fun swipeRight(position: Int) {
+        return
     }
 }

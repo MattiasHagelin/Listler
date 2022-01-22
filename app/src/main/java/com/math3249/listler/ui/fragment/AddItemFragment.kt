@@ -19,7 +19,7 @@ import com.math3249.listler.util.CATEGORY_ID
 import com.math3249.listler.util.ITEM_ID
 import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.Utils
-import com.math3249.listler.util.message.type.MessageType
+import com.math3249.listler.util.message.Message.Type
 
 class AddItemFragment: Fragment() {
 
@@ -82,9 +82,8 @@ class AddItemFragment: Fragment() {
                     //categoryInput.setText(item.categoryId)
                 }
             }
-            binding.addItem.visibility = View.INVISIBLE
-            binding.updateItem.visibility = View.VISIBLE
-            binding.updateItem.setOnClickListener {
+            binding.actionBar.saveButton.text = getString(R.string.btn_update)
+            binding.actionBar.saveButton.setOnClickListener {
                 val itemName = StringUtil.standardizeItemName(binding.itemInput.text.toString())
                 val categoryName = StringUtil.standardizeItemName(binding.categoryDropdown.text.toString())
 
@@ -92,20 +91,25 @@ class AddItemFragment: Fragment() {
                     viewModel.updateItem(
                         navArgs.addItemData.listId,
                         itemId,
-                        itemName!!,
                         categoryId,
+                        itemName!!,
                         categoryName!!)
                     navigateBack()
                 }
             }
         } else {
-            binding.addItem.visibility = View.VISIBLE
+            binding.actionBar.saveButton.text = getString(R.string.btn_save)
             binding.itemInput.setText(navArgs.addItemData.itemName)
+            binding.actionBar.saveButton.setOnClickListener {
+                if (checkUserInput(getItemName(), getCategoryName())) {
+                    viewModel.addItemAndCategory(navArgs.addItemData.listId, getItemName()!!, getCategoryName()!!)
+                }
+            }
         }
 
         viewModel.addItemFragmentMessage.observe(this.viewLifecycleOwner) {
             message ->
-            if (!message.read) {
+            if (message.type != null) {
                 when (message.type) {
                     else -> {
                         //MessageType.ITEM_INSERTED ->
@@ -120,16 +124,14 @@ class AddItemFragment: Fragment() {
                     }
                 }
             }
-
         }
         binding.apply {
             itemInput.setText(navArgs.addItemData.itemName)
             categoryDropdown.setText(navArgs.addItemData.catName)
-            addItem.setOnClickListener {
-                if (checkUserInput(getItemName(), getCategoryName())) {
-                    viewModel.addItemAndCategory(navArgs.addItemData.listId, getItemName()!!, getCategoryName()!!)
-                }
+            actionBar.cancelButton.setOnClickListener {
+                findNavController().navigateUp()
             }
+
         }
     }
 
@@ -143,8 +145,8 @@ class AddItemFragment: Fragment() {
 
     private fun checkUserInput(itemName:String?, categoryName: String?): Boolean {
 
-        if (!StringUtil.validateUserInput(itemName)) Utils.snackbar(MessageType.ITEM_INPUT_EMPTY, binding.root)
-        if (!StringUtil.validateUserInput(categoryName)) Utils.snackbar(MessageType.CATEGORY_INPUT_EMPTY, binding.root)
+        if (!StringUtil.validateUserInput(itemName)) Utils.snackbar(Type.ITEM_INPUT_EMPTY, binding.root)
+        if (!StringUtil.validateUserInput(categoryName)) Utils.snackbar(Type.CATEGORY_INPUT_EMPTY, binding.root)
 
         return StringUtil.validateUserInput(itemName)
                 && StringUtil.validateUserInput(categoryName)

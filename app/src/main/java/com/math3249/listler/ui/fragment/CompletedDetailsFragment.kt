@@ -15,9 +15,12 @@ import com.math3249.listler.App
 import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentCompletedDetailsBinding
 import com.math3249.listler.model.ListWithData
-import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
+import com.math3249.listler.model.crossref.ListCategoryItem
 import com.math3249.listler.ui.adapter.ListDetailAdapter
-import com.math3249.listler.ui.listview.*
+import com.math3249.listler.ui.listview.ListDetailCategory
+import com.math3249.listler.ui.listview.ListDetailItem
+import com.math3249.listler.ui.listview.RowType
+import com.math3249.listler.ui.listview.RowTypes
 import com.math3249.listler.ui.viewmodel.ListDetailViewModel
 import com.math3249.listler.util.DragSwipe
 import com.math3249.listler.util.LEFT
@@ -55,7 +58,8 @@ class CompletedDetailsFragment(val listId: Long): Fragment(), Swipeable<RowType>
         _settings = Settings(requireContext())
         _adapter = ListDetailAdapter ({ item ->
             if (item.getRowType() == RowTypes.ITEM.ordinal) {
-                viewModel.updateItemOnList(listId, item.id, false)
+                viewModel.updateItemOnList(
+                    item.listItem, false)
             }
         },
             { item ->
@@ -74,26 +78,17 @@ class CompletedDetailsFragment(val listId: Long): Fragment(), Swipeable<RowType>
 
             this.selectedList = selectedList
             selectedList.let { list ->
-                val itemsById = list.items.associateBy { it.itemId } //list.listItems.filter {it.listId == list.list.listId}.associateBy { it.itemId }
-                val crossRefByCategory = list.listItems.groupBy { it.categoryId }
+                val listItemsByCategory = list.listItems.groupBy { it.categoryId }
                 val listData  = mutableListOf<RowType>()
-                list.categories.forEach { category ->
+                for ((k, v) in listItemsByCategory) {
                     var first = true
-                    crossRefByCategory[category.categoryId]!!.forEach { crossRefItem ->
-                        val tempItem = itemsById[crossRefItem.itemId]
-                        if (tempItem != null) {
-                            if (crossRefItem.done && showItem(crossRefItem.modifiedAt)) {
-                                if (first) {
-                                    listData.add(ListDetailCategory(category.name, category.categoryId))
-                                    first = false
-                                }
-                                listData.add(ListDetailItem(
-                                    category.categoryId,
-                                    category.name,
-                                    tempItem.name,
-                                    tempItem.itemId
-                                ))
+                    v.forEach { item ->
+                        if (item.done) {
+                            if (first) {
+                                first = false
+                                listData.add(ListDetailCategory(v.first()))
                             }
+                            listData.add(ListDetailItem(item))
                         }
                     }
                 }
@@ -166,10 +161,10 @@ class CompletedDetailsFragment(val listId: Long): Fragment(), Swipeable<RowType>
         val item = adapter.getRowType(position)
         if (item.getRowType() == RowTypes.ITEM.ordinal) {
             viewModel.deleteItemFromList(
-                ListCategoryItemCrossRef(
+                ListCategoryItem(
                     listId = listId,
-                    itemId = item.getData()[RowTypeKey.ITEM_ID]?.toLongOrNull() ?: 0,
-                    categoryId = item.getData()[RowTypeKey.CATEGORY_ID]?.toLongOrNull() ?: 0
+                    itemId = item.listItem.itemId,
+                    categoryId = item.listItem.categoryId
                 )
             )
         }

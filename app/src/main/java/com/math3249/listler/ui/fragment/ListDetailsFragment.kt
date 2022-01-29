@@ -15,7 +15,6 @@ import com.math3249.listler.App
 import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentListDetailsBinding
 import com.math3249.listler.model.ListWithData
-import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
 import com.math3249.listler.model.entity.Item
 import com.math3249.listler.ui.adapter.ListDetailAdapter
 import com.math3249.listler.ui.fragment.dialog.DeleteDialog
@@ -24,7 +23,7 @@ import com.math3249.listler.ui.fragment.navargs.ListDetailsArgs
 import com.math3249.listler.ui.listview.*
 import com.math3249.listler.ui.viewmodel.ListDetailViewModel
 import com.math3249.listler.util.*
-import com.math3249.listler.util.message.Message
+import com.math3249.listler.util.message.ListMessage
 import com.math3249.listler.util.message.Message.Type
 import com.math3249.listler.util.utilinterface.Swipeable
 
@@ -96,53 +95,44 @@ class ListDetailsFragment(private val listDetailsArgs: ListDetailsArgs): Fragmen
 
     private fun subscribeToViewmodelMessage() {
         viewModel.listDetailFragmentMessage.observe(this.viewLifecycleOwner) { message ->
-            if (message?.type != null) {
-                when (message.type) {
-                    Type.ITEM_MISSING_CATEGORY -> {
-                        val action = ListDetailsTabFragmentDirections
-                            .actionListDetailsTabFragmentToAddItemFragment(
-                                AddItemArgs(
-                                    listId,
-                                    listDetailsArgs.listName,
-                                    -1,
-                                    "",
-                                    message.getId(ITEM_ID),
-                                    message.extra
-                                )
+            when (message.type) {
+                Type.ITEM_MISSING_CATEGORY -> {
+                    message as ListMessage
+                    val action = ListDetailsTabFragmentDirections
+                        .actionListDetailsTabFragmentToAddItemFragment(
+                            AddItemArgs(
+                                listId,
+                                listDetailsArgs.listName,
+                                itemName = message.listData.listItem.itemName
                             )
-                        message.clear()
-                        findNavController().navigate(action)
-                    }
-                    else -> {
-                        val action = ListDetailsTabFragmentDirections
-                            .actionListDetailsTabFragmentToAddItemFragment(
-                                AddItemArgs(
-                                    listId,
-                                    listDetailsArgs.listName,
-                                    -1,
-                                    "",
-                                    message.getId(ITEM_ID),
-                                    message.extra
-                                )
+                        )
+                    findNavController().navigate(action)
+                }
+                Type.NO_MESSAGE -> {}
+                else -> {
+                    message as ListMessage
+                    val action = ListDetailsTabFragmentDirections
+                        .actionListDetailsTabFragmentToAddItemFragment(
+                            AddItemArgs(
+                                listId,
+                                listDetailsArgs.listName,
+                                itemName = message.listData.listItem.itemName
                             )
-                        message.clear()
-                        findNavController().navigate(action)
-                    }
+                        )
+                    findNavController().navigate(action)
                 }
             }
+            message.clear()
         }
     }
 
     private fun subscribeToChildFragment() {
         childFragmentManager.setFragmentResultListener(KEY_REQUEST, this.viewLifecycleOwner) { _, bundle ->
-            val message = bundle.get(KEY_INPUT) as Message
+            val message = bundle.get(KEY_INPUT) as ListMessage
             if (message.success) {
                 viewModel.deleteItemFromList(
-                    ListCategoryItemCrossRef(
-                        listId,
-                        -1,
-                        message.getId(ITEM_ID)
-                ))
+                    message.listData.listItem
+                )
             }
         }
     }
@@ -152,34 +142,23 @@ class ListDetailsFragment(private val listDetailsArgs: ListDetailsArgs): Fragmen
             .observe(this.viewLifecycleOwner) { selectedList ->
                 this.selectedList = selectedList
                 selectedList.let { list ->
-                    val itemsById =
-                        list.items.associateBy { it.itemId } //list.listItems.filter {it.listId == list.list.listId}.associateBy { it.itemId }
-                    val crossRefByCategory = list.listItems.groupBy { it.categoryId }
+                    val itemsByCategory = list.listItems.groupBy { it.categoryId }
                     val listData = mutableListOf<RowType>()
-                    list.categories.forEach { category ->
+                    for ((k, v) in itemsByCategory) {
                         var first = true
-                        crossRefByCategory[category.categoryId]!!.forEach { crossRefItem ->
-                            val tempItem = itemsById[crossRefItem.itemId]
-                            if (tempItem != null) {
-                                if (!crossRefItem.done) {
-                                    if (first) {
-                                        listData.add(
-                                            ListDetailCategory(
-                                                category.name,
-                                                category.categoryId
-                                            )
-                                        )
-                                        first = false
-                                    }
+                        v.forEach { item ->
+                            if (!item.done) {
+                                if (first) {
+                                    first = false
                                     listData.add(
-                                        ListDetailItem(
-                                            category.categoryId,
-                                            category.name,
-                                            tempItem.name,
-                                            tempItem.itemId
+                                        ListDetailCategory(
+                                            v.first()
                                         )
                                     )
                                 }
+                                listData.add(ListDetailItem(
+                                    item
+                                ))
                             }
                         }
                     }
@@ -208,7 +187,7 @@ class ListDetailsFragment(private val listDetailsArgs: ListDetailsArgs): Fragmen
 
     private fun createAdapter() = ListDetailAdapter({ item ->
             if (item.getRowType() == RowTypes.ITEM.ordinal) {
-                viewModel.updateItemOnList(listId, item.id, true)
+                viewModel.updateItemOnList(item.listItem, true)
             }
         })
 
@@ -220,7 +199,7 @@ class ListDetailsFragment(private val listDetailsArgs: ListDetailsArgs): Fragmen
 
         if (selectedItem != null) {
           if (selectedItem.itemId > 0) {
-              viewModel.addItemToList(listId, selectedItem)
+              viewModel.addItemToList(listId, selectedItem.name)
               Utils.clearDropdown(binding.itemDropdown)
           }
         } else
@@ -279,9 +258,8 @@ class ListDetailsFragment(private val listDetailsArgs: ListDetailsArgs): Fragmen
     override fun swipeLeft(position: Int) {
         val item = adapter.getRowType(position)
         if (item.getRowType() == RowTypes.ITEM.ordinal) {
-            DeleteDialog(item.getData()[RowTypeKey.ITEM].toString(),
-                item.getData()[RowTypeKey.ITEM_ID]?.toLong()!!,
-                position.toLong()
+            DeleteDialog(item.listItem,
+                position
                 ).show(childFragmentManager, DeleteDialog.TAG)
         }
     }
@@ -294,10 +272,10 @@ class ListDetailsFragment(private val listDetailsArgs: ListDetailsArgs): Fragmen
                     AddItemArgs(
                         listDetailsArgs.listId,
                         listDetailsArgs.listName,
-                        item.getData()[RowTypeKey.CATEGORY_ID]?.toLongOrNull() ?: -1,
-                        item.getData()[RowTypeKey.CATEGORY] ?: "",
-                        item.getData()[RowTypeKey.ITEM_ID]?.toLongOrNull() ?: -1,
-                        item.getData()[RowTypeKey.ITEM] ?: ""
+                        item.listItem.categoryId,
+                        item.listItem.categoryName,
+                        item.listItem.itemId,
+                        item.listItem.itemName
                     ))
             findNavController().navigate(action)
         }

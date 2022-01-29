@@ -14,7 +14,7 @@ class ListDetailAdapter(private val clickListener: (RowType) -> Unit,
 
     companion object DiffCallback: DiffUtil.ItemCallback<RowType>(){
         override fun areItemsTheSame(oldItem: RowType, newItem: RowType): Boolean {
-            return oldItem.id == newItem.id
+            return oldItem.listItem.itemId == newItem.listItem.itemId
         }
 
         override fun areContentsTheSame(oldItem: RowType, newItem: RowType): Boolean {

@@ -12,12 +12,15 @@
     <string name="title_lists">Lists</string>
     <string name="title_stores">Stores</string>
     <string name="title_history">History</string>
+    <string name="title_new_item">New item</string>
+    <string name="title_edit_item">Edit item</string>
     <string name="store_management">Store management</string>
     <string name="category_management">Category management</string>
     <string name="list_settings">List settings</string>
 
     <!-- BUTTON TEXTS -->
     <string name="btn_save">Save</string>
+    <string name="btn_add">Add</string>
     <string name="btn_add_store">Add store</string>
     <string name="btn_cancel">Cancel</string>
     <string name="btn_add_item">Add item</string>

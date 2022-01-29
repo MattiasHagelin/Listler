@@ -4,16 +4,11 @@ import androidx.lifecycle.*
 import com.math3249.listler.R
 import com.math3249.listler.data.dao.ListDetailDao
 import com.math3249.listler.model.ListWithData
-import com.math3249.listler.model.ListWithItem
-import com.math3249.listler.model.crossref.ListCategoryCrossRef
-import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
-import com.math3249.listler.model.crossref.ListItemCrossRef
-import com.math3249.listler.model.entity.Item
-import com.math3249.listler.util.CATEGORY_ID
-import com.math3249.listler.util.ITEM_ID
-import com.math3249.listler.util.LIST_ID
+import com.math3249.listler.model.crossref.ListCategoryItem
 import com.math3249.listler.util.StringUtil
+import com.math3249.listler.util.message.ListMessage
 import com.math3249.listler.util.message.Message
+import com.math3249.listler.util.message.type.ListData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -21,7 +16,7 @@ class ListDetailViewModel(
     private val listDetailDao: ListDetailDao
 ): ViewModel() {
 
-    val listDetailFragmentMessage = MutableLiveData<Message?>()
+    val listDetailFragmentMessage = MutableLiveData<Message>()
     val allItems = listDetailDao.getItems().asLiveData()
 
 
@@ -29,8 +24,8 @@ class ListDetailViewModel(
         return listDetailDao.getListData(id).asLiveData()
     }
 
-    fun getListItemHistory(listId: Long): LiveData<ListWithItem> {
-        return listDetailDao.getListItem(listId).asLiveData()
+    fun getListItemHistory(listId: Long): LiveData<List<ListCategoryItem>> {
+        return listDetailDao.getListItems(listId).asLiveData()
     }
 
     /**
@@ -38,94 +33,95 @@ class ListDetailViewModel(
      */
     fun addItemToList(
         listId: Long,
-        item: Item
+        itemName: String
     ) {
         viewModelScope.launch(Dispatchers.IO) {
+            val  listItem = listDetailDao.getListItem(listId, itemName)
             //Check is in list
-            val listItem = listDetailDao.getListItem(listId, item.itemId)
             if (listItem != null) {
                 //Check if item have a category
-                val categoryId = listDetailDao.getCategoryId(listId, item.itemId)
-                if (categoryId > 0) {
+                if (listItem.categoryName != "") {
                     //If item have a Category do an update
                     listDetailDao.updateWithTimeStamp(
-                        ListCategoryItemCrossRef(
-                            listId,
-                            categoryId,
-                            item.itemId,
-                            false
-                        )
-                    )
+                        ListCategoryItem(
+                            listItem.listId,
+                            listItem.categoryId,
+                            listItem.itemId
+                    ))
                 } else {
                     //If category is missing notify fragment
                     listDetailFragmentMessage.postValue(
-                        Message(
+                        ListMessage(
                             Message.Type.ITEM_MISSING_CATEGORY,
                             false,
-                            mutableMapOf(LIST_ID to listId,
-                                CATEGORY_ID to -1,
-                                ITEM_ID to item.itemId
-                            ),
-                            _extra = item.name
-                        )
-                    )
+                            ListData(listItem = ListCategoryItem(itemName = listItem.itemName))
+                        ))
                 }
             } else {
-                listDetailDao.insert(ListItemCrossRef(listId, item.itemId))
-                //Notify fragment item needs binding to category
-                listDetailFragmentMessage.postValue(
-                    Message(
-                        Message.Type.ITEM_MISSING_CATEGORY,
-                        false,
-                        mutableMapOf(LIST_ID to listId,
-                            CATEGORY_ID to -1,
-                            ITEM_ID to item.itemId
-                        ),
-                        _extra = item.name
+                val item = listDetailDao.getItemByName(itemName)
+                if (item != null) {
+                    listDetailFragmentMessage.postValue(
+                        ListMessage(
+                            Message.Type.ITEM_MISSING_CATEGORY,
+                            false,
+                            ListData(listItem = ListCategoryItem(itemName = item.name))
+                        )
                     )
-                )
+                } else {
+                    //Notify fragment item needs binding to category
+                    listDetailFragmentMessage.postValue(
+                        ListMessage(
+                            Message.Type.ITEM_MISSING_CATEGORY,
+                            false,
+                            ListData(listItem =  ListCategoryItem(itemName = itemName))
+                        ))
+                }
+
             }
         }
     }
 
     fun updateItemOnList(
-        listId: Long,
-        itemId: Long,
+        listItem: ListCategoryItem,
         isDone: Boolean
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            val categoryId = listDetailDao.getCategoryId(listId, itemId)
             listDetailDao.updateWithTimeStamp(
-                ListCategoryItemCrossRef(
-                listId,
-                categoryId,
-                itemId,
+                ListCategoryItem(
+                listItem.listId,
+                listItem.categoryId,
+                listItem.itemId,
+                listItem.categoryName,
+                listItem.itemName,
                 isDone
-            )
-            )
+            ))
         }
     }
 
-    fun deleteItemFromList(listCategoryItemCrossRef: ListCategoryItemCrossRef) {
+    fun deleteListItems(listItems: List<ListCategoryItem>) {
         viewModelScope.launch(Dispatchers.IO) {
-            val listId = listCategoryItemCrossRef.listId
-            val itemId = listCategoryItemCrossRef.itemId
-            val categoryId = if (listCategoryItemCrossRef.categoryId < 0)
-                listDetailDao.getCategoryId(listCategoryItemCrossRef.listId, listCategoryItemCrossRef.itemId)
-            else listCategoryItemCrossRef.categoryId
+            listDetailDao.delete(listItems)
+        }
+    }
+
+    fun deleteItemFromList(listCategoryItem: ListCategoryItem) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val listId = listCategoryItem.listId
+            val itemId = listCategoryItem.itemId
+            val categoryId = if (listCategoryItem.categoryId < 0)
+                listDetailDao.getCategoryId(listCategoryItem.listId, listCategoryItem.itemId)
+            else listCategoryItem.categoryId
 
             //Delete item from list
-            listDetailDao.delete(ListItemCrossRef(listId, itemId))
+            //listDetailDao.delete(ListItem(listId, itemId, ""))
 
             //Check if there's more items in the same category
-            if (listDetailDao.countItemsInCategory(listId, categoryId) == 1)
+            //if (listDetailDao.countItemsInCategory(listId, categoryId) == 1)
                 //Delete category from list if there's no items in that category
-                listDetailDao.delete(ListCategoryCrossRef(listId, categoryId))
+               // listDetailDao.delete(ListCategory(listId, categoryId, ""))
 
             //Delete item category relation in list
-            listDetailDao.deleteItemFromList(
-                ListCategoryItemCrossRef(listId, categoryId, itemId)
-            )
+            listDetailDao.deleteItemFromList(listCategoryItem)
         }
     }
 

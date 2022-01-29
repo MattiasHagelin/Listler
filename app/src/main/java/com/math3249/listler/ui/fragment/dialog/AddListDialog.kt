@@ -12,9 +12,13 @@ import androidx.fragment.app.setFragmentResult
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.math3249.listler.R
-import com.math3249.listler.util.*
+import com.math3249.listler.util.KEY_INPUT
+import com.math3249.listler.util.KEY_REQUEST
+import com.math3249.listler.util.StringUtil
+import com.math3249.listler.util.message.ListMessage
 import com.math3249.listler.util.message.Message
 import com.math3249.listler.util.message.Message.Type
+import com.math3249.listler.util.message.type.ListData
 
 class AddListDialog: DialogFragment() {
 
@@ -41,10 +45,10 @@ class AddListDialog: DialogFragment() {
                         false
                     )))
                 else
-                    setFragmentResult(KEY_REQUEST, bundleOf(KEY_INPUT to Message(
+                    setFragmentResult(KEY_REQUEST, bundleOf(KEY_INPUT to ListMessage(
                         Type.NEW_LIST,
                         true,
-                        _data = mutableMapOf(KEY_LIST_TYPE to type, KEY_LIST_NAME to input)
+                        ListData(input, )
                     )))
             }.setNegativeButton(StringUtil.getString(R.string.btn_cancel)) { dialog, _ ->
                 dialog.cancel()

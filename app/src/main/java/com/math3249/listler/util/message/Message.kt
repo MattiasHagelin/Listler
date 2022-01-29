@@ -4,35 +4,32 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-class Message (private var _type: Type? = null,
-               private var _success: Boolean = false,
+open class Message(
+    private var _type: Type = Type.NO_MESSAGE,
+    private var _success: Boolean = false,
+               /*
                private var _ids: MutableMap<String, Long>? = null,
                private var _data: MutableMap<String, String>? = null,
                private var _extra: String = ""
+               */
 ): Parcelable {
     val success get() = _success
     val type get() = _type
-    val ids get() = _ids
-    val data get() = _data
+    /*
+    private val ids get() = _ids
+    private val data get() = _data
     val extra get() = _extra
+    */
 
-    fun clear() {
-        _type = null
+    open fun clear() {
+        _type = Type.NO_MESSAGE
         _success = false
+
+        /*
         _ids?.clear()
+        _data?.clear()
         _extra = ""
-    }
-
-    fun getIdsKeys(): List<String>? {
-        return ids?.keys?.toList()
-    }
-
-    fun getId(key: String): Long{
-        return ids?.get(key) ?: -1
-    }
-
-    fun getData(key: String): String {
-        return data?.get(key) ?: ""
+        */
     }
 
     enum class Type {
@@ -42,6 +39,7 @@ class Message (private var _type: Type? = null,
         NEW_LIST,
         CATEGORY_IN_DATABASE,
         CATEGORY_INPUT_EMPTY,
+        ITEM_NEW,
         ITEM_IN_LIST,
         ITEM_NOT_IN_DATABASE,
         ITEM_INSERTED,
@@ -49,7 +47,8 @@ class Message (private var _type: Type? = null,
         ITEM_INPUT_EMPTY,
         ITEM_MISSING_CATEGORY,
         INVALID_INPUT,
-        DELETE;
+        DELETE,
+        NO_MESSAGE;
 }
 /*
         fun redirectMessage(type: MessageType,

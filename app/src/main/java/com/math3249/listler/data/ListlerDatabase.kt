@@ -5,9 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.math3249.listler.data.dao.*
-import com.math3249.listler.model.crossref.ListCategoryCrossRef
-import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
-import com.math3249.listler.model.crossref.ListItemCrossRef
+import com.math3249.listler.model.crossref.ListCategoryItem
 import com.math3249.listler.model.crossref.StoreCategoryCrossRef
 import com.math3249.listler.model.entity.Category
 import com.math3249.listler.model.entity.Item
@@ -15,16 +13,16 @@ import com.math3249.listler.model.entity.List
 import com.math3249.listler.model.entity.Store
 import com.math3249.listler.util.DATABASE_NAME
 
-@Database(version = 10,
+@Database(version = 14,
     entities = [
     Item::class,
     List::class,
     Category::class,
     Store::class,
-    ListCategoryCrossRef::class,
-    ListItemCrossRef::class,
+    //ListCategory::class,
+    //ListItem::class,
     StoreCategoryCrossRef::class,
-    ListCategoryItemCrossRef::class
+    ListCategoryItem::class
                ],
     exportSchema = false
 )

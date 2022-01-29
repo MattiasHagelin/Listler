@@ -7,26 +7,31 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
 import com.math3249.listler.R
-import com.math3249.listler.util.*
-import com.math3249.listler.util.message.Message
+import com.math3249.listler.model.crossref.ListCategoryItem
+import com.math3249.listler.util.KEY_INPUT
+import com.math3249.listler.util.KEY_REQUEST
+import com.math3249.listler.util.POSITION
+import com.math3249.listler.util.StringUtil
+import com.math3249.listler.util.message.ListMessage
 import com.math3249.listler.util.message.Message.Type
+import com.math3249.listler.util.message.type.ListData
 
 class DeleteDialog(
-    private val item: String = "",
-    private val id: Long = 0,
-    private val position: Long
+    private val listItem: ListCategoryItem = ListCategoryItem(),
+    private val position: Int = -1
     ): DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle(getString(R.string.confirm))
-            .setMessage(getString(R.string.confirm_deletion, item))
-            .setPositiveButton(StringUtil.getString(R.string.btn_delete)) { _, _->
-                setFragmentResult(KEY_REQUEST, bundleOf(KEY_INPUT to Message(
-                    Type.DELETE,
-                    true,
-                    mutableMapOf(ITEM_ID to id, POSITION to position)
-                )))
+            .setMessage(getString(R.string.confirm_deletion, listItem.itemName))
+            .setPositiveButton(StringUtil.getString(R.string.btn_delete)) { _, _ ->
+                    setFragmentResult(KEY_REQUEST, bundleOf(KEY_INPUT to ListMessage(
+                        Type.DELETE,
+                        true,
+                        ListData(listItem = listItem)
+                    ),
+                    POSITION to position))
             }.setNegativeButton(StringUtil.getString(R.string.btn_cancel)) { dialog, _ ->
                 dialog.cancel()
             }

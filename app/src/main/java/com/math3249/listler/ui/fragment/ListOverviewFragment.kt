@@ -22,7 +22,7 @@ import com.math3249.listler.ui.fragment.dialog.AddStoreDialog
 import com.math3249.listler.ui.fragment.navargs.ListDetailsArgs
 import com.math3249.listler.ui.viewmodel.ListOverviewViewModel
 import com.math3249.listler.util.*
-import com.math3249.listler.util.message.Message
+import com.math3249.listler.util.message.ListMessage
 import com.math3249.listler.util.utilinterface.Swipeable
 
 class ListOverviewFragment : Fragment(), Swipeable<List> {
@@ -70,11 +70,11 @@ class ListOverviewFragment : Fragment(), Swipeable<List> {
         }
 
         childFragmentManager.setFragmentResultListener(KEY_REQUEST, this.viewLifecycleOwner) { _, bundle ->
-            val message = bundle.get(KEY_INPUT) as Message
+            val message = bundle.get(KEY_INPUT) as ListMessage
             if (message.success)
                 viewModel.addList(
-                    name = message.getData(KEY_LIST_NAME),
-                    type = message.getData(KEY_LIST_TYPE)
+                    name = message.listData.listName,
+                    type = message.listData.listType
                 )
             else
                 Utils.snackbar(message.type!!, binding.root, getString(R.string.list))
@@ -92,18 +92,16 @@ class ListOverviewFragment : Fragment(), Swipeable<List> {
 
     private fun subscribeToMessage() {
         viewModel.message.observe(this.viewLifecycleOwner) { message ->
-            if (message.type != null) {
-                val action = ListOverviewFragmentDirections
-                    .actionListOverviewFragmentToListDetailsTabFragment2(
-                        ListDetailsArgs(
-                            message.getId(LIST_ID),
-                            message.getData(KEY_LIST_NAME)
-                        )
+            message as ListMessage
+            val action = ListOverviewFragmentDirections
+                .actionListOverviewFragmentToListDetailsTabFragment2(
+                    ListDetailsArgs(
+                        message.listData.listItem.listId,
+                        message.listData.listName
                     )
-                findNavController().navigate(action)
-                message.clear()
-            }
-
+                )
+            findNavController().navigate(action)
+            message.clear()
         }
     }
 

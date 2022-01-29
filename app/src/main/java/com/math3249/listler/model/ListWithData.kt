@@ -1,34 +1,29 @@
 package com.math3249.listler.model
 
 import androidx.room.Embedded
-import androidx.room.Junction
 import androidx.room.Relation
-import com.math3249.listler.model.crossref.ListCategoryCrossRef
-import com.math3249.listler.model.crossref.ListCategoryItemCrossRef
-import com.math3249.listler.model.crossref.ListItemCrossRef
-import com.math3249.listler.model.entity.Category
-import com.math3249.listler.model.entity.Item
+import com.math3249.listler.model.crossref.ListCategoryItem
 import com.math3249.listler.model.entity.List
 
 data class ListWithData(
     @Embedded val list: List,
-    @Relation(
+   /* @Relation(
         parentColumn = "listId",
-        entityColumn = "categoryId",
-        associateBy = Junction(ListCategoryCrossRef::class)
-    )
-    val categories: kotlin.collections.List<Category>,
-    @Relation(
-        parentColumn = "listId",
-        entity = ListCategoryItemCrossRef::class,
+        entity = ListCategory::class,
         entityColumn = "listId"
     )
-    val listItems: kotlin.collections.List<ListCategoryItemCrossRef>,
+    val categories: kotlin.collections.List<ListCategory>,*/
     @Relation(
         parentColumn = "listId",
-        entityColumn = "itemId",
-        associateBy = Junction(ListItemCrossRef::class)
+        entity = ListCategoryItem::class,
+        entityColumn = "listId"
     )
-    val items: kotlin.collections.List<Item>
-
+    val listItems: kotlin.collections.List<ListCategoryItem>/*,
+    @Relation(
+        parentColumn = "listId",
+        entity = ListItem::class,
+        entityColumn = "listId"
+    )
+    val items: kotlin.collections.List<ListItem>
+*/
 )

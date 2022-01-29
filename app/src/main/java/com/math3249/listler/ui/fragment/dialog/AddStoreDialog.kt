@@ -37,8 +37,7 @@ class AddStoreDialog(): DialogFragment(){
                 else
                     setFragmentResult(KEY_REQUEST, bundleOf(KEY_INPUT to Message(
                         Message.Type.STORE_NEW,
-                        true,
-                        _extra = input
+                        true
                     )))
             }.setNegativeButton(StringUtil.getString(R.string.btn_cancel)) { dialog, _ ->
                 dialog.cancel()

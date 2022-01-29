@@ -16,6 +16,8 @@ const val STORES_FRAGMENT = "StoresFragment"
 const val ITEM_ID = "itemId"
 const val LIST_ID = "listId"
 const val CATEGORY_ID = "categoryId"
+const val CATEGORY_DATA = "categoryData"
+const val ITEM_DATA = "itemData"
 const val STORE_ID = "storeId"
 const val POSITION = "position"
 
@@ -29,7 +31,10 @@ const val KEY_LIST_NAME = "listName"
 const val KEY_ERROR = "error"
 const val KEY_LIST_TYPE = "listType"
 const val KEY_REQUEST = "request"
-
+const val KEY_CATEGORY = "category"
+const val KEY_ITEM = "item"
+const val KEY_CATEGORY_ID = "categoryId"
+const val KEY_ITEM_ID = "itemId"
 //DIRECTIONS
 const val LEFT = ItemTouchHelper.LEFT
 const val RIGHT = ItemTouchHelper.RIGHT

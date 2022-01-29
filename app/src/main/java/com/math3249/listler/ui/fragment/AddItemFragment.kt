@@ -15,8 +15,6 @@ import com.math3249.listler.databinding.FragmentAddItemBinding
 import com.math3249.listler.model.entity.Item
 import com.math3249.listler.ui.fragment.navargs.ListDetailsArgs
 import com.math3249.listler.ui.viewmodel.AddItemViewModel
-import com.math3249.listler.util.CATEGORY_ID
-import com.math3249.listler.util.ITEM_ID
 import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.Utils
 import com.math3249.listler.util.message.Message.Type
@@ -61,6 +59,7 @@ class AddItemFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val itemId = navArgs.addItemData.itemId
         val categoryId = navArgs.addItemData.catId
+        val itemName = navArgs.addItemData.itemName
 
         viewModel.allCategories.observe(this.viewLifecycleOwner) {
             categories ->
@@ -74,27 +73,23 @@ class AddItemFragment: Fragment() {
                 binding.categoryDropdown.setAdapter(dropDownAdapter)
             }
         }
-        if ( itemId > 0 ) {
-            viewModel.getItem(itemId).observe(this.viewLifecycleOwner) {
-                selectedItem -> item = selectedItem
-                binding.apply {
-                    itemInput.setText(item.name)
-                    //categoryInput.setText(item.categoryId)
+        if ( itemId > 0 && categoryId > 0) {
+            binding.apply {
+                itemInput.setText(itemName)
+                categoryDropdown.setText(navArgs.addItemData.catName)
                 }
-            }
+
             binding.actionBar.saveButton.text = getString(R.string.btn_update)
             binding.actionBar.saveButton.setOnClickListener {
-                val itemName = StringUtil.standardizeItemName(binding.itemInput.text.toString())
+                val inputName = StringUtil.standardizeItemName(binding.itemInput.text.toString())
                 val categoryName = StringUtil.standardizeItemName(binding.categoryDropdown.text.toString())
 
-                if (checkUserInput(itemName, categoryName)) {
-                    viewModel.updateItem(
-                        navArgs.addItemData.listId,
-                        itemId,
-                        categoryId,
-                        itemName!!,
-                        categoryName!!)
-                    navigateBack()
+                if (checkUserInput(inputName, categoryName)) {
+                    viewModel.updateItemOnList(
+                        navArgs.addItemData,
+                    categoryName!!,
+                    inputName!!)
+                    //navigateBack()
                 }
             }
         } else {
@@ -106,25 +101,8 @@ class AddItemFragment: Fragment() {
                 }
             }
         }
+        subscribeToMessage()
 
-        viewModel.addItemFragmentMessage.observe(this.viewLifecycleOwner) {
-            message ->
-            if (message.type != null) {
-                when (message.type) {
-                    else -> {
-                        //MessageType.ITEM_INSERTED ->
-                        viewModel.addItemToList(
-                            navArgs.addItemData.listId,
-                            message.getId(CATEGORY_ID),
-                            message.getId(ITEM_ID),
-                            false
-                        )
-                        message.clear()
-                        navigateBack()
-                    }
-                }
-            }
-        }
         binding.apply {
             itemInput.setText(navArgs.addItemData.itemName)
             categoryDropdown.setText(navArgs.addItemData.catName)
@@ -132,6 +110,30 @@ class AddItemFragment: Fragment() {
                 findNavController().navigateUp()
             }
 
+        }
+    }
+
+    private fun subscribeToMessage() {
+        viewModel.message.observe(this.viewLifecycleOwner) {
+                message ->
+                when (message.type) {
+                    Type.ITEM_IN_LIST -> {
+                        Utils.snackbar(Type.ITEM_IN_LIST, binding.root, message.listData.listItem.itemName)
+                    }
+                    Type.NO_MESSAGE -> {}
+                    else -> {
+                        /*MessageType.ITEM_INSERTED ->
+                        viewModel.addItemToList(
+                            navArgs.addItemData.listId,
+                            message.getId(CATEGORY_ID),
+                            message.getData(CATEGORY_DATA),
+                            message.getData(ITEM_DATA),
+                            false
+                        )*/
+                        navigateBack()
+                    }
+                }
+            message.clear()
         }
     }
 

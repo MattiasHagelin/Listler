@@ -3,19 +3,20 @@ package com.math3249.listler.ui.viewmodel
 import androidx.lifecycle.*
 import com.math3249.listler.R
 import com.math3249.listler.data.dao.ListDao
+import com.math3249.listler.model.crossref.ListCategoryItem
 import com.math3249.listler.model.entity.List
-import com.math3249.listler.util.KEY_LIST_NAME
-import com.math3249.listler.util.LIST_ID
 import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.UNCHECKED_CAST
+import com.math3249.listler.util.message.ListMessage
 import com.math3249.listler.util.message.Message
+import com.math3249.listler.util.message.type.ListData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ListOverviewViewModel (
     private val listDao: ListDao
         ): ViewModel() {
-    val message = MutableLiveData<Message>()
+    val message = MutableLiveData<ListMessage>()
     val allLists: LiveData<kotlin.collections.List<List>> = listDao.getAllLists().asLiveData()
 
     fun addList(
@@ -29,21 +30,20 @@ class ListOverviewViewModel (
         )
         viewModelScope.launch {
             val listId = listDao.insert(list)
-            if (listId > 0) message.postValue(Message(
+            if (listId > 0) message.postValue(ListMessage(
                 Message.Type.LIST_INSERTED,
                 true,
-                mutableMapOf(LIST_ID to listId),
-                mutableMapOf(KEY_LIST_NAME to name)))
+                ListData(name, type, ListCategoryItem(listId = listId))
+            ))
         }
     }
 
     fun deleteList(listId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            val deleteList = listDao.getDeleteList(listId)
-            listDao.delete(deleteList.list,
-                deleteList.categories.toTypedArray(),
-                deleteList.items.toTypedArray(),
-                deleteList.listItems.toTypedArray())
+            val listItems = listDao.getListItems(listId)
+            if (listItems != null)
+                listDao.delete(listItems.toTypedArray())
+            listDao.deleteList(List(listId, "", "", 0))
         }
     }
 

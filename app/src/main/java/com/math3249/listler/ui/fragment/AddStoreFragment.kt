@@ -15,7 +15,6 @@ import com.math3249.listler.model.entity.Store
 import com.math3249.listler.ui.viewmodel.StoreViewModel
 import com.math3249.listler.util.ADD_STORE_FRAGMENT
 import com.math3249.listler.util.MenuUtil
-import com.math3249.listler.util.STORE_ID
 import com.math3249.listler.util.message.Message.Type
 
 class AddStoreFragment : Fragment() {
@@ -63,16 +62,18 @@ class AddStoreFragment : Fragment() {
 
     private fun subscribeToMessage() {
         viewModel.message.observe(this.viewLifecycleOwner) { message ->
-            if (message.type != null) {
-                when (message.type) {
-                    Type.STORE_INSERTED -> {
-                        val action = AddStoreFragmentDirections
-                            .actionAddStoreFragmentToStoreDetailsFragment(message.getId(STORE_ID), message.extra)
-                        findNavController().navigate(action)
-                    }
+            when (message.type) {
+                Type.STORE_INSERTED -> {
+                    val action = AddStoreFragmentDirections
+                        .actionAddStoreFragmentToStoreDetailsFragment(
+                            message.store.storeId,
+                            message.store.name
+                        )
+                    findNavController().navigate(action)
                 }
-                message.clear()
+                else -> {}
             }
+            message.clear()
         }
     }
 }

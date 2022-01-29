@@ -8,10 +8,10 @@ import com.math3249.listler.model.StoreWithCategories
 import com.math3249.listler.model.crossref.StoreCategoryCrossRef
 import com.math3249.listler.model.entity.Category
 import com.math3249.listler.model.entity.Store
-import com.math3249.listler.util.STORE_ID
 import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.UNCHECKED_CAST
 import com.math3249.listler.util.message.Message
+import com.math3249.listler.util.message.StoreMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -19,7 +19,7 @@ class StoreViewModel(
     private val storeDao: StoreDao
 ): ViewModel() {
 
-    val message = MutableLiveData<Message>()
+    val message = MutableLiveData<StoreMessage>()
 
     val stores: LiveData<List<Store>>
         get() = storeDao.getStores().asLiveData()
@@ -39,12 +39,11 @@ class StoreViewModel(
         viewModelScope.launch {
             val storeId = storeDao.insert(store)
             if (storeId > 0)
-                message.postValue(Message(
+                message.postValue(StoreMessage(
                     Message.Type.STORE_INSERTED,
                     true,
-                    mutableMapOf(STORE_ID to storeId),
-                    _extra = store.name
-            ))
+                    Store(storeId, store.name)
+                ))
         }
     }
 

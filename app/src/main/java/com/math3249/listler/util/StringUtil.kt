@@ -20,10 +20,11 @@ object StringUtil {
      * and the rest to lower case
      */
     fun standardizeItemName(name: String): String? {
-        return if (name.isBlank()) {
+        val n = name.trim()
+        return if (n.isBlank()) {
             null
         } else {
-            name.lowercase()
+            n.lowercase()
                 .replaceFirstChar { it.uppercaseChar() }
         }
     }

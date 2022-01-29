@@ -22,6 +22,7 @@ import com.math3249.listler.ui.fragment.dialog.AddStoreDialog
 import com.math3249.listler.ui.viewmodel.StoreViewModel
 import com.math3249.listler.util.*
 import com.math3249.listler.util.message.Message
+import com.math3249.listler.util.message.StoreMessage
 import com.math3249.listler.util.utilinterface.Swipeable
 
 class StoresFragment : Fragment(), Swipeable<Store> {
@@ -55,11 +56,11 @@ class StoresFragment : Fragment(), Swipeable<Store> {
         subscribeToMessage()
         swipe()
         childFragmentManager.setFragmentResultListener(KEY_REQUEST, this.viewLifecycleOwner) { _, bundle ->
-            val message = bundle.get(KEY_INPUT) as Message
+            val message = bundle.get(KEY_INPUT) as StoreMessage
             if (message.success)
-                viewModel.addStore(Store(name = message.extra))
+                viewModel.addStore(Store(name = message.store.name))
              else
-                Utils.snackbar(message.type!!, binding.root, getString(R.string.store))
+                Utils.snackbar(message.type, binding.root, getString(R.string.store))
         }
 
         binding.apply {
@@ -91,20 +92,22 @@ class StoresFragment : Fragment(), Swipeable<Store> {
 
     private fun subscribeToMessage() {
         viewModel.message.observe(this.viewLifecycleOwner) { message ->
-            if (message.type != null) {
-                when (message.type) {
-                    Message.Type.STORE_INSERTED -> {
-                        val action = StoresFragmentDirections
-                            .actionStoresFragmentToStoreDetailsFragment(message.getId(STORE_ID), message.extra)
-                        findNavController().navigate(action)
-                    }
-                    Message.Type.STORE_NEW -> {
-                        viewModel.addStore(Store(name = message.extra))
-                    }
-                    else -> {}
+            message as StoreMessage
+            when (message.type) {
+                Message.Type.STORE_INSERTED -> {
+                    val action = StoresFragmentDirections
+                        .actionStoresFragmentToStoreDetailsFragment(
+                            message.store.storeId,
+                            message.store.name
+                        )
+                    findNavController().navigate(action)
                 }
-                message.clear()
+                Message.Type.STORE_NEW -> {
+                    viewModel.addStore(Store(name = message.store.name))
+                }
+                else -> {}
             }
+            message.clear()
         }
     }
 

@@ -89,7 +89,7 @@ class AddItemFragment: Fragment() {
                         navArgs.addItemData,
                     categoryName!!,
                     inputName!!)
-                    //navigateBack()
+                    navigateBack()
                 }
             }
         } else {

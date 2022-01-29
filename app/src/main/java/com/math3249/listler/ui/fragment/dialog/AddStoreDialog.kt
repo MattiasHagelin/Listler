@@ -10,10 +10,12 @@ import androidx.fragment.app.setFragmentResult
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.math3249.listler.R
+import com.math3249.listler.model.entity.Store
 import com.math3249.listler.util.KEY_INPUT
 import com.math3249.listler.util.KEY_REQUEST
 import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.message.Message
+import com.math3249.listler.util.message.StoreMessage
 
 class AddStoreDialog(): DialogFragment(){
 
@@ -30,14 +32,15 @@ class AddStoreDialog(): DialogFragment(){
                 val input = StringUtil.standardizeItemName(
                     inputEditText.text.toString())
                 if (input == null)
-                    setFragmentResult(KEY_REQUEST, bundleOf(KEY_INPUT to Message(
+                    setFragmentResult(KEY_REQUEST, bundleOf(KEY_INPUT to StoreMessage(
                         Message.Type.INVALID_INPUT,
                         false
                     )))
                 else
-                    setFragmentResult(KEY_REQUEST, bundleOf(KEY_INPUT to Message(
+                    setFragmentResult(KEY_REQUEST, bundleOf(KEY_INPUT to StoreMessage(
                         Message.Type.STORE_NEW,
-                        true
+                        true,
+                        Store(name = input)
                     )))
             }.setNegativeButton(StringUtil.getString(R.string.btn_cancel)) { dialog, _ ->
                 dialog.cancel()

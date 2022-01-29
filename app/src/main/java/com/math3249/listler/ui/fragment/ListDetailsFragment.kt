@@ -142,7 +142,7 @@ class ListDetailsFragment(private val listDetailsArgs: ListDetailsArgs): Fragmen
             .observe(this.viewLifecycleOwner) { selectedList ->
                 this.selectedList = selectedList
                 selectedList.let { list ->
-                    val itemsByCategory = list.listItems.groupBy { it.categoryId }
+                    val itemsByCategory = list.listItems.groupBy { it.categoryName }
                     val listData = mutableListOf<RowType>()
                     for ((k, v) in itemsByCategory) {
                         var first = true

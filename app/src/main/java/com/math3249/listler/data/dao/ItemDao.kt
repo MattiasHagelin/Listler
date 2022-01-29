@@ -11,9 +11,6 @@ abstract class ItemDao: BaseDao() {
     @Query("SELECT itemId FROM item WHERE name = :name")
     abstract fun getItemIdByName(name: String): Long
 
-    @Query("SELECT categoryId FROM category WHERE name = :categoryName")
-    abstract fun getCategoryId(categoryName: String): Long
-
     @Query("SELECT * FROM ListCategoryItem WHERE listId = :listId AND categoryId = :categoryId AND itemId = :itemId")
     abstract fun getListCategoryItem(listId: Long, categoryId: Long, itemId: Long): ListCategoryItem?
 

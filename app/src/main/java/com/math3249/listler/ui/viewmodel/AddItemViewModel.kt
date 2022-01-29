@@ -82,6 +82,7 @@ class AddItemViewModel(
         itemName: String
     ){
         viewModelScope.launch(Dispatchers.IO) {
+            itemDao.insert(Category(name = catName))
             itemDao.update(
                 ListCategoryItem(
                     addItemData.listId,
@@ -100,7 +101,7 @@ class AddItemViewModel(
     }
 
     private suspend fun getCategoryId(catName: String): Long {
-        var catId = itemDao.getCategoryIdByName(catName)
+        var catId = itemDao.getCategoryId(catName)
         if (catId <= 0) catId = itemDao.insert(Category(name = catName))
         return catId
     }

@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 class StoreMessage(
     private var _type: Type = Type.NO_MESSAGE,
     private var _success: Boolean = false,
-    private var _store: Store
+    private var _store: Store = Store()
 
 ): Message(_type, _success), Parcelable {
     val store: Store = _store

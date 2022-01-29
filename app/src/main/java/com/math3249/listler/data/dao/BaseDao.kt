@@ -25,12 +25,12 @@ abstract class BaseDao {
     abstract fun getCategoryId(listId: Long, itemId: Long): Long
 
     @Query("SELECT categoryId FROM Category WHERE name = :categoryName")
-    abstract suspend fun getCategoryIdByName(categoryName: String): Long
+    abstract fun getCategoryId(categoryName: String): Long
 
     @Query("SELECT * FROM Category")
     abstract fun getCategories(): Flow<List<Category>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insert(category: Category): Long
 
     //@Insert(onConflict = OnConflictStrategy.IGNORE)

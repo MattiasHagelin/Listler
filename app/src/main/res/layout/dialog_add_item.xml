@@ -38,9 +38,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/half_standard_margin"
                 android:layout_marginEnd="@dimen/half_standard_margin"
-                android:inputType="none"
+                android:ems="12"
+                android:imeOptions="actionSearch"
+                android:inputType="textAutoComplete|textAutoCorrect"
                 />
-
         </com.google.android.material.textfield.TextInputLayout>
     </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>

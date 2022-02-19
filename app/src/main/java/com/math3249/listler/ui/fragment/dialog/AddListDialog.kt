@@ -69,4 +69,8 @@ class AddListDialog: DialogFragment() {
         dropDown.setAdapter(adapter)
         dropDown.setText(typesAsString[0], false)
     }
+
+    companion object {
+        const val TAG = "AddListDialog"
+    }
 }

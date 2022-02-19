@@ -21,7 +21,7 @@ import com.math3249.listler.databinding.FragmentListHistoryBinding
 import com.math3249.listler.model.entity.Item
 import com.math3249.listler.ui.adapter.ListHistoryAdapter
 import com.math3249.listler.ui.fragment.dialog.DeleteDialog
-import com.math3249.listler.ui.viewmodel.ListDetailViewModel
+import com.math3249.listler.ui.viewmodel.ListViewModel
 import com.math3249.listler.util.DragSwipe
 import com.math3249.listler.util.KEY_REQUEST
 import com.math3249.listler.util.POSITION
@@ -32,9 +32,9 @@ class ListHistoryFragment : Fragment(), Swipeable<Item> {
     private val navArgs: ListHistoryFragmentArgs by navArgs()
     private var _binding: FragmentListHistoryBinding? = null
     private val binding get() = _binding!!
-    val viewModel: ListDetailViewModel by activityViewModels() {
-        ListDetailViewModel.ListDetailViewModelFactory (
-            (activity?.application as App).database.listDetailDao()
+    val viewModel: ListViewModel by activityViewModels() {
+        ListViewModel.ListViewModelFactory (
+            (activity?.application as App).database.listDao()
         )
     }
 

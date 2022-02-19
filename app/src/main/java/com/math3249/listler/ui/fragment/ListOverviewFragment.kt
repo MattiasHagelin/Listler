@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
@@ -18,16 +19,16 @@ import com.math3249.listler.databinding.FragmentListOverviewBinding
 import com.math3249.listler.model.entity.List
 import com.math3249.listler.ui.adapter.ListOverviewAdapter
 import com.math3249.listler.ui.fragment.dialog.AddListDialog
-import com.math3249.listler.ui.fragment.dialog.AddStoreDialog
 import com.math3249.listler.ui.fragment.navargs.ListDetailsArgs
-import com.math3249.listler.ui.viewmodel.ListOverviewViewModel
+import com.math3249.listler.ui.viewmodel.ListViewModel
 import com.math3249.listler.util.*
 import com.math3249.listler.util.message.ListMessage
+import com.math3249.listler.util.message.Message
 import com.math3249.listler.util.utilinterface.Swipeable
 
 class ListOverviewFragment : Fragment(), Swipeable<List> {
-    private val viewModel: ListOverviewViewModel by activityViewModels {
-        ListOverviewViewModel.ListOverviewViewModelFactory(
+    private val viewModel: ListViewModel by activityViewModels {
+        ListViewModel.ListViewModelFactory(
             (activity?.application as App).database.listDao()
         )
     }
@@ -45,8 +46,8 @@ class ListOverviewFragment : Fragment(), Swipeable<List> {
     ): View {
         _binding = FragmentListOverviewBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
-        _adapter = ListOverviewAdapter {
-                list -> val action = com.math3249.listler.ui.fragment.ListOverviewFragmentDirections
+        _adapter = ListOverviewAdapter { list ->
+            val action = com.math3249.listler.ui.fragment.ListOverviewFragmentDirections
             .actionListOverviewFragmentToListDetailsTabFragment2(
                 ListDetailsArgs(
                     list.listId,
@@ -69,6 +70,8 @@ class ListOverviewFragment : Fragment(), Swipeable<List> {
             }
         }
 
+        //viewModel.getHomeScreen()
+
         childFragmentManager.setFragmentResultListener(KEY_REQUEST, this.viewLifecycleOwner) { _, bundle ->
             val message = bundle.get(KEY_INPUT) as ListMessage
             if (message.success)
@@ -85,23 +88,41 @@ class ListOverviewFragment : Fragment(), Swipeable<List> {
         binding.apply {
             listOverviewRecyclerview.adapter = adapter
             addNewListButton.setOnClickListener {
-                AddListDialog().show(childFragmentManager, AddStoreDialog.TAG)
+                AddListDialog().show(childFragmentManager, AddListDialog.TAG)
             }
         }
     }
 
     private fun subscribeToMessage() {
         viewModel.message.observe(this.viewLifecycleOwner) { message ->
-            message as ListMessage
-            val action = ListOverviewFragmentDirections
-                .actionListOverviewFragmentToListDetailsTabFragment2(
-                    ListDetailsArgs(
-                        message.listData.listItem.listId,
-                        message.listData.listName
-                    )
-                )
-            findNavController().navigate(action)
-            message.clear()
+            if (message.type != Message.Type.NO_MESSAGE) {
+                message as ListMessage
+                var action: NavDirections
+                when (message.type) {
+                    Message.Type.LIST_INSERTED -> {
+                        action = ListOverviewFragmentDirections
+                            .actionListOverviewFragmentToListDetailsTabFragment2(
+                                ListDetailsArgs(
+                                    message.listData.listItem.listId,
+                                    message.listData.listName
+                                )
+                            )
+                        findNavController().navigate(action)
+                    }
+                    Message.Type.LIST_HOME_SCREEN -> {
+                        action = ListOverviewFragmentDirections
+                            .actionListOverviewFragmentToListDetailsTabFragment2(
+                                ListDetailsArgs(
+                                    message.listData.listItem.listId,
+                                    message.listData.listName
+                                )
+                            )
+                        findNavController().navigate(action)
+                    }
+                    else -> {}
+                }
+                message.clear()
+            }
         }
     }
 

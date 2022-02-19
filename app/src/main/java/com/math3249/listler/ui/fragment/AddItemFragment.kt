@@ -14,7 +14,7 @@ import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentAddItemBinding
 import com.math3249.listler.model.entity.Item
 import com.math3249.listler.ui.fragment.navargs.ListDetailsArgs
-import com.math3249.listler.ui.viewmodel.AddItemViewModel
+import com.math3249.listler.ui.viewmodel.ItemViewModel
 import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.Utils
 import com.math3249.listler.util.message.Message.Type
@@ -31,8 +31,8 @@ class AddItemFragment: Fragment() {
     }
     */
 
-    private val viewModel: AddItemViewModel by activityViewModels {
-        AddItemViewModel.AddItemViewModelFactory (
+    private val viewModel: ItemViewModel by activityViewModels {
+        ItemViewModel.AddItemViewModelFactory (
             (activity?.application as App).database.itemDao()
         )
     }
@@ -57,8 +57,7 @@ class AddItemFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val itemId = navArgs.addItemData.itemId
-        val categoryId = navArgs.addItemData.catId
+        val categoryName = navArgs.addItemData.catName
         val itemName = navArgs.addItemData.itemName
 
         viewModel.allCategories.observe(this.viewLifecycleOwner) {
@@ -73,7 +72,7 @@ class AddItemFragment: Fragment() {
                 binding.categoryDropdown.setAdapter(dropDownAdapter)
             }
         }
-        if ( itemId > 0 && categoryId > 0) {
+        if ( itemName.isNotBlank() && categoryName.isNotBlank()) {
             binding.apply {
                 itemInput.setText(itemName)
                 categoryDropdown.setText(navArgs.addItemData.catName)
@@ -81,31 +80,46 @@ class AddItemFragment: Fragment() {
 
             binding.actionBar.saveButton.text = getString(R.string.btn_update)
             binding.actionBar.saveButton.setOnClickListener {
-                val inputName = StringUtil.standardizeItemName(binding.itemInput.text.toString())
-                val categoryName = StringUtil.standardizeItemName(binding.categoryDropdown.text.toString())
+                val itemInput = StringUtil.standardizeItemName(binding.itemInput.text.toString())
+                val catInput = StringUtil.standardizeItemName(binding.categoryDropdown.text.toString())
 
-                if (checkUserInput(inputName, categoryName)) {
+                if (checkUserInput(itemInput, catInput)) {
                     viewModel.updateItemOnList(
                         navArgs.addItemData,
-                    categoryName!!,
-                    inputName!!)
+                    catInput!!,
+                    itemInput!!)
                     navigateBack()
                 }
             }
         } else {
-            binding.actionBar.saveButton.text = getString(R.string.btn_save)
-            binding.itemInput.setText(navArgs.addItemData.itemName)
-            binding.actionBar.saveButton.setOnClickListener {
-                if (checkUserInput(getItemName(), getCategoryName())) {
-                    viewModel.addItemAndCategory(navArgs.addItemData.listId, getItemName()!!, getCategoryName()!!)
+            binding.apply {
+                actionBar.saveButton.text = getString(R.string.btn_save)
+                itemInput.setText(navArgs.addItemData.itemName)
+                categoryDropdown.setText(getText(R.string.misc))
+
+                actionBar.saveButton.setOnClickListener {
+                    if (checkUserInput(getItemName(), getCategoryName())) {
+                        viewModel.addItemAndCategory(navArgs.addItemData.listId, getItemName()!!, getCategoryName()!!)
+                    }
                 }
             }
         }
         subscribeToMessage()
 
         binding.apply {
-            itemInput.setText(navArgs.addItemData.itemName)
-            categoryDropdown.setText(navArgs.addItemData.catName)
+            categoryDropdown.setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus)
+                    categoryDropdown.setText("")
+                else if (categoryDropdown.text.toString() == "") {
+                    if (navArgs.addItemData.catName == "")
+                        categoryDropdown.setText(getText(R.string.misc))
+                    else
+                        categoryDropdown.setText(navArgs.addItemData.catName)
+                }
+
+            }
+     //       itemInput.setText(navArgs.addItemData.itemName)
+     //       categoryDropdown.setText(navArgs.addItemData.catName)
             actionBar.cancelButton.setOnClickListener {
                 findNavController().navigateUp()
             }
@@ -122,14 +136,6 @@ class AddItemFragment: Fragment() {
                     }
                     Type.NO_MESSAGE -> {}
                     else -> {
-                        /*MessageType.ITEM_INSERTED ->
-                        viewModel.addItemToList(
-                            navArgs.addItemData.listId,
-                            message.getId(CATEGORY_ID),
-                            message.getData(CATEGORY_DATA),
-                            message.getData(ITEM_DATA),
-                            false
-                        )*/
                         navigateBack()
                     }
                 }

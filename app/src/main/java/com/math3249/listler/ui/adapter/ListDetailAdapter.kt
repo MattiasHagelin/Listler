@@ -12,9 +12,11 @@ class ListDetailAdapter(private val clickListener: (RowType) -> Unit,
     private val longClickListener: (RowType) -> Unit = {}
 ): ListAdapter<RowType, RecyclerView.ViewHolder>(DiffCallback){
 
+    private val data: MutableList<RowType> = mutableListOf()
+
     companion object DiffCallback: DiffUtil.ItemCallback<RowType>(){
         override fun areItemsTheSame(oldItem: RowType, newItem: RowType): Boolean {
-            return oldItem.listItem.itemId == newItem.listItem.itemId
+            return oldItem.listItem.itemName == newItem.listItem.itemName
         }
 
         override fun areContentsTheSame(oldItem: RowType, newItem: RowType): Boolean {
@@ -42,11 +44,26 @@ class ListDetailAdapter(private val clickListener: (RowType) -> Unit,
         return getItem(position)
     }
 
+    override fun getItem(position: Int): RowType {
+        return data[position]
+    }
+
     override fun getItemCount(): Int {
-        return currentList.size
+        return data.size
     }
 
     override fun getItemViewType(position: Int): Int {
-        return currentList[position].getRowType()
+        return data[position].getRowType()
+    }
+
+    fun clearData() {
+        val size = itemCount
+        data.clear()
+        notifyItemRangeRemoved(0, size)
+    }
+
+    fun insertData(list: MutableList<RowType>) {
+        data.addAll(list.toTypedArray())
+        notifyItemRangeInserted(0, itemCount)
     }
 }

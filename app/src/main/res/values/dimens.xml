@@ -7,4 +7,5 @@
     <dimen name="half_action_bar_height">28dp</dimen>
     <dimen name="standard_action_bar_height">56dp</dimen>
     <dimen name="double_action_bar_height">112dp</dimen>
+    <dimen name="card_space">3dp</dimen>
 </resources>

@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.math3249.listler.databinding.ActivitySettingsBinding
-import com.math3249.listler.ui.fragment.SettingsFragment
+import com.math3249.listler.ui.fragment.ListSettingsFragment
 import com.math3249.listler.util.StringUtil
 
 class SettingsActivity : AppCompatActivity() {
@@ -17,7 +17,7 @@ class SettingsActivity : AppCompatActivity() {
 
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setSupportActionBar(binding.actionBar.toolbar)
+        setSupportActionBar(binding.actionBar.standardToolbar)
 
         supportActionBar?.title = StringUtil.getString(R.string.settings_title)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -28,7 +28,7 @@ class SettingsActivity : AppCompatActivity() {
                 return
             }
             // below line is to inflate our fragment.
-            supportFragmentManager.beginTransaction().replace(R.id.settings_layout, SettingsFragment()).commit()
+            supportFragmentManager.beginTransaction().replace(R.id.settings_layout, ListSettingsFragment()).commit()
         }
     }
 

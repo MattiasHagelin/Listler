@@ -19,10 +19,10 @@ object StringUtil {
      * Sets first letter to upper case
      * and the rest to lower case
      */
-    fun standardizeItemName(name: String): String? {
+    fun standardizeItemName(name: String): String {
         val n = name.trim()
         return if (n.isBlank()) {
-            null
+            ""
         } else {
             n.lowercase()
                 .replaceFirstChar { it.uppercaseChar() }

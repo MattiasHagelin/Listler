@@ -3,6 +3,7 @@
     <string name="store">Store</string>
     <string name="list">List</string>
     <string name="confirm">Confirm</string>
+    <string name="misc">Miscellaneous</string>
 
     <!-- TITLES -->
     <string name="title_new_list">New list</string>
@@ -68,9 +69,15 @@
     <string name="settings_title">Settings</string>
     <string name="completed_item_time_limit_summary">Sets time limit before item is hidden from completed list</string>
     <string name="completed_item_time_limit_title">Completed item time limit</string>
+    <string name="is_home_screen_title">Use this list as home screen</string>
+    <string name="is_home_screen_summary">Sets this list as home screen</string>
+    <string name="store_sort_order_title">Sort order</string>
+    <string name="store_sort_order_summary">Select store to sort list by</string>
 
     <!-- SETTINGS KEYS -->
     <string name="key_completed_item_time_limit">completed_item_time_limit</string>
+    <string name="key_home_screen">is_home_screen</string>
+    <string name="key_store_sort_order">store_sort_order</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

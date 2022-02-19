@@ -11,7 +11,7 @@ import com.math3249.listler.util.StringUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class AddCategoryViewModel(
+class CategoryViewModel(
     private val categoryDao: CategoryDao
 ): ViewModel() {
 
@@ -37,9 +37,9 @@ class AddCategoryViewModel(
         private val categoryDao: CategoryDao
     ): ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(AddCategoryViewModel::class.java)) {
+            if (modelClass.isAssignableFrom(CategoryViewModel::class.java)) {
                 @Suppress
-                return AddCategoryViewModel(categoryDao) as T
+                return CategoryViewModel(categoryDao) as T
             }
             throw IllegalArgumentException(StringUtil.getString(R.string.e_unknown_viewmodel_class))
         }

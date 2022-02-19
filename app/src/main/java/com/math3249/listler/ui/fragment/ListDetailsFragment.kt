@@ -2,12 +2,13 @@ package com.math3249.listler.ui.fragment
 
 import android.content.Context
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -15,13 +16,20 @@ import com.math3249.listler.App
 import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentListDetailsBinding
 import com.math3249.listler.model.ListWithData
+import com.math3249.listler.model.crossref.ListCategoryItem
+import com.math3249.listler.model.crossref.StoreCategoryCrossRef
+import com.math3249.listler.model.entity.Category
 import com.math3249.listler.model.entity.Item
 import com.math3249.listler.ui.adapter.ListDetailAdapter
+import com.math3249.listler.ui.fragment.dialog.AddItemDialog
 import com.math3249.listler.ui.fragment.dialog.DeleteDialog
 import com.math3249.listler.ui.fragment.navargs.AddItemArgs
 import com.math3249.listler.ui.fragment.navargs.ListDetailsArgs
-import com.math3249.listler.ui.listview.*
-import com.math3249.listler.ui.viewmodel.ListDetailViewModel
+import com.math3249.listler.ui.listview.ListDetailCategory
+import com.math3249.listler.ui.listview.ListDetailItem
+import com.math3249.listler.ui.listview.RowType
+import com.math3249.listler.ui.listview.RowTypes
+import com.math3249.listler.ui.viewmodel.ListViewModel
 import com.math3249.listler.util.*
 import com.math3249.listler.util.message.ListMessage
 import com.math3249.listler.util.message.Message.Type
@@ -30,9 +38,9 @@ import com.math3249.listler.util.utilinterface.Swipeable
 class ListDetailsFragment(private val listDetailsArgs: ListDetailsArgs): Fragment(), Swipeable<RowType> {
     private val listId = listDetailsArgs.listId
 
-    private val viewModel: ListDetailViewModel by activityViewModels {
-        ListDetailViewModel.ListDetailViewModelFactory (
-            (activity?.application as App).database.listDetailDao()
+    private val viewModel: ListViewModel by activityViewModels {
+        ListViewModel.ListViewModelFactory (
+            (activity?.application as App).database.listDao()
         )
     }
 
@@ -45,12 +53,16 @@ class ListDetailsFragment(private val listDetailsArgs: ListDetailsArgs): Fragmen
     private var _adapter: ListDetailAdapter = createAdapter()
     private val adapter get() = _adapter
 
+    private var _store: List<StoreCategoryCrossRef>? = null
+    private val store get() = _store!!
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentListDetailsBinding.inflate(inflater, container, false)
+        viewModel.getSortOrder(listId)
         setHasOptionsMenu(true)
         return binding.root
     }
@@ -79,8 +91,9 @@ class ListDetailsFragment(private val listDetailsArgs: ListDetailsArgs): Fragmen
             }
 
             addItemToList.setEndIconOnClickListener {
-                addToDatabase()
+                addToList()
             }
+            /*
             itemDropdown.setOnKeyListener { _, keyCode, event ->
                 if (keyCode == KeyEvent.KEYCODE_ENTER
                     && event.action == KeyEvent.ACTION_UP
@@ -89,14 +102,33 @@ class ListDetailsFragment(private val listDetailsArgs: ListDetailsArgs): Fragmen
                     return@setOnKeyListener true
                 }
                 return@setOnKeyListener false
-            }
+            }*/
         }
     }
 
     private fun subscribeToViewmodelMessage() {
-        viewModel.listDetailFragmentMessage.observe(this.viewLifecycleOwner) { message ->
+        viewModel.message.observe(this.viewLifecycleOwner) { message ->
+            message as ListMessage
             when (message.type) {
-                Type.ITEM_MISSING_CATEGORY -> {
+                Type.ITEM_NEW -> createAddItemDialog(AddItemArgs(
+                    listId,
+                    listDetailsArgs.listName,
+                    message.listData.listItem.categoryName,
+                    message.listData.listItem.itemName
+                ))
+               /*{
+                    val action = ListDetailsTabFragmentDirections
+                        .actionListDetailsTabFragmentToAddItemFragment(
+                            AddItemArgs(
+                                listId,
+                                listDetailsArgs.listName,
+                                itemName = message.listData.listItem.itemName
+                            )
+                        )
+                    findNavController().navigate(action)
+                }*/
+
+                else -> Unit/*{
                     message as ListMessage
                     val action = ListDetailsTabFragmentDirections
                         .actionListDetailsTabFragmentToAddItemFragment(
@@ -107,20 +139,7 @@ class ListDetailsFragment(private val listDetailsArgs: ListDetailsArgs): Fragmen
                             )
                         )
                     findNavController().navigate(action)
-                }
-                Type.NO_MESSAGE -> {}
-                else -> {
-                    message as ListMessage
-                    val action = ListDetailsTabFragmentDirections
-                        .actionListDetailsTabFragmentToAddItemFragment(
-                            AddItemArgs(
-                                listId,
-                                listDetailsArgs.listName,
-                                itemName = message.listData.listItem.itemName
-                            )
-                        )
-                    findNavController().navigate(action)
-                }
+                }*/
             }
             message.clear()
         }
@@ -130,9 +149,13 @@ class ListDetailsFragment(private val listDetailsArgs: ListDetailsArgs): Fragmen
         childFragmentManager.setFragmentResultListener(KEY_REQUEST, this.viewLifecycleOwner) { _, bundle ->
             val message = bundle.get(KEY_INPUT) as ListMessage
             if (message.success) {
-                viewModel.deleteItemFromList(
-                    message.listData.listItem
-                )
+                when (message.type) {
+                    Type.ITEM_INSERTED -> addToDatabase(message.listData.listItem)
+                    Type.ITEM_UPDATED -> addToList(message.listData.listItem)
+                    Type.ITEM_DELETED -> viewModel.deleteItemFromList(message.listData.listItem)
+                    Type.INVALID_INPUT -> Utils.snackbar(Type.INVALID_INPUT, binding.listRecyclerview)
+                    else -> Unit
+                }
             }
         }
     }
@@ -142,31 +165,63 @@ class ListDetailsFragment(private val listDetailsArgs: ListDetailsArgs): Fragmen
             .observe(this.viewLifecycleOwner) { selectedList ->
                 this.selectedList = selectedList
                 selectedList.let { list ->
-                    val itemsByCategory = list.listItems.groupBy { it.categoryName }
-                    val listData = mutableListOf<RowType>()
-                    for ((k, v) in itemsByCategory) {
-                        var first = true
-                        v.forEach { item ->
-                            if (!item.done) {
-                                if (first) {
-                                    first = false
-                                    listData.add(
-                                        ListDetailCategory(
-                                            v.first()
-                                        )
-                                    )
-                                }
-                                listData.add(ListDetailItem(
-                                    item
-                                ))
-                            }
-                        }
-                    }
-                    adapter.submitList(listData)
+                    adapter.clearData()
+                    adapter.insertData(sortList(list))
+                   //adapter.submitList(listItems)
                     (requireActivity() as AppCompatActivity).supportActionBar?.title =
                         list.list.name
                 }
             }
+    }
+
+    private fun sortList(
+        list: ListWithData
+    ): MutableList<RowType> {
+        val misc = getString(R.string.misc)
+        val listData: MutableList<RowType> = mutableListOf()
+        val itemsByCat = list.listItems.groupBy { it.categoryName }
+        val itemsMissing = itemsMissingCatInStore(
+            list.settings?.store?.categories?.map { it.name }!!, itemsByCat)
+        val sort = list.settings.store.storeCategories.sortedBy { it.sortOrder }
+        val catByName = list.settings.store.categories.associateBy { it.categoryId }
+        //Handle items missing category
+        if (itemsByCat[misc] == null) {
+            if (itemsMissing.isNotEmpty())
+                listData.add(ListDetailCategory(ListCategoryItem(categoryName = misc)))
+            listData.addAll(itemsMissing)
+        }
+        sort.forEach { storCatSorted ->
+            var first = true
+            itemsByCat[catByName[storCatSorted.categoryId]?.name]?.forEach { item ->
+                if (!item.done) {
+                    if (first) {
+                        first = false
+                        listData.add(ListDetailCategory(item))
+                    }
+                    //Handle items missing category
+                    if (item.categoryName == misc)
+                        listData.addAll(itemsMissing)
+                    listData.add(ListDetailItem(item))
+                }
+            }
+        }
+        return listData
+    }
+
+    private fun itemsMissingCatInStore(
+        storeCats: List<String>,
+        itemsByCat: Map<String, List<ListCategoryItem>>
+    ): Array<RowType> {
+        val itemsMissing: MutableList<RowType> = mutableListOf()
+        val itemsCategories = itemsByCat.keys.toList()
+        itemsCategories.forEach { cat ->
+            if (!storeCats.contains(cat))
+                itemsByCat[cat]?.forEach { listItem ->
+                    if (!listItem.done)
+                        itemsMissing.add(ListDetailItem(listItem))
+                }
+        }
+        return itemsMissing.toTypedArray()
     }
 
     private fun subscribeToItems() {
@@ -194,16 +249,17 @@ class ListDetailsFragment(private val listDetailsArgs: ListDetailsArgs): Fragmen
     /** Adds item to current list and
     clears text from item_dropdown
      */
-    private fun addToList() {
-        val selectedItem = items.find { it.name == getItemNameFromItemDropdown() }
-
-        if (selectedItem != null) {
-          if (selectedItem.itemId > 0) {
-              viewModel.addItemToList(listId, selectedItem.name)
-              Utils.clearDropdown(binding.itemDropdown)
-          }
-        } else
-            Utils.snackbar(Type.ITEM_NOT_IN_DATABASE, binding.listRecyclerview)
+    private fun addToList(listItem: ListCategoryItem? = null) {
+        if (listItem != null) {
+            viewModel.addItemToList(listItem)
+        } else {
+            val itemName =  StringUtil.standardizeItemName(binding.itemDropdown.text.toString())
+            if (itemName.isNotBlank())
+                viewModel.addItemToList(listId, itemName)
+            else
+                Utils.snackbar(Type.ITEM_NOT_IN_DATABASE, binding.root)
+        }
+        Utils.clearDropdown(binding.itemDropdown)
     }
 
     /**
@@ -211,27 +267,21 @@ class ListDetailsFragment(private val listDetailsArgs: ListDetailsArgs): Fragmen
      * Navigate to Add Item fragment if it doesn't
      * Add item to list if it does
      */
-    private fun addToDatabase(){
+    private fun addToDatabase(listItem: ListCategoryItem){
         //checks if itemDropdown has a value
-        if (StringUtil.validateUserInput(getItemNameFromItemDropdown())) {
-                if (!itemExists()) {
-                    //add new item to database
-                    val action = ListDetailsTabFragmentDirections
-                        .actionListDetailsTabFragmentToAddItemFragment(
-                            AddItemArgs(
-                                listId,
-                                listDetailsArgs.listName,
-                                0,
-                                "",
-                                0,
-                                getItemNameFromItemDropdown()
-                            )
-                        )
-                    findNavController().navigate(action)
-                } else {
-                    addToList()
-                }
+        if (StringUtil.validateUserInput(listItem.itemName)) {
+            if (!itemExists(listItem.itemName)) {
+                //add new item to database
+                viewModel.insert(listItem, true)
+            } else {
+                addToList()
+            }
         }
+    }
+
+    private fun createAddItemDialog(itemArgs: AddItemArgs) {
+        val catergories = getCategories().map { it.name }
+        AddItemDialog(itemArgs, catergories).show(childFragmentManager, AddItemDialog.TAG)
     }
 
     private fun getItemNameFromItemDropdown(): String {
@@ -242,8 +292,8 @@ class ListDetailsFragment(private val listDetailsArgs: ListDetailsArgs): Fragmen
         } else input!!
     }
 
-    private fun itemExists(): Boolean {
-        return items.count { it.name == getItemNameFromItemDropdown() } > 0
+    private fun itemExists(itemName: String): Boolean {
+        return items.count { it.name == itemName } > 0
     }
 
     override val swipeDirs: Int
@@ -267,24 +317,25 @@ class ListDetailsFragment(private val listDetailsArgs: ListDetailsArgs): Fragmen
     override fun swipeRight(position: Int) {
         val item = adapter.getRowType(position)
         if (item.getRowType() == RowTypes.ITEM.ordinal) {
-            val action = ListDetailsTabFragmentDirections
-                .actionListDetailsTabFragmentToAddItemFragment(
-                    AddItemArgs(
-                        listDetailsArgs.listId,
-                        listDetailsArgs.listName,
-                        item.listItem.categoryId,
-                        item.listItem.categoryName,
-                        item.listItem.itemId,
-                        item.listItem.itemName
-                    ))
-            findNavController().navigate(action)
+            createAddItemDialog(AddItemArgs(
+                listDetailsArgs.listId,
+                listDetailsArgs.listName,
+                item.listItem.categoryName,
+                item.listItem.itemName
+            ))
         }
     }
-
-
 
     private fun swipe(){
         val itemTouchHelper = ItemTouchHelper(DragSwipe(this))
         itemTouchHelper.attachToRecyclerView(binding.listRecyclerview)
+    }
+
+    private fun getCategories(): List<Category> {
+        val storeId = selectedList.settings?.listSettings?.storeId
+        return if (storeId != null && storeId > 1)
+            selectedList.settings?.store?.categories!!
+        else
+            viewModel.allCategories!!
     }
 }

@@ -5,11 +5,12 @@ import androidx.room.Entity
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-@Entity(primaryKeys = ["listId", "categoryId", "itemId"])
+@Entity(primaryKeys = ["listId", "itemName"])
 data class ListCategoryItem(
+
     val listId: Long = 0,
-    val categoryId: Long = 0,
-    val itemId: Long = 0,
+    /*val categoryId: Long = 0,
+    val itemId: Long = 0,*/
     val categoryName: String = "",
     val itemName: String = "",
     val done: Boolean = false,

@@ -27,7 +27,7 @@ class DeleteDialog(
             .setMessage(getString(R.string.confirm_deletion, listItem.itemName))
             .setPositiveButton(StringUtil.getString(R.string.btn_delete)) { _, _ ->
                     setFragmentResult(KEY_REQUEST, bundleOf(KEY_INPUT to ListMessage(
-                        Type.DELETE,
+                        Type.ITEM_DELETED,
                         true,
                         ListData(listItem = listItem)
                     ),

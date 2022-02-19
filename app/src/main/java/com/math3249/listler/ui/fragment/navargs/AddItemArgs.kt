@@ -7,8 +7,6 @@ import kotlinx.parcelize.Parcelize
 data class AddItemArgs(
     val listId: Long = 0,
     val listName: String = "",
-    val catId: Long = 0,
     val catName: String = "",
-    val itemId: Long = 0,
     val itemName:String = ""
 ): Parcelable

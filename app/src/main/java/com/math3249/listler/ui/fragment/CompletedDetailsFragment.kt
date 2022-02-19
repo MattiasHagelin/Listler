@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.math3249.listler.App
-import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentCompletedDetailsBinding
 import com.math3249.listler.model.ListWithData
 import com.math3249.listler.model.crossref.ListCategoryItem
@@ -21,19 +20,17 @@ import com.math3249.listler.ui.listview.ListDetailCategory
 import com.math3249.listler.ui.listview.ListDetailItem
 import com.math3249.listler.ui.listview.RowType
 import com.math3249.listler.ui.listview.RowTypes
-import com.math3249.listler.ui.viewmodel.ListDetailViewModel
+import com.math3249.listler.ui.viewmodel.ListViewModel
 import com.math3249.listler.util.DragSwipe
 import com.math3249.listler.util.LEFT
-import com.math3249.listler.util.Settings
-import com.math3249.listler.util.StringUtil
 import com.math3249.listler.util.utilinterface.Swipeable
 
 class CompletedDetailsFragment(val listId: Long): Fragment(), Swipeable<RowType> {
 
     //TODO:private val navArgs: ListDetailsFragmentArgs by navArgs()
-    private val viewModel: ListDetailViewModel by activityViewModels {
-        ListDetailViewModel.ListDetailViewModelFactory (
-            (activity?.application as App).database.listDetailDao()
+    private val viewModel: ListViewModel by activityViewModels {
+        ListViewModel.ListViewModelFactory (
+            (activity?.application as App).database.listDao()
         )
     }
 
@@ -46,16 +43,12 @@ class CompletedDetailsFragment(val listId: Long): Fragment(), Swipeable<RowType>
     private var _adapter: ListDetailAdapter? = null
     private val adapter get() = _adapter!!
 
-    private lateinit var _settings: Settings
-    private val settings get() = _settings
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCompletedDetailsBinding.inflate(inflater, container, false)
-        _settings = Settings(requireContext())
         _adapter = ListDetailAdapter ({ item ->
             if (item.getRowType() == RowTypes.ITEM.ordinal) {
                 viewModel.updateItemOnList(
@@ -78,12 +71,12 @@ class CompletedDetailsFragment(val listId: Long): Fragment(), Swipeable<RowType>
 
             this.selectedList = selectedList
             selectedList.let { list ->
-                val listItemsByCategory = list.listItems.groupBy { it.categoryId }
+                val listItemsByCategory = list.listItems.groupBy { it.categoryName }
                 val listData  = mutableListOf<RowType>()
                 for ((k, v) in listItemsByCategory) {
                     var first = true
                     v.forEach { item ->
-                        if (item.done) {
+                        if (item.done && showItem(item.modifiedAt)) {
                             if (first) {
                                 first = false
                                 listData.add(ListDetailCategory(v.first()))
@@ -97,7 +90,7 @@ class CompletedDetailsFragment(val listId: Long): Fragment(), Swipeable<RowType>
             }
         }
 
-        viewModel.listDetailFragmentMessage.observe(this.viewLifecycleOwner) {
+        viewModel.message.observe(this.viewLifecycleOwner) {
             message ->
             if (message?.type != null) {
                 /*
@@ -146,8 +139,11 @@ class CompletedDetailsFragment(val listId: Long): Fragment(), Swipeable<RowType>
 
     private fun showItem(modifiedTime: Long): Boolean {
         val elapsedTimeInHours = ((System.nanoTime() - modifiedTime)/1_000_000_000.0/3600.0)
-        val timeLimit = settings.getInt(StringUtil.getString(R.string.key_completed_item_time_limit), 1)
-        return elapsedTimeInHours <= timeLimit
+        val timeLimit = selectedList.settings?.listSettings?.completeTimeLimit
+        return if (timeLimit == null)
+                false
+        else
+            elapsedTimeInHours <= timeLimit
     }
 
     override val swipeDirs: Int
@@ -163,8 +159,8 @@ class CompletedDetailsFragment(val listId: Long): Fragment(), Swipeable<RowType>
             viewModel.deleteItemFromList(
                 ListCategoryItem(
                     listId = listId,
-                    itemId = item.listItem.itemId,
-                    categoryId = item.listItem.categoryId
+                    itemName = item.listItem.itemName,
+                    categoryName = item.listItem.categoryName
                 )
             )
         }

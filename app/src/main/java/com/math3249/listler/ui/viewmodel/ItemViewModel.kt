@@ -15,7 +15,7 @@ import com.math3249.listler.util.message.type.ListData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class AddItemViewModel(
+class ItemViewModel(
     private val itemDao: ItemDao
 ): ViewModel() {
     val message = MutableLiveData<ListMessage>()
@@ -59,7 +59,7 @@ class AddItemViewModel(
             if (listItem != null) {
                 if (listItem.categoryName != catName) {
                     itemDao.delete(listItem)
-                    itemDao.insertWithTimeStamp(ListCategoryItem(listId, catId, listItem.itemId, catName, itemName))
+                    itemDao.insertWithTimeStamp(ListCategoryItem(listId, catName, itemName))
                 } else {
                     message.postValue(
                         ListMessage(
@@ -71,7 +71,7 @@ class AddItemViewModel(
                 }
             } else {
                 val itemId = getItemId(itemName)
-                itemDao.insertWithTimeStamp(ListCategoryItem(listId, catId, itemId, catName, itemName))
+                itemDao.insertWithTimeStamp(ListCategoryItem(listId, catName, itemName))
             }
         }
     }
@@ -86,8 +86,6 @@ class AddItemViewModel(
             itemDao.update(
                 ListCategoryItem(
                     addItemData.listId,
-                    addItemData.catId,
-                    addItemData.itemId,
                     catName,
                     itemName
             ))
@@ -191,9 +189,9 @@ class AddItemViewModel(
 */
     class AddItemViewModelFactory(private val itemDao: ItemDao): ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(AddItemViewModel::class.java)) {
+            if (modelClass.isAssignableFrom(ItemViewModel::class.java)) {
                 @Suppress(UNCHECKED_CAST)
-                return AddItemViewModel(itemDao) as T
+                return ItemViewModel(itemDao) as T
             }
             throw IllegalArgumentException(StringUtil.getString(R.string.e_unknown_viewmodel_class))
         }

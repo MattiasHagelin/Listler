@@ -35,6 +35,8 @@ const val KEY_CATEGORY = "category"
 const val KEY_ITEM = "item"
 const val KEY_CATEGORY_ID = "categoryId"
 const val KEY_ITEM_ID = "itemId"
+const val KEY_ENTRY_VALUE = "entryValue"
+const val KEY_ENTRY_TYPE = "entryType"
 //DIRECTIONS
 const val LEFT = ItemTouchHelper.LEFT
 const val RIGHT = ItemTouchHelper.RIGHT

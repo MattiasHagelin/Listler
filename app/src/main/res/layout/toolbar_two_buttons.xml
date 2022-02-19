@@ -3,7 +3,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/toolbar"
+        android:id="@+id/two_button_toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/standard_action_bar_height"
         android:layout_weight="1"

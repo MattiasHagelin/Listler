@@ -20,7 +20,6 @@ class StoreDetailsAdapter: ListAdapter<StoreCategoryWithCategoryName, StoreDetai
         private val binding: StoreCategoryBinding
     ): RecyclerView.ViewHolder(binding.root) {
         fun bind(storeCategoryWithCategoryName: StoreCategoryWithCategoryName){
-            list.add(storeCategoryWithCategoryName)
             binding.storeCat = storeCategoryWithCategoryName
             binding.categoryId.text = storeCategoryWithCategoryName.storeCat.categoryId.toString()
             binding.categorySortOrder.text = storeCategoryWithCategoryName.storeCat.sortOrder.toString()
@@ -50,12 +49,28 @@ class StoreDetailsAdapter: ListAdapter<StoreCategoryWithCategoryName, StoreDetai
         holder.bind(category)
     }
 
+    override fun getItem(position: Int): StoreCategoryWithCategoryName {
+        return list[position]
+    }
+
+    override fun getItemCount(): Int {
+        return list.size
+    }
+
     override fun getAdapterType(): Adapters {
         return Adapters.STORE_DETAIL_ADAPTER
     }
 
     override fun moveItem(from: Int, to: Int) {
-        Collections.swap(list, from, to)
+        if (from < to) {
+            for (i in from until to) {
+                Collections.swap(list, i, i + 1)
+            }
+        } else {
+            for (i in from downTo to + 1) {
+                Collections.swap(list, i, i - 1)
+            }
+        }
     }
 
     override fun removeItem(position: Int) {

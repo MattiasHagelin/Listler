@@ -9,6 +9,5 @@ data class List(
     @PrimaryKey(autoGenerate = true)
     val listId: Long = 0,
     val name: String,
-    val type: String = Type.SHOPPING_LIST.toString(),
-    val storeId: Long
+    val type: String = Type.SHOPPING_LIST.toString()
 )

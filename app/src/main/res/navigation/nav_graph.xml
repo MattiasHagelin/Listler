@@ -141,6 +141,9 @@
         <action
             android:id="@+id/action_listDetailsTabFragment_to_listHistoryFragment"
             app:destination="@id/listHistoryFragment" />
+        <action
+            android:id="@+id/action_listDetailsTabFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/listHistoryFragment"
@@ -149,6 +152,19 @@
         tools:layout="@layout/fragment_list_history" >
         <argument
             android:name="listDetails"
+            app:argType="com.math3249.listler.ui.fragment.navargs.ListDetailsArgs" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.math3249.listler.ui.fragment.ListSettingsFragment"
+        android:label="SettingsFragment" >
+        <action
+            android:id="@+id/action_settingsFragment_to_listDetailsTabFragment"
+            app:destination="@id/listDetailsTabFragment"
+            app:popUpTo="@id/listDetailsTabFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="listArgs"
             app:argType="com.math3249.listler.ui.fragment.navargs.ListDetailsArgs" />
     </fragment>
 </navigation>

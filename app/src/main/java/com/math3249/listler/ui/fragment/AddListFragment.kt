@@ -13,14 +13,14 @@ import com.math3249.listler.App
 import com.math3249.listler.R
 import com.math3249.listler.databinding.FragmentAddListBinding
 import com.math3249.listler.ui.fragment.navargs.ListDetailsArgs
-import com.math3249.listler.ui.viewmodel.ListOverviewViewModel
+import com.math3249.listler.ui.viewmodel.ListViewModel
 import com.math3249.listler.util.Type
 import com.math3249.listler.util.message.ListMessage
 
 class AddListFragment: Fragment() {
 
-    private val viewModel: ListOverviewViewModel by activityViewModels {
-        ListOverviewViewModel.ListOverviewViewModelFactory(
+    private val viewModel: ListViewModel by activityViewModels {
+        ListViewModel.ListViewModelFactory(
             (activity?.application as App).database.listDao()
         )
     }

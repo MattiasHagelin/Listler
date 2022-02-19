@@ -11,8 +11,8 @@ abstract class ItemDao: BaseDao() {
     @Query("SELECT itemId FROM item WHERE name = :name")
     abstract fun getItemIdByName(name: String): Long
 
-    @Query("SELECT * FROM ListCategoryItem WHERE listId = :listId AND categoryId = :categoryId AND itemId = :itemId")
-    abstract fun getListCategoryItem(listId: Long, categoryId: Long, itemId: Long): ListCategoryItem?
+    @Query("SELECT * FROM ListCategoryItem WHERE listId = :listId AND categoryName = :categoryName AND itemName = :itemName")
+    abstract fun getListCategoryItem(listId: Long, categoryName: String, itemName: String): ListCategoryItem?
 
     @Query("SELECT * FROM ListCategoryItem WHERE listId = :listId AND itemName = :itemName")
     abstract fun getListCatItem(listId: Long, itemName: String): ListCategoryItem?
@@ -41,8 +41,8 @@ abstract class ItemDao: BaseDao() {
     //@Query("SELECT itemId FROM ListItem WHERE name = :name")
     //abstract fun getListItemIdByName(name: String): Long
 
-    @Query("SELECT * FROM ListCategoryItem WHERE listId = :listId AND itemId = :itemId")
-    abstract fun getListCategoryItem(listId: Long, itemId: Long): ListCategoryItem?
+    @Query("SELECT * FROM ListCategoryItem WHERE listId = :listId AND itemName = :itemName")
+    abstract fun getListCategoryItem(listId: Long, itemName: String): ListCategoryItem?
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract suspend fun insertItem(item: Item): Long

@@ -63,6 +63,11 @@ class ListDetailsTabFragment : Fragment(), Toolbar.OnMenuItemClickListener {
                     .actionListDetailsTabFragmentToListHistoryFragment(navArgs.listData)
                 findNavController().navigate(action)
             }
+            R.id.action_list_settings -> {
+                val action = ListDetailsTabFragmentDirections
+                    .actionListDetailsTabFragmentToSettingsFragment(navArgs.listData)
+                findNavController().navigate(action)
+            }
             else -> {}
         }
         return false

@@ -21,7 +21,7 @@ class ListHistoryAdapter(): ListAdapter<ListCategoryItem, ListHistoryAdapter.Lis
 
     companion object DiffCallback: DiffUtil.ItemCallback<ListCategoryItem>() {
         override fun areItemsTheSame(oldItem: ListCategoryItem, newItem: ListCategoryItem): Boolean {
-            return oldItem.itemId == newItem.itemId
+            return oldItem.itemName == newItem.itemName
         }
 
         override fun areContentsTheSame(oldItem: ListCategoryItem, newItem: ListCategoryItem): Boolean {

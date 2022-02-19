@@ -2,16 +2,24 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <PreferenceCategory
-    app:key="shopping_list_category"
-    app:title="Shopping list">
-
         <ListPreference
             android:key="@string/key_completed_item_time_limit"
             android:entries="@array/completedItemTimeLimit"
             android:entryValues="@array/completedItemTimeLimitData"
+            android:summary="@string/completed_item_time_limit_summary"
             android:title="@string/completed_item_time_limit_title"
-            android:summary="@string/completed_item_time_limit_summary"/>
-    </PreferenceCategory>
+            android:persistent="false" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/key_home_screen"
+            android:title="@string/is_home_screen_title"
+            android:summary="@string/is_home_screen_summary"
+            android:persistent="false"/>
+
+        <ListPreference
+            android:key="@string/key_store_sort_order"
+            android:title="@string/store_sort_order_title"
+            android:summary="@string/store_sort_order_summary"
+            android:persistent="false"/>
 </PreferenceScreen>

@@ -25,13 +25,11 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.actionBar.toolbar)
+        setSupportActionBar(binding.actionBar.standardToolbar)
 
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -40,6 +38,7 @@ class MainActivity : AppCompatActivity() {
             menuInflater.inflate(R.menu.menu_main, menu)
             true
         } else false
+        return false
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

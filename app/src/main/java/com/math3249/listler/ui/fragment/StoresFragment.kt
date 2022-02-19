@@ -86,7 +86,8 @@ class StoresFragment : Fragment(), Swipeable<Store> {
 
     private fun subscribeToStores() {
         viewModel.stores.observe(this.viewLifecycleOwner) { stores ->
-            adapter.submitList(stores)
+            val storesWithoutDef = stores.filter { it.storeId != 1L }
+            adapter.submitList(storesWithoutDef)
         }
     }
 

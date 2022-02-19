@@ -9,14 +9,14 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import com.math3249.listler.App
 import com.math3249.listler.databinding.FragmentAddCategoryBinding
-import com.math3249.listler.ui.viewmodel.AddCategoryViewModel
+import com.math3249.listler.ui.viewmodel.CategoryViewModel
 
 class AddCategoryFragment: Fragment() {
 
     private val navArgs: AddCategoryFragmentArgs by navArgs()
 
-    private val viewModel: AddCategoryViewModel by activityViewModels {
-        AddCategoryViewModel.AddCategoryViewModelFactory (
+    private val viewModel: CategoryViewModel by activityViewModels {
+        CategoryViewModel.AddCategoryViewModelFactory (
             (activity?.application as App).database.categoryDao()
         )
     }

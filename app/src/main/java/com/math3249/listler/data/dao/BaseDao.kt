@@ -17,12 +17,12 @@ abstract class BaseDao {
     @Query("SELECT * FROM Item WHERE name = :name")
     abstract fun getItemByName(name: String): Item?
 
-    @Query("SELECT COUNT(*) FROM ListCategoryItem WHERE categoryId = :categoryId AND listId = :listId")
-    abstract fun countItemsInCategory(listId: Long, categoryId: Long): Int
+    @Query("SELECT COUNT(*) FROM ListCategoryItem WHERE categoryName = :categoryName AND listId = :listId")
+    abstract fun countItemsInCategory(listId: Long, categoryName: String): Int
 
     //CATEGORY
-    @Query("SELECT categoryId FROM ListCategoryItem WHERE listId = :listId AND itemId = :itemId")
-    abstract fun getCategoryId(listId: Long, itemId: Long): Long
+    @Query("SELECT categoryName FROM ListCategoryItem WHERE listId = :listId AND itemName = :itemName")
+    abstract fun getCategoryId(listId: Long, itemName: String): String
 
     @Query("SELECT categoryId FROM Category WHERE name = :categoryName")
     abstract fun getCategoryId(categoryName: String): Long
@@ -45,7 +45,7 @@ abstract class BaseDao {
         })
     }
 
-    @Update
+    @Update(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun update(listCategoryItem: ListCategoryItem)
 
     suspend fun updateWithTimeStamp(listCategoryItem: ListCategoryItem) {
@@ -53,4 +53,5 @@ abstract class BaseDao {
             modifiedAt = System.nanoTime()
         })
     }
+
 }

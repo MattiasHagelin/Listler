@@ -1,4 +1,4 @@
-package com.math3249.listler.data.dao
+/*package com.math3249.listler.data.dao
 
 //import com.math3249.listler.model.crossref.ListCategory
 //mport com.math3249.listler.model.crossref.ListItem
@@ -12,16 +12,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 abstract class ListDetailDao: BaseDao() {
-
-    @Query ("SELECT EXISTS (SELECT 1 FROM item WHERE item.name = :name)")
-    abstract fun itemExists(name: String): Boolean
-
-    @Query("SELECT * FROM ListCategoryItem WHERE listId = :listId")
-    abstract fun getListItems(listId: Long): Flow<List<ListCategoryItem>>
-
-    @Query("SELECT * FROM ListCategoryItem WHERE listId = :listId AND itemName = :itemName")
-    abstract fun getListItem(listId: Long, itemName: String): ListCategoryItem?
-/*
+///*
     @Query("SELECT EXISTS (SELECT 1 FROM ListItem WHERE name = :itemName)")
     abstract fun itemExistsInList(itemName: String): Boolean
 
@@ -36,7 +27,7 @@ abstract class ListDetailDao: BaseDao() {
 
     @Query("SELECT * FROM ListItem WHERE name = :itemName")
     abstract fun getListItemByName(itemName: String): ListItem?
-*/
+///*/
     @Transaction
     @Query("SELECT * FROM list WHERE list.listId = :listId")
     abstract fun getListData(listId: Long): Flow<ListWithData>
@@ -55,10 +46,10 @@ abstract class ListDetailDao: BaseDao() {
     @Delete
     abstract suspend fun delete(listItems: List<ListCategoryItem>)
 
-/*    @Delete
+///*    @Delete
     abstract suspend fun delete(listItem: ListItem): Int
 
     @Delete
     abstract suspend fun delete(listCategory: ListCategory)
-*/
-}
+//*/
+}*/

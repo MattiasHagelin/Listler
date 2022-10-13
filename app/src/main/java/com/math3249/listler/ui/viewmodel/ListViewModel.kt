@@ -5,6 +5,7 @@ import com.math3249.listler.R
 import com.math3249.listler.data.dao.ListDao
 import com.math3249.listler.model.ListWithData
 import com.math3249.listler.model.crossref.ListCategoryItem
+import com.math3249.listler.model.entity.Category
 import com.math3249.listler.model.entity.Item
 import com.math3249.listler.model.entity.ListSettings
 import com.math3249.listler.util.StringUtil
@@ -21,8 +22,12 @@ class ListViewModel(
     val message = MutableLiveData<ListMessage>()
     val allItems = listDao.getItems().asLiveData()
     val allLists: LiveData<List<com.math3249.listler.model.entity.List>> = listDao.getAllLists().asLiveData()
-    val allCategories = listDao.getCategories().asLiveData().value
+    val allCategories = getCategories()
     val stores = listDao.stores().asLiveData()
+
+    private fun getCategories() : List<Category>? {
+        return listDao.getCategories().asLiveData().value ?: emptyList()
+    }
 
     fun getListWithCategoriesAndItems(id: Long): LiveData<ListWithData> {
         return listDao.getListData(id).asLiveData()
@@ -112,34 +117,27 @@ class ListViewModel(
         itemName: String
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            if (listDao.isItemInList(listId, itemName)){
-                val listItem = listDao.getListItem(listId, itemName)!!
-                if (listItem.categoryName.isNotBlank()) {
-                    //If item have a Category do an update
-                    listDao.updateWithTimeStamp(
-                        ListCategoryItem(
-                            listItem.listId,
-                            listItem.categoryName,
-                            listItem.itemName
-                        ))
-                } else {
-                    //If category is missing notify fragment
-                    message.postValue(
-                        ListMessage(
-                            Message.Type.ITEM_NEW,
-                            false,
-                            ListData(listItem = ListCategoryItem(listId, itemName = itemName))
-                        )
-                    )
-                }
+            val listSettings = listDao.getListSetting(listId)
+            val isItemInList = listDao.isItemInList(listId, itemName)
+            //Check if store is Default
+            if (listSettings?.storeId == 1L) {
+                //Check if item is in list
+                if (isItemInList) {
+                    val listItem = listDao.getListItem(listId, itemName)!!
+                    updateWithTimeStamp(listItem)
+                } else
+                    createMessage(Message.Type.ITEM_NEW, listId, itemName)
             } else {
-                message.postValue(
-                    ListMessage(
-                        Message.Type.ITEM_NEW,
-                        false,
-                        ListData(listItem = ListCategoryItem(listId, itemName = itemName))
-                    )
-                )
+                if (isItemInList){
+                    val listItem = listDao.getListItem(listId, itemName)!!
+                    if (listItem.categoryName.isNotBlank())
+                        //If item have a Category do an update
+                        updateWithTimeStamp(listItem)
+                    else
+                        //If category is missing notify fragment
+                        createMessage(Message.Type.ITEM_NEW, listId, itemName)
+                } else
+                    createMessage(Message.Type.ITEM_NEW, listId, itemName)
             }
         }
     }
@@ -214,6 +212,25 @@ class ListViewModel(
                 listDao.delete(listItems)
             listDao.deleteList(com.math3249.listler.model.entity.List(listId, "", ""))
         }
+    }
+
+    private fun createMessage(type: Message.Type, listId: Long, name: String) {
+        message.postValue(
+            ListMessage(
+                Message.Type.ITEM_NEW,
+                true,
+                ListData(listItem = ListCategoryItem(listId, itemName = name))
+            )
+        )
+    }
+
+    private suspend fun updateWithTimeStamp(item : ListCategoryItem) {
+        listDao.updateWithTimeStamp(
+            ListCategoryItem(
+                item.listId,
+                item.categoryName,
+                item.itemName
+            ))
     }
 
     class ListViewModelFactory(private val listDao: ListDao): ViewModelProvider.Factory {

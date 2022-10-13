@@ -110,12 +110,19 @@ class ListDetailsFragment(private val listDetailsArgs: ListDetailsArgs): Fragmen
         viewModel.message.observe(this.viewLifecycleOwner) { message ->
             message as ListMessage
             when (message.type) {
-                Type.ITEM_NEW -> createAddItemDialog(AddItemArgs(
-                    listId,
-                    listDetailsArgs.listName,
-                    message.listData.listItem.categoryName,
-                    message.listData.listItem.itemName
-                ))
+                Type.ITEM_NEW -> {
+                    if (selectedList.settings?.store?.store?.storeId == 1L) {
+
+                    } else {
+                        createAddItemDialog(AddItemArgs(
+                            listId,
+                            listDetailsArgs.listName,
+                            message.listData.listItem.categoryName,
+                            message.listData.listItem.itemName
+                        ))
+                    }
+
+                }
                /*{
                     val action = ListDetailsTabFragmentDirections
                         .actionListDetailsTabFragmentToAddItemFragment(
@@ -150,7 +157,7 @@ class ListDetailsFragment(private val listDetailsArgs: ListDetailsArgs): Fragmen
             val message = bundle.get(KEY_INPUT) as ListMessage
             if (message.success) {
                 when (message.type) {
-                    Type.ITEM_INSERTED -> addToDatabase(message.listData.listItem)
+                    Type.ITEM_NEW -> addToDatabase(message.listData.listItem)
                     Type.ITEM_UPDATED -> addToList(message.listData.listItem)
                     Type.ITEM_DELETED -> viewModel.deleteItemFromList(message.listData.listItem)
                     Type.INVALID_INPUT -> Utils.snackbar(Type.INVALID_INPUT, binding.listRecyclerview)
@@ -190,9 +197,9 @@ class ListDetailsFragment(private val listDetailsArgs: ListDetailsArgs): Fragmen
                 listData.add(ListDetailCategory(ListCategoryItem(categoryName = misc)))
             listData.addAll(itemsMissing)
         }
-        sort.forEach { storCatSorted ->
+        sort.forEach { storeCatSorted ->
             var first = true
-            itemsByCat[catByName[storCatSorted.categoryId]?.name]?.forEach { item ->
+            itemsByCat[catByName[storeCatSorted.categoryId]?.name]?.forEach { item ->
                 if (!item.done) {
                     if (first) {
                         first = false
@@ -280,8 +287,8 @@ class ListDetailsFragment(private val listDetailsArgs: ListDetailsArgs): Fragmen
     }
 
     private fun createAddItemDialog(itemArgs: AddItemArgs) {
-        val catergories = getCategories().map { it.name }
-        AddItemDialog(itemArgs, catergories).show(childFragmentManager, AddItemDialog.TAG)
+        val categories = getCategories().map { it.name }
+        AddItemDialog(itemArgs, categories).show(childFragmentManager, AddItemDialog.TAG)
     }
 
     private fun getItemNameFromItemDropdown(): String {
@@ -289,11 +296,11 @@ class ListDetailsFragment(private val listDetailsArgs: ListDetailsArgs): Fragmen
         return if (!StringUtil.validateUserInput(input)) {
             Utils.snackbar(Type.ITEM_INPUT_EMPTY, binding.listRecyclerview)
             ""
-        } else input!!
+        } else input
     }
 
     private fun itemExists(itemName: String): Boolean {
-        return items.count { it.name == itemName } > 0
+        return items.isNotEmpty()
     }
 
     override val swipeDirs: Int

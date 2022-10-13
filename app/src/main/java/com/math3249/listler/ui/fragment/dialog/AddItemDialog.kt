@@ -45,7 +45,7 @@ class AddItemDialog(
         } else {
             builder.setTitle(getString(R.string.title_new_item))
             .setPositiveButton(StringUtil.getString(R.string.btn_add)) { _, _->
-                tryAddItem(Message.Type.ITEM_INSERTED)
+                tryAddItem(Message.Type.ITEM_NEW)
             }
         }
         builder.setNegativeButton(StringUtil.getString(R.string.btn_cancel)) { dialog, _ ->
@@ -80,12 +80,26 @@ class AddItemDialog(
             binding.dialogItem.text.toString())
         val catName = StringUtil.standardizeItemName(
             binding.categoryDropdown.text.toString())
-        if (itemName.isNotBlank() &&
-            (catName.isNotBlank() && categories.contains(catName))) {
+        val hasItemAndCategory = itemName.isNotBlank() && catName.isNotBlank()
+        val categoryExists = categories.contains(catName)
+        if (hasItemAndCategory && categoryExists) {
             setFragmentResult(
                 KEY_REQUEST, bundleOf(
                     KEY_INPUT to ListMessage(
                         type,
+                        true,
+                        ListData(
+                            listItem = ListCategoryItem(
+                                itemArgs.listId,
+                                catName,
+                                itemName,
+                                false
+                            )))))
+        } else if (hasItemAndCategory && !categoryExists) {
+            setFragmentResult(
+                KEY_REQUEST, bundleOf(
+                    KEY_INPUT to ListMessage(
+                        Message.Type.ITEM_CATEGORY_NEW,
                         true,
                         ListData(
                             listItem = ListCategoryItem(
